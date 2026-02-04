@@ -1,11 +1,21 @@
+import { Difficulty, TaxRate } from './enums';
+
 export type Resource = 'budget' | 'happiness' | 'cleanliness';
+
+export interface RegionModifiers {
+  budgetMultiplier?: number;
+  happinessMultiplier?: number;
+  cleanlinessMultiplier?: number;
+  eventFrequency?: number;
+}
 
 export interface Region {
   id: string;
   name: string;
   description: string;
-  difficulty: 'Kolay' | 'Orta' | 'Zor'; // Localized difficulty
+  difficulty: Difficulty;
   spawnPoints?: { x: number; y: number }[];
+  modifiers?: RegionModifiers;
 }
 
 export interface GameEvent {
@@ -31,6 +41,7 @@ export interface Project {
   description: string;
   cost: number;
   duration: number;
+  prerequisites?: string[]; // Project IDs
   effects: {
     happiness?: number;
     cleanliness?: number;
@@ -42,7 +53,7 @@ export interface ActiveProject extends Project {
   daysRemaining: number;
 }
 
-export type TaxRate = 'low' | 'normal' | 'high';
+export { TaxRate };
 
 export interface EventNode {
   id: string;
@@ -62,8 +73,8 @@ export interface GameState {
   completedProjectIds: string[];
   isPlaying: boolean;
   isGameOver: boolean;
-  isVictory: boolean; // New win condition
+  isVictory: boolean;
   day: number;
-  activeNodes: EventNode[]; // Map bubbles
-  activeEvent: GameEvent | null; // Currently open modal
+  activeNodes: EventNode[];
+  activeEvent: GameEvent | null;
 }

@@ -1,17 +1,22 @@
 import type { Region } from '../types';
+import { Difficulty } from '../types/enums';
 
 export const REGIONS: Region[] = [
   {
     id: 'marmara',
     name: 'Marmara Bölgesi',
     description: 'Yüksek nüfus ve sanayi merkezi. Bütçe yüksek ama kirlilik hızlı artıyor.',
-    difficulty: 'Zor',
+    difficulty: Difficulty.HARD,
     spawnPoints: [
       { x: 15, y: 25 },
       { x: 20, y: 20 },
       { x: 10, y: 30 },
       { x: 25, y: 15 }
-    ]
+    ],
+    modifiers: {
+      budgetMultiplier: 1.2, // Industry Hub
+      cleanlinessMultiplier: 0.8 // Pollution risk
+    }
   },
   {
     id: 'blacksea',

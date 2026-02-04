@@ -4,6 +4,7 @@ export interface Project {
   description: string;
   cost: number;
   duration: number; // Days to complete
+  prerequisites?: string[]; // Added based on new project data
   effects: {
     happiness?: number;
     cleanliness?: number;
@@ -14,36 +15,48 @@ export interface Project {
 
 export const PROJECTS: Project[] = [
   {
-    id: 'recycling-center',
+    id: 'recycle-plant',
     name: 'Geri Dönüşüm Tesisi',
-    description: 'Şehrin atıklarını yöneterek temizliği artırır.',
-    cost: 300,
-    duration: 15,
+    description: 'Çöpleri ayrıştırarak çevreye katkı sağlar.',
+    cost: 150,
+    duration: 5,
     effects: {
       cleanliness: 15,
-      budgetPerTurn: 2
+      happiness: 5
     }
   },
   {
-    id: 'solar-plant',
+    id: 'solar-farm',
     name: 'Güneş Enerjisi Santrali',
-    description: 'Temiz enerji sağlar ve uzun vadede bütçe kazandırır.',
-    cost: 500,
-    duration: 30,
+    description: 'Temiz enerji üretir. Geri Dönüşüm Tesisi gerektirir.',
+    cost: 300,
+    duration: 8,
+    prerequisites: ['recycle-plant'],
     effects: {
-      cleanliness: 5,
-      budgetPerTurn: 10
+      budgetPerTurn: 15,
+      cleanliness: 10
     }
   },
   {
-    id: 'tourism-ad',
-    name: 'Turizm Reklam Kampanyası',
-    description: 'Bölgeye turist çeker ve bütçeyi artırır.',
-    cost: 200,
-    duration: 10,
+    id: 'eco-park',
+    name: 'Ekolojik Park',
+    description: 'Halkın nefes alabileceği yeşil alan.',
+    cost: 100,
+    duration: 3,
     effects: {
-      happiness: 5,
-      budgetPerTurn: 15
+      happiness: 20,
+      cleanliness: 5
+    }
+  },
+  {
+    id: 'smart-grid',
+    name: 'Akıllı Şebeke',
+    description: 'Enerji verimliliği sağlar. Güneş Enerjisi gerektirir.',
+    cost: 500,
+    duration: 10,
+    prerequisites: ['solar-farm'],
+    effects: {
+      budgetPerTurn: 40
     }
   },
   {
