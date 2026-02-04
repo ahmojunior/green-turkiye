@@ -40,10 +40,6 @@ export function useGame() {
     openEvent(nodeId);
   }, [openEvent]);
 
-  // Exposed but maybe not used yet
-  const handleDismissNode = useCallback((nodeId: string) => {
-    dispatch({ type: 'DISMISS_NODE', payload: nodeId });
-  }, []);
 
   // Game Loop
   const timeAccumulator = useRef(0);

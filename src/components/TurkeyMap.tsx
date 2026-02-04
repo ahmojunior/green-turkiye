@@ -1,5 +1,3 @@
-
-
 import { useState, memo } from 'react';
 import { PROVINCE_PATHS } from '../data/provincePaths';
 
@@ -69,5 +67,6 @@ export const TurkeyMap = memo(function TurkeyMap({ onRegionSelect, selectedRegio
           style={{ opacity: (40 - cleanliness) / 40 }}
         ></div>
       )}
-      );
+    </div>
+  );
 });

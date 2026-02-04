@@ -12,7 +12,7 @@ export function useGameLoop(
             if (requestRef.current) {
                 cancelAnimationFrame(requestRef.current);
             }
-            previousTimeRef.current = undefined;
+            previousTimeRef.current = null;
             return;
         }
 
