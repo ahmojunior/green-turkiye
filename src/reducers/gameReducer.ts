@@ -14,7 +14,8 @@ export type GameAction =
     | { type: 'OPEN_EVENT'; payload: string } // nodeId
     | { type: 'CLOSE_EVENT' }
     | { type: 'HANDLE_CHOICE'; payload: number } // choiceIndex
-    | { type: 'DISMISS_NODE'; payload: string }; // nodeId
+    | { type: 'DISMISS_NODE'; payload: string } // nodeId
+    | { type: 'SET_PAUSED'; payload: boolean }; // New action
 
 export const INITIAL_STATE: GameState = {
     regionId: null,
@@ -25,6 +26,7 @@ export const INITIAL_STATE: GameState = {
     activeProjects: [],
     completedProjectIds: [],
     isPlaying: false,
+    isPaused: false,
     isGameOver: false,
     isVictory: false,
     day: 1,
@@ -47,6 +49,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
         case 'SET_TAX_RATE':
             return { ...state, taxRate: action.payload };
+
+        case 'SET_PAUSED':
+            return { ...state, isPaused: action.payload };
 
         case 'BUY_PROJECT': {
             const project = action.payload;

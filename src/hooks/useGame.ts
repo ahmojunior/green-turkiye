@@ -36,6 +36,14 @@ export function useGame() {
     dispatch({ type: 'HANDLE_CHOICE', payload: choiceIndex });
   }, []);
 
+  const handleDismissNode = useCallback((nodeId: string) => {
+    dispatch({ type: 'DISMISS_NODE', payload: nodeId });
+  }, []);
+
+  const setPaused = useCallback((paused: boolean) => {
+    dispatch({ type: 'SET_PAUSED', payload: paused });
+  }, []);
+
   const handleNodeClick = useCallback((nodeId: string) => {
     openEvent(nodeId);
   }, [openEvent]);
@@ -45,7 +53,10 @@ export function useGame() {
   const timeAccumulator = useRef(0);
 
   const handleTick = useCallback((deltaTime: number) => {
-    timeAccumulator.current += deltaTime;
+    // CLAMP DELTA TIME to prevent spiral of death
+    const safeDelta = Math.min(deltaTime, 100);
+
+    timeAccumulator.current += safeDelta;
     // 1000ms = 1 day
     if (timeAccumulator.current >= 1000) {
       dispatch({ type: 'TICK', payload: { deltaTime: 1000 } });
@@ -53,7 +64,7 @@ export function useGame() {
     }
   }, []);
 
-  const shouldRun = gameState.isPlaying && !gameState.isGameOver && !gameState.activeEvent;
+  const shouldRun = gameState.isPlaying && !gameState.isGameOver && !gameState.activeEvent && !gameState.isPaused;
   // Use non-null assertion or Boolean cast if needed, but boolean is fine
   useGameLoop(handleTick, !!shouldRun);
 
@@ -64,6 +75,7 @@ export function useGame() {
     handleNodeClick,
     setTaxRate,
     buyProject,
-    resetGame
+    resetGame,
+    setPaused
   };
 }

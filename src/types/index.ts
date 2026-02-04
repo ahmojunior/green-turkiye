@@ -72,6 +72,7 @@ export interface GameState {
   activeProjects: ActiveProject[];
   completedProjectIds: string[];
   isPlaying: boolean;
+  isPaused: boolean; // New pause state
   isGameOver: boolean;
   isVictory: boolean;
   day: number;

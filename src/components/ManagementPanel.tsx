@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PROJECTS, type Project } from '../data/projects';
 import type { TaxRate, ActiveProject } from '../types';
 import { Coins, Hammer, Clock, CheckCircle } from 'lucide-react';
@@ -10,6 +10,7 @@ interface ManagementPanelProps {
     activeProjects: ActiveProject[];
     completedProjectIds: string[];
     onBuyProject: (project: Project) => void;
+    onTogglePause?: (paused: boolean) => void;
 }
 
 export function ManagementPanel({
@@ -18,9 +19,17 @@ export function ManagementPanel({
     budget,
     activeProjects,
     completedProjectIds,
-    onBuyProject
+    onBuyProject,
+    onTogglePause
 }: ManagementPanelProps) {
     const [showProjects, setShowProjects] = useState(false);
+
+    // Pause game when modal is open
+    useEffect(() => {
+        if (onTogglePause) {
+            onTogglePause(showProjects);
+        }
+    }, [showProjects, onTogglePause]);
 
     return (
         <>
