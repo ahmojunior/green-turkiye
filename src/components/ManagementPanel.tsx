@@ -1,35 +1,24 @@
 import { useState, useEffect } from 'react';
-import { PROJECTS, type Project } from '../data/projects';
-import type { TaxRate, ActiveProject } from '../types';
+import { PROJECTS } from '../data/projects';
 import { Coins, Hammer, Clock, CheckCircle } from 'lucide-react';
+import { useGame } from '../hooks/useGame';
+import { TaxRate } from '../types/enums';
 
-interface ManagementPanelProps {
-    taxRate: TaxRate;
-    onSetTaxRate: (rate: TaxRate) => void;
-    budget: number;
-    activeProjects: ActiveProject[];
-    completedProjectIds: string[];
-    onBuyProject: (project: Project) => void;
-    onTogglePause?: (paused: boolean) => void;
-}
+export function ManagementPanel() {
+    const {
+        gameState,
+        setTaxRate,
+        buyProject,
+        setPaused
+    } = useGame();
 
-export function ManagementPanel({
-    taxRate,
-    onSetTaxRate,
-    budget,
-    activeProjects,
-    completedProjectIds,
-    onBuyProject,
-    onTogglePause
-}: ManagementPanelProps) {
+    const { taxRate, budget, activeProjects, completedProjectIds } = gameState;
     const [showProjects, setShowProjects] = useState(false);
 
     // Pause game when modal is open
     useEffect(() => {
-        if (onTogglePause) {
-            onTogglePause(showProjects);
-        }
-    }, [showProjects, onTogglePause]);
+        setPaused(showProjects);
+    }, [showProjects, setPaused]);
 
     return (
         <>
@@ -40,10 +29,10 @@ export function ManagementPanel({
                         <Coins className="w-4 h-4" /> Vergi Oranı
                     </h3>
                     <div className="flex bg-gray-100 p-1 rounded-lg">
-                        {(['low', 'normal', 'high'] as TaxRate[]).map((rate) => (
+                        {(Object.values(TaxRate) as TaxRate[]).map((rate) => (
                             <button
                                 key={rate}
-                                onClick={() => onSetTaxRate(rate)}
+                                onClick={() => setTaxRate(rate)}
                                 className={`
                             px-4 py-2 rounded-md text-sm font-bold transition-all
                             ${taxRate === rate
@@ -51,16 +40,16 @@ export function ManagementPanel({
                                         : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'}
                         `}
                             >
-                                {rate === 'low' && 'Düşük'}
-                                {rate === 'normal' && 'Normal'}
-                                {rate === 'high' && 'Yüksek'}
+                                {rate === TaxRate.LOW && 'Düşük'}
+                                {rate === TaxRate.NORMAL && 'Normal'}
+                                {rate === TaxRate.HIGH && 'Yüksek'}
                             </button>
                         ))}
                     </div>
                     <div className="mt-2 text-xs text-gray-500 font-medium h-4">
-                        {taxRate === 'low' && '+10 Bütçe, +1 Mutluluk / Gün'}
-                        {taxRate === 'normal' && '+30 Bütçe / Gün'}
-                        {taxRate === 'high' && '+80 Bütçe, -1 Mutluluk / Gün'}
+                        {taxRate === TaxRate.LOW && '+5 Bütçe, +1 Mutluluk / Gün'}
+                        {taxRate === TaxRate.NORMAL && '+15 Bütçe / Gün'}
+                        {taxRate === TaxRate.HIGH && '+40 Bütçe, -1 Mutluluk / Gün'}
                     </div>
                 </div>
             </div>
@@ -173,7 +162,7 @@ export function ManagementPanel({
                                             </button>
                                         ) : (
                                             <button
-                                                onClick={() => onBuyProject(project)}
+                                                onClick={() => buyProject(project)}
                                                 disabled={isDisabled}
                                                 className={`
                                             w-full py-2 font-bold rounded-lg transition-colors

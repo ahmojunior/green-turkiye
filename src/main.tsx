@@ -2,12 +2,12 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import { GameEffectsProvider } from './contexts/GameEffectsContext'
+import { GameProvider } from './contexts/GameContext'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <GameEffectsProvider>
+    <GameProvider>
       <App />
-    </GameEffectsProvider>
+    </GameProvider>
   </StrictMode>,
 )

@@ -13,11 +13,10 @@ function App() {
     gameState,
     startGame,
     handleChoice,
+    gameState,
+    handleChoice,
     handleNodeClick,
     resetGame,
-    setTaxRate,
-    buyProject,
-    setPaused
   } = useGame();
 
   const currentRegion = REGIONS.find(r => r.id === gameState.regionId);
@@ -78,15 +77,7 @@ function App() {
       <GameHUD state={gameState} regionName={currentRegion?.name || 'Bilinmeyen Bölge'} />
 
       {/* Management Panel */}
-      <ManagementPanel
-        taxRate={gameState.taxRate}
-        onSetTaxRate={setTaxRate}
-        budget={gameState.budget}
-        activeProjects={gameState.activeProjects}
-        completedProjectIds={gameState.completedProjectIds}
-        onBuyProject={buyProject}
-        onTogglePause={setPaused}
-      />
+      <ManagementPanel />
 
       {/* Main Game Area - Map & Nodes */}
       <div className="flex-1 relative w-full h-full flex items-center justify-center z-10">
