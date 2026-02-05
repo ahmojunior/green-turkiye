@@ -36,10 +36,6 @@ export function useGame() {
     dispatch({ type: 'HANDLE_CHOICE', payload: choiceIndex });
   }, []);
 
-  const handleDismissNode = useCallback((nodeId: string) => {
-    dispatch({ type: 'DISMISS_NODE', payload: nodeId });
-  }, []);
-
   const setPaused = useCallback((paused: boolean) => {
     dispatch({ type: 'SET_PAUSED', payload: paused });
   }, []);
