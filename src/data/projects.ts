@@ -18,7 +18,7 @@ export const PROJECTS: Project[] = [
     id: 'recycle-plant',
     name: 'Geri Dönüşüm Tesisi',
     description: 'Çöpleri ayrıştırarak çevreye katkı sağlar.',
-    cost: 1500, // Increased from 150
+    cost: 5000,
     duration: 5,
     effects: {
       cleanliness: 15,
@@ -29,7 +29,7 @@ export const PROJECTS: Project[] = [
     id: 'solar-farm',
     name: 'Güneş Enerjisi Santrali',
     description: 'Temiz enerji üretir. Geri Dönüşüm Tesisi gerektirir.',
-    cost: 3000, // Increased from 300
+    cost: 12000,
     duration: 8,
     prerequisites: ['recycle-plant'],
     effects: {
@@ -41,7 +41,7 @@ export const PROJECTS: Project[] = [
     id: 'eco-park',
     name: 'Ekolojik Park',
     description: 'Halkın nefes alabileceği yeşil alan.',
-    cost: 1000, // Increased from 100
+    cost: 4000,
     duration: 3,
     effects: {
       happiness: 20,
@@ -52,7 +52,7 @@ export const PROJECTS: Project[] = [
     id: 'smart-grid',
     name: 'Akıllı Şebeke',
     description: 'Enerji verimliliği sağlar. Güneş Enerjisi gerektirir.',
-    cost: 5000, // Increased from 500
+    cost: 25000,
     duration: 10,
     prerequisites: ['solar-farm'],
     effects: {
@@ -63,7 +63,7 @@ export const PROJECTS: Project[] = [
     id: 'public-park',
     name: 'Büyük Şehir Parkı',
     description: 'Halkın nefes alabileceği yeşil alanlar oluşturur.',
-    cost: 150,
+    cost: 750,
     duration: 7,
     effects: {
       happiness: 10,
@@ -74,7 +74,7 @@ export const PROJECTS: Project[] = [
     id: 'water-filter',
     name: 'Su Arıtma Tesisi',
     description: 'Su kaynaklarını temizler ve salgınları önler.',
-    cost: 400,
+    cost: 2000,
     duration: 20,
     effects: {
       cleanliness: 20,

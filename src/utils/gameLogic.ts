@@ -11,13 +11,13 @@ export const calculateDailyTax = (
     let dailyHappinessChange = 0;
 
     if (rate === TaxRate.LOW) {
-        dailyBudgetChange += 5; // Decreased from 10
+        dailyBudgetChange += -1; // Decreased from 5
         dailyHappinessChange += 1;
     } else if (rate === TaxRate.NORMAL) {
-        dailyBudgetChange += 15; // Decreased from 30
+        dailyBudgetChange += 5; // Decreased from 15
         dailyHappinessChange += 0;
     } else if (rate === TaxRate.HIGH) {
-        dailyBudgetChange += 40; // Decreased from 80
+        dailyBudgetChange += 15; // Decreased from 40
         dailyHappinessChange -= 1;
     }
 
