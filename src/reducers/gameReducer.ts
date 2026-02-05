@@ -20,8 +20,8 @@ export type GameAction =
 export const INITIAL_STATE: GameState = {
     regionId: null,
     budget: 500,
-    happiness: 50,
-    cleanliness: 50,
+    happiness: 20,
+    cleanliness: 20,
     taxRate: TaxRate.NORMAL,
     activeProjects: [],
     completedProjectIds: [],
