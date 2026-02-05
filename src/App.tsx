@@ -13,8 +13,6 @@ function App() {
     gameState,
     startGame,
     handleChoice,
-    gameState,
-    handleChoice,
     handleNodeClick,
     resetGame,
   } = useGame();
