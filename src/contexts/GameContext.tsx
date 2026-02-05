@@ -14,7 +14,7 @@ interface GameContextType {
     setPaused: (paused: boolean) => void;
 }
 
-const GameContext = createContext<GameContextType | null>(null);
+export const GameContext = createContext<GameContextType | null>(null);
 
 export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [gameState, dispatch] = useReducer(gameReducer, INITIAL_STATE);

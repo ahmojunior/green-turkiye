@@ -8,7 +8,9 @@ interface EventModalProps {
 }
 
 export function EventModal({ event, onChoice }: EventModalProps) {
-  const { showFloatingText } = useGameEffects();
+  const effectsContext = useGameEffects();
+  // Safe destructuring or fallback
+  const showFloatingText = effectsContext?.showFloatingText || (() => { });
 
   const handleChoiceClick = (e: React.MouseEvent, index: number) => {
     const choice = event.choices[index];
