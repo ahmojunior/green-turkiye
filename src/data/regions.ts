@@ -36,10 +36,10 @@ export const REGIONS: Region[] = [
     description: 'Turizm ve tarım odaklı. Denizi temiz tutmak mutluluk için hayati önemde.',
     difficulty: 'Orta',
     spawnPoints: [
-      { x: 10, y: 45 },
-      { x: 15, y: 55 },
-      { x: 8, y: 60 },
-      { x: 12, y: 40 }
+      { x: 12, y: 48 }, 
+      { x: 14, y: 65 }, 
+      { x: 22, y: 55 }, 
+      { x: 20, y: 42 }  
     ]
   },
   {
