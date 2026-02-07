@@ -28,6 +28,7 @@ export interface GameEvent {
 
 export interface EventChoice {
   text: string;
+  description?: string;
   effects: {
     budget?: number;
     happiness?: number;
