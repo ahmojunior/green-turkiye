@@ -51,7 +51,249 @@ export const EVENTS: GameEvent[] = [
       }
     ]
   },
+  {
+    id: 'plastic-ban',
+    title: 'Plastik Poşet Yasağı',
+    description: 'Çevre örgütleri plastik kullanımının tamamen yasaklanması için baskı yapıyor. Marketler ise tepkili.',
+    choices: [
+      {
+        text: 'Tam Yasak Uygula',
+        effects: { budget: -40, happiness: -10, cleanliness: +25 }
+      },
+      {
+        text: 'Ücretli Yap ve Denetle',
+        effects: { budget: +30, happiness: -5, cleanliness: +10 }
+      },
+      {
+        text: 'Sektörü Serbest Bırak',
+        effects: { budget: +10, happiness: +5, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'solar-incentive',
+    title: 'Güneş Enerjisi Teşviği',
+    description: 'Uluslararası bir fon, güneş paneli tarlaları kurmak için hibe teklif ediyor, ancak tarım arazisi talep ediyor.',
+    choices: [
+      {
+        text: 'Kabul Et (Tarım Arazisine Kur)',
+        effects: { budget: +100, happiness: -5, cleanliness: +20 }
+      },
+      {
+        text: 'Sadece Çorak Araziye İzin Ver',
+        effects: { budget: +20, happiness: +5, cleanliness: +10 }
+      },
+      {
+        text: 'Reddet',
+        effects: { budget: 0, happiness: 0, cleanliness: 0 }
+      }
+    ]
+  },
+  {
+    id: 'ewaste-dump',
+    title: 'Elektronik Atık Krizi',
+    description: 'Şehir çöplüklerinde geri dönüştürülmeyen elektronik atıklar toprağı zehirlemeye başladı.',
+    choices: [
+      {
+        text: 'Geri Dönüşüm Tesisi Kur',
+        effects: { budget: -80, happiness: +10, cleanliness: +15 }
+      },
+      {
+        text: 'Yurt Dışına İhraç Et',
+        effects: { budget: +40, happiness: -5, cleanliness: +5 } // Etik değil ama karlı
+      }
+    ]
+  },
 
+  // --- MARMARA BÖLGESİ EKLEMELERİ ---
+  {
+    id: 'marmara-urban-renewal',
+    regionId: 'marmara',
+    title: 'Kentsel Dönüşüm İkilemi',
+    description: 'İstanbul\'da riskli binaların yıkımı çok fazla moloz ve toz çıkarıyor. Halk rahatsız.',
+    choices: [
+      {
+        text: 'Yıkımları Hızlandır (Toza Rağmen)',
+        effects: { budget: -50, happiness: -15, cleanliness: -10 }
+      },
+      {
+        text: 'Yeşil Bariyer Zorunluluğu Getir',
+        effects: { budget: -100, happiness: +5, cleanliness: +5 }
+      }
+    ]
+  },
+  {
+    id: 'thrace-sunflower',
+    regionId: 'marmara',
+    title: 'Ayçiçeği Tarlalarında Sanayi',
+    description: 'Trakya\'daki verimli ayçiçeği tarlalarına yeni bir organize sanayi bölgesi kurulmak isteniyor.',
+    choices: [
+      {
+        text: 'Sanayiye İzin Ver',
+        effects: { budget: +130, happiness: -20, cleanliness: -15 }
+      },
+      {
+        text: 'Tarımsal Sit Alanı İlan Et',
+        effects: { budget: -30, happiness: +15, cleanliness: +10 }
+      }
+    ]
+  },
+
+  // --- EGE BÖLGESİ EKLEMELERİ ---
+  {
+    id: 'izmir-wind-farm',
+    regionId: 'aegean',
+    title: 'Rüzgar Gülü ve Kuş Göçü',
+    description: 'Çeşme\'ye kurulacak rüzgar santrali göçmen kuşların rotasında kalıyor.',
+    choices: [
+      {
+        text: 'Projeyi Onayla (Temiz Enerji)',
+        effects: { budget: +60, happiness: +5, cleanliness: +15 }
+      },
+      {
+        text: 'Konumu Değiştir (Ekstra Maliyet)',
+        effects: { budget: -50, happiness: +10, cleanliness: +15 }
+      }
+    ]
+  },
+
+  // --- AKDENİZ BÖLGESİ EKLEMELERİ ---
+  {
+    id: 'med-invasive-fish',
+    regionId: 'mediterranean',
+    title: 'İstilacı Türler',
+    description: 'Aslan balığı ve Balon balığı yerel balık popülasyonunu yok ediyor.',
+    choices: [
+      {
+        text: 'Avlanma Teşviği Ver (Ödül)',
+        effects: { budget: -40, happiness: +10, cleanliness: +5 }
+      },
+      {
+        text: 'Doğal Dengeye Bırak',
+        effects: { budget: 0, happiness: -10, cleanliness: -5 }
+      }
+    ]
+  },
+  {
+    id: 'adana-stubble-burning',
+    regionId: 'mediterranean',
+    title: 'Anız Yakma Sorunu',
+    description: 'Çukurova\'da hasat sonrası tarlalar yakılıyor, duman tüm şehri kapladı.',
+    choices: [
+      {
+        text: 'Ağır Cezalar Uygula',
+        effects: { budget: +20, happiness: -10, cleanliness: +10 }
+      },
+      {
+        text: 'Eğitim ve Makine Desteği Ver',
+        effects: { budget: -60, happiness: +15, cleanliness: +15 }
+      }
+    ]
+  },
+
+  // --- İÇ ANADOLU BÖLGESİ EKLEMELERİ ---
+  {
+    id: 'ankara-green-belt',
+    regionId: 'anatolian',
+    title: 'Yeşil Kuşak Projesi',
+    description: 'Bozkırın ortasına yapay bir orman kuşağı oluşturma projesi gündemde.',
+    choices: [
+      {
+        text: 'Büyük Bütçe Ayır',
+        effects: { budget: -120, happiness: +20, cleanliness: +20 }
+      },
+      {
+        text: 'Daha Küçük Parklar Yap',
+        effects: { budget: -40, happiness: +5, cleanliness: +5 }
+      }
+    ]
+  },
+
+  // --- KARADENİZ BÖLGESİ EKLEMELERİ ---
+  {
+    id: 'blacksea-hes',
+    regionId: 'blacksea',
+    title: 'HES Protestoları',
+    description: 'Yerel halk, derelerini kurutacak Hidroelektrik Santrali (HES) istemiyor.',
+    choices: [
+      {
+        text: 'Halkı Dinle, İptal Et',
+        effects: { budget: -90, happiness: +25, cleanliness: +10 }
+      },
+      {
+        text: 'Güvenlik Güçleriyle İnşaatı Koru',
+        effects: { budget: -30, happiness: -30, cleanliness: -5 }
+      }
+    ]
+  },
+  {
+    id: 'fındık-pesticide',
+    regionId: 'blacksea',
+    title: 'Zirai İlaç Kalıntısı',
+    description: 'Fındık ihracatında kullanılan ilaçlar nedeniyle ürünler gümrükten döndü.',
+    choices: [
+      {
+        text: 'Organik Tarıma Geçişi Zorla',
+        effects: { budget: -100, happiness: -10, cleanliness: +20 }
+      },
+      {
+        text: 'Yeni Pazarlar Ara',
+        effects: { budget: -20, happiness: +5, cleanliness: -5 }
+      }
+    ]
+  },
+
+  // --- DOĞU ANADOLU BÖLGESİ EKLEMELERİ ---
+  {
+    id: 'van-lake-pollution',
+    regionId: 'eastern',
+    title: 'Van Gölü Can Çekişiyor',
+    description: 'Kanalizasyon atıkları İnci Kefali\'nin üreme alanlarını tehdit ediyor.',
+    choices: [
+      {
+        text: 'Biyolojik Arıtma Tesisi Kur',
+        effects: { budget: -150, happiness: +15, cleanliness: +25 }
+      },
+      {
+        text: 'Geçici Temizlik Yap',
+        effects: { budget: -30, happiness: +5, cleanliness: +5 }
+      }
+    ]
+  },
+
+  // --- GÜNEYDOĞU ANADOLU BÖLGESİ EKLEMELERİ ---
+  {
+    id: 'urfa-solar',
+    regionId: 'southeastern',
+    title: 'Güneşin Başkenti',
+    description: 'Şanlıurfa\'nın yakıcı güneşi enerjiye dönüştürülebilir ama altyapı yetersiz.',
+    choices: [
+      {
+        text: 'Altyapıyı Yenile ve Panel Kur',
+        effects: { budget: -110, happiness: +10, cleanliness: +15 }
+      },
+      {
+        text: 'Özel Sektörü Davet Et',
+        effects: { budget: +50, happiness: 0, cleanliness: +10 }
+      }
+    ]
+  },
+  {
+    id: 'dust-transport',
+    regionId: 'southeastern',
+    title: 'Sınır Ötesi Toz Taşınımı',
+    description: 'Suriye üzerinden gelen çöl tozları hava kalitesini düşürüyor, nefes almak zorlaştı.',
+    choices: [
+      {
+        text: 'Halka Maske Dağıt ve Uyar',
+        effects: { budget: -20, happiness: +5, cleanliness: 0 }
+      },
+      {
+        text: 'Ağaçlandırma Bariyeri Başlat',
+        effects: { budget: -80, happiness: +10, cleanliness: +5 } // Uzun vadeli çözüm
+      }
+    ]
+  },
   // --- Bölgesel Olaylar ---
   
   // Karadeniz (Black Sea)
