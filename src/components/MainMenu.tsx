@@ -248,7 +248,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
               </p>
               <hr className="border-white/10 my-3" />
               <p className="text-slate-400 text-xs">
-                Tasarım &amp; Geliştirme — <a href="https://github.com/ahmojunior" target="_blank" rel="noopener noreferrer" style={{ textDecorationLine: 'underline' }}>ahmocodes</a>
+                Tasarım &amp; Geliştirme — <a href="https://github.com/ahmojunior" target="_blank" rel="noopener noreferrer" style={{ textDecorationLine: 'underline' }}>ahmocodes</a> / <a href="https://github.com/SirAtilotty" target="_blank" rel="noopener noreferrer" style={{ textDecorationLine: 'underline' }}>SirAtilotty</a>
               </p>
               <p className="text-slate-500 text-xs">v0.2 • 2026</p>
             </div>

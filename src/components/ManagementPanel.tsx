@@ -136,34 +136,50 @@ export function ManagementPanel() {
                                             )}
                                         </div>
 
-                                        <p className="text-sm text-slate-400 mb-0 h-10">{project.description}</p>
+                                        <p className="text-sm text-slate-400 mb-3">{project.description}</p>
 
                                         {/* Prereq Info */}
                                         {!hasPrereqs && project.prerequisites && (
-                                            <div className="text-xs text-red-400 mb-0 font-medium">
+                                            <div className="text-xs text-red-400 mb-3 font-medium">
                                                 Gereksinim: {project.prerequisites.map(id => PROJECTS.find(p => p.id === id)?.name).join(', ')}
                                             </div>
                                         )}
 
-                                        <div className="flex gap-4 text-xs font-medium text-slate-500 mb-2">
-                                            <span className="flex items-center gap-0">
-                                                <Coins className="w-3 h-3 text-yellow-400" /> {project.cost}M
-                                            </span>
-                                            <span className="flex items-center gap-0">
-                                                <Clock className="w-3 h-3" /> {project.duration} Gün
-                                            </span>
+                                        {/* Cost & Duration */}
+                                        <div className="mb-3 pb-3 border-b border-white/10">
+                                            <div className="grid grid-cols-2 gap-3 text-xs">
+                                                <div className="flex items-center gap-2">
+                                                    <Coins className="w-4 h-4 text-yellow-400" />
+                                                    <div>
+                                                        <div className="text-slate-400 text-xs">Fiyat</div>
+                                                        <div className="text-white font-bold">{project.cost.toLocaleString()}M</div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <Clock className="w-4 h-4 text-blue-400" />
+                                                    <div>
+                                                        <div className="text-slate-400 text-xs">Süre</div>
+                                                        <div className="text-white font-bold">{project.duration} Gün</div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        <div className="space-y-0 text-xs mb-4">
-                                            {project.effects.budgetPerTurn && (
-                                                <div className="text-emerald-400">+{project.effects.budgetPerTurn} Bütçe / Gün</div>
-                                            )}
-                                            {project.effects.cleanliness && (
-                                                <div className="text-emerald-400">+{project.effects.cleanliness} Temizlik (Bitince)</div>
-                                            )}
-                                            {project.effects.happiness && (
-                                                <div className="text-blue-400">+{project.effects.happiness} Mutluluk (Bitince)</div>
-                                            )}
+                                        {/* Returns & Effects */}
+                                        <div className="space-y-1 text-xs mb-4">
+                                            <div className="text-slate-400 font-bold text-xs uppercase tracking-wider mb-2">Getiriler:</div>
+                                            {project.effects.budgetPerTurn ? (
+                                                <div className="text-emerald-400 font-medium">✓ +{project.effects.budgetPerTurn} Bütçe / Gün</div>
+                                            ) : null}
+                                            {project.effects.cleanliness ? (
+                                                <div className="text-emerald-400 font-medium">✓ +{project.effects.cleanliness} Temizlik</div>
+                                            ) : null}
+                                            {project.effects.happiness ? (
+                                                <div className="text-blue-400 font-medium">✓ +{project.effects.happiness} Mutluluk</div>
+                                            ) : null}
+                                            {!project.effects.budgetPerTurn && !project.effects.cleanliness && !project.effects.happiness ? (
+                                                <div className="text-slate-500">Henüz belirtilmemiş</div>
+                                            ) : null}
                                         </div>
 
                                         {isActive && (

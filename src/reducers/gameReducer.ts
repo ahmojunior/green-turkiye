@@ -171,7 +171,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             }
 
             // Random Events Spawning
-            const spawnChance = 0.3; // 30% per day
+            const spawnChance = 0.5; // 50% per day
             let newNodes = [...state.activeNodes];
             // Check exisiting nodes expiry
             const nextDay = state.day + 1;
