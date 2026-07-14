@@ -1,27 +1,37 @@
-import type { GameState, Project, EventNode, Region } from '../types';
+import type { GameState, Project, ActiveProject, EventNode, Region } from '../types';
+import type { QuestState } from '../types/quest';
 import { TaxRate } from '../types/enums';
-import { calculateDailyTax, clampValue } from '../utils/gameLogic';
+import {
+    calculateDailyTax,
+    calculatePassiveIncome,
+    evaluateQuests,
+    getNodeSeverity,
+    getNodeBleed,
+    clampValue,
+    TUNING,
+} from '../utils/gameLogic';
+import { generateId } from '../utils/id';
 import { EVENTS } from '../data/events';
 import { REGIONS } from '../data/regions';
 import { PROJECTS } from '../data/projects';
+import { ALL_QUESTS } from '../data/quests';
 
 export type GameAction =
     | { type: 'START_GAME'; payload: { region: Region; startBudget: number } }
     | { type: 'RESET_GAME' }
-    | { type: 'TICK'; payload: { deltaTime: number } } // deltaTime in seconds (approx)
+    | { type: 'TICK' }
     | { type: 'SET_TAX_RATE'; payload: TaxRate }
     | { type: 'BUY_PROJECT'; payload: Project }
     | { type: 'OPEN_EVENT'; payload: string } // nodeId
-    | { type: 'CLOSE_EVENT' }
     | { type: 'HANDLE_CHOICE'; payload: number } // choiceIndex
-    | { type: 'DISMISS_NODE'; payload: string } // nodeId
-    | { type: 'SET_PAUSED'; payload: boolean }; // New action
+    | { type: 'SET_PAUSED'; payload: boolean }
+    | { type: 'CLEAR_QUEST_TOAST' };
 
 export const INITIAL_STATE: GameState = {
     regionId: null,
-    budget: 500,
-    happiness: 20,
-    cleanliness: 20,
+    budget: TUNING.startBudget,
+    happiness: TUNING.startHappiness,
+    cleanliness: TUNING.startCleanliness,
     taxRate: TaxRate.NORMAL,
     activeProjects: [],
     completedProjectIds: [],
@@ -31,8 +41,15 @@ export const INITIAL_STATE: GameState = {
     isVictory: false,
     day: 1,
     activeNodes: [],
-    activeEvent: null
+    activeEvent: null,
+    eventsSolved: 0,
+    sustainDays: 0,
+    quests: [],
+    questToast: null,
 };
+
+const createInitialQuests = (): QuestState[] =>
+    ALL_QUESTS.map(q => ({ id: q.id, progress: 0, isCompleted: false }));
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
     switch (action.type) {
@@ -42,6 +59,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
                 budget: action.payload.startBudget,
                 regionId: action.payload.region.id,
                 isPlaying: true,
+                quests: createInitialQuests(),
             };
 
         case 'RESET_GAME':
@@ -53,11 +71,13 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         case 'SET_PAUSED':
             return { ...state, isPaused: action.payload };
 
+        case 'CLEAR_QUEST_TOAST':
+            return { ...state, questToast: null };
+
         case 'BUY_PROJECT': {
             const project = action.payload;
             if (state.budget < project.cost) return state;
 
-            // Check Prerequisites
             if (project.prerequisites) {
                 const hasPrereqs = project.prerequisites.every(pId => state.completedProjectIds.includes(pId));
                 if (!hasPrereqs) return state;
@@ -86,65 +106,52 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             };
         }
 
-        case 'DISMISS_NODE':
-            return {
-                ...state,
-                activeNodes: state.activeNodes.filter(n => n.id !== action.payload)
-            };
-
         case 'HANDLE_CHOICE': {
             if (!state.activeEvent) return state;
             const choice = state.activeEvent.choices[action.payload];
 
-            const newBudget = state.budget + (choice.effects.budget || 0);
-            const newHappiness = clampValue(state.happiness + (choice.effects.happiness || 0));
-            const newCleanliness = clampValue(state.cleanliness + (choice.effects.cleanliness || 0));
+            const budget = state.budget + (choice.effects.budget || 0);
+            const happiness = clampValue(state.happiness + (choice.effects.happiness || 0));
+            const cleanliness = clampValue(state.cleanliness + (choice.effects.cleanliness || 0));
+            const eventsSolved = state.eventsSolved + 1;
+
+            // Resolving an event can push a stat past a goal threshold, or tick the
+            // "events solved" counter over the line — so re-score goals here too.
+            const result = evaluateQuests(state.quests, {
+                budget, happiness, cleanliness, day: state.day, eventsSolved,
+            });
 
             return {
                 ...state,
-                budget: newBudget,
-                happiness: newHappiness,
-                cleanliness: newCleanliness,
+                budget: budget + result.reward.budget,
+                happiness: clampValue(happiness + result.reward.happiness),
+                cleanliness: clampValue(cleanliness + result.reward.cleanliness),
+                eventsSolved,
+                quests: result.quests,
+                questToast: result.completedTitle ?? state.questToast,
                 activeEvent: null,
             };
         }
 
         case 'TICK': {
-            // This is the core logic previously in useEffect
-            // We assume TICK is called once per game-day or we track accumulation.
-            // For simplicity, let's assume the hook triggers TICK when a day passes.
-            // TODO: Logic needs to handle if TICK is called more frequently (frames).
-            // But for now, let's keep the logic "per tick is a day" OR the hook controls the timing.
-            // The instruction was to use requestAnimationFrame. 
-            // If we use RAF, TICK might be called 60 times a second. 
-            // We need to separate "Update Frame" from "Game Day Pass".
-            // BUT, `useGameLoop` will likely handle the timing and only dispatch 'TICK' when a day should pass.
-
+            // One TICK advances the game by a single day; useGameLoop handles the timing.
             const currentRegion = REGIONS.find(r => r.id === state.regionId);
             const modifiers = currentRegion?.modifiers;
 
-            const { dailyBudgetChange, dailyHappinessChange } = calculateDailyTax(
-                state.taxRate,
-                state.completedProjectIds,
-                PROJECTS,
-                modifiers
-            );
+            const { dailyBudgetChange, dailyHappinessChange } = calculateDailyTax(state.taxRate, modifiers);
+            const passive = calculatePassiveIncome(state.completedProjectIds, PROJECTS);
 
-            let nextBudget = state.budget + dailyBudgetChange;
-            let nextHappiness = state.happiness + dailyHappinessChange;
-            let nextCleanliness = state.cleanliness;
+            // Daily decay is the core pressure — a region left alone slowly degrades.
+            const happinessDecay = TUNING.happinessDecayPerDay * (modifiers?.happinessDecayMultiplier ?? 1);
+            const cleanlinessDecay = TUNING.cleanlinessDecayPerDay * (modifiers?.cleanlinessDecayMultiplier ?? 1);
 
-            // Apply Modifiers to Happiness/Cleanliness Logic if we had base decay
-            // For now, happiness logic assumes simple tax effect.
-            // If we add modifiers for happiness, apply here:
-            if (modifiers?.happinessMultiplier && dailyHappinessChange > 0) {
-                nextHappiness += dailyHappinessChange * (modifiers.happinessMultiplier - 1);
-            }
+            let nextBudget = state.budget + dailyBudgetChange + passive.budget;
+            let nextHappiness = state.happiness + dailyHappinessChange + passive.happiness - happinessDecay;
+            let nextCleanliness = state.cleanliness + passive.cleanliness - cleanlinessDecay;
 
-            // Projects
-            const nextActiveProjects = [];
+            // Advance projects; apply one-time effects for the ones that finish today.
+            const nextActiveProjects: ActiveProject[] = [];
             const nextCompletedProjects = [...state.completedProjectIds];
-
             for (const p of state.activeProjects) {
                 const remaining = p.daysRemaining - 1;
                 if (remaining <= 0) {
@@ -156,58 +163,80 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
                 }
             }
 
+            const nextDay = state.day + 1;
+
+            // Crisis nodes escalate the longer they're ignored: each active node
+            // bleeds stats every day (more as it grows more severe), and a node left
+            // until it erupts deals a big one-time hit before disappearing.
+            const survivingNodes: EventNode[] = [];
+            let eruptions = 0;
+            for (const n of state.activeNodes) {
+                if (nextDay - n.spawnDay >= TUNING.nodeEruptionDays) {
+                    eruptions++;
+                    continue;
+                }
+                const bleed = getNodeBleed(getNodeSeverity(n.spawnDay, nextDay));
+                nextHappiness -= bleed.happiness;
+                nextCleanliness -= bleed.cleanliness;
+                survivingNodes.push(n);
+            }
+            if (eruptions > 0) {
+                nextHappiness -= eruptions * TUNING.nodeEruptionHappinessPenalty;
+                nextCleanliness -= eruptions * TUNING.nodeEruptionCleanlinessPenalty;
+            }
+
             nextHappiness = clampValue(nextHappiness);
             nextCleanliness = clampValue(nextCleanliness);
 
-            // Win/Loss
+            // Goals (day / passive-stat thresholds) may complete this tick.
+            const result = evaluateQuests(state.quests, {
+                budget: nextBudget, happiness: nextHappiness, cleanliness: nextCleanliness,
+                day: nextDay, eventsSolved: state.eventsSolved,
+            });
+            nextBudget += result.reward.budget;
+            nextHappiness = clampValue(nextHappiness + result.reward.happiness);
+            nextCleanliness = clampValue(nextCleanliness + result.reward.cleanliness);
+
+            // Victory is earned by *sustaining* both stats, not by a one-off spike.
+            const holding = nextHappiness >= TUNING.sustainThreshold && nextCleanliness >= TUNING.sustainThreshold;
+            const nextSustainDays = holding ? state.sustainDays + 1 : 0;
+
             let isGameOver = false;
             let isVictory = false;
-
             if (nextBudget <= 0 || nextHappiness <= 0 || nextCleanliness <= 0) {
                 isGameOver = true;
-            } else if (nextHappiness >= 100 && nextCleanliness >= 100) {
+            } else if (nextSustainDays >= TUNING.sustainGoalDays) {
                 isVictory = true;
                 isGameOver = true;
             }
 
-            // Random Events Spawning
-            const spawnChance = 0.5; // 50% per day
-            let newNodes = [...state.activeNodes];
-            // Check exisiting nodes expiry
-            const nextDay = state.day + 1;
-            const hasExpiredNode = newNodes.some(n => n.expiresAt < nextDay);
-            if (hasExpiredNode) isGameOver = true; // Timeout failure
+            // Spawn a new crisis node (region frequency scales the odds).
+            let newNodes = survivingNodes;
+            if (!isGameOver) {
+                const spawnChance = TUNING.baseSpawnChance * (modifiers?.eventFrequencyMultiplier ?? 1);
+                if (Math.random() < spawnChance && newNodes.length < TUNING.maxNodes) {
+                    const relevantEvents = EVENTS.filter(e => !e.regionId || e.regionId === state.regionId);
+                    if (relevantEvents.length > 0) {
+                        const randomEvent = relevantEvents[Math.floor(Math.random() * relevantEvents.length)];
+                        let spawnX = 50;
+                        let spawnY = 50;
 
-            // Spawn new
-            if (!isGameOver && Math.random() < spawnChance && newNodes.length < 3) {
-                const relevantEvents = EVENTS.filter(e => !e.regionId || e.regionId === state.regionId);
-                if (relevantEvents.length > 0) {
-                    const randomEvent = relevantEvents[Math.floor(Math.random() * relevantEvents.length)];
-                    const currentRegion = REGIONS.find(r => r.id === state.regionId);
-                    let spawnX = 50;
-                    let spawnY = 50;
+                        if (currentRegion?.spawnPoints && currentRegion.spawnPoints.length > 0) {
+                            const randomPoint = currentRegion.spawnPoints[Math.floor(Math.random() * currentRegion.spawnPoints.length)];
+                            spawnX = randomPoint.x + (Math.random() * 5 - 2.5);
+                            spawnY = randomPoint.y + (Math.random() * 5 - 2.5);
+                        }
 
-                    if (currentRegion?.spawnPoints && currentRegion.spawnPoints.length > 0) {
-                        const randomPoint = currentRegion.spawnPoints[Math.floor(Math.random() * currentRegion.spawnPoints.length)];
-                        spawnX = randomPoint.x + (Math.random() * 5 - 2.5);
-                        spawnY = randomPoint.y + (Math.random() * 5 - 2.5);
+                        const newNode: EventNode = {
+                            id: generateId(),
+                            eventId: randomEvent.id,
+                            x: spawnX,
+                            y: spawnY,
+                            spawnDay: nextDay
+                        };
+                        newNodes = [...newNodes, newNode];
                     }
-
-                    const newNode: EventNode = {
-                        id: Math.random().toString(36).substr(2, 9),
-                        eventId: randomEvent.id,
-                        x: spawnX,
-                        y: spawnY,
-                        expiresAt: nextDay + 8
-                    };
-                    newNodes.push(newNode);
                 }
-            }
-
-            if (isGameOver) {
-                // Should handle side effects like localStorage in a side-effect hook or middleware, 
-                // but strict reducer shouldn't do side effects. 
-                // For now, we'll keep side effects out of reducer.
             }
 
             return {
@@ -219,9 +248,12 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
                 activeProjects: nextActiveProjects,
                 completedProjectIds: nextCompletedProjects,
                 activeNodes: newNodes,
+                sustainDays: nextSustainDays,
+                quests: result.quests,
+                questToast: result.completedTitle ?? state.questToast,
                 isPlaying: !isGameOver,
-                isGameOver: isGameOver,
-                isVictory: isVictory
+                isGameOver,
+                isVictory,
             };
         }
 

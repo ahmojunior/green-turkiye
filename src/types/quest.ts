@@ -1,4 +1,4 @@
-export type QuestType = 'threshold' | 'accumulation' | 'counter';
+import type { LocalizedText } from './index';
 
 export interface QuestReward {
     budget?: number;
@@ -6,26 +6,20 @@ export interface QuestReward {
     cleanliness?: number;
 }
 
+// The game stat a goal tracks. 'eventsSolved' counts resolved crisis events.
+export type QuestStat = 'budget' | 'happiness' | 'cleanliness' | 'day' | 'eventsSolved';
+
 export interface Quest {
     id: string;
-    type: QuestType;
-    title: string;
-    description: string;
+    title: LocalizedText;
+    description: LocalizedText;
+    stat: QuestStat;
+    target: number;
     reward: QuestReward;
-    // Condition Config
-    target?: number; // For threshold/accumulation/counter
-    stat?: 'budget' | 'happiness' | 'cleanliness' | 'day'; // For threshold
-    eventCount?: number; // For counter
 }
 
 export interface QuestState {
     id: string;
     progress: number;
     isCompleted: boolean;
-    isClaimed: boolean; // Just in case we want claim logic later, for now auto-reward
-}
-
-export interface DailyQuestData {
-    date: string; // "YYYY-MM-DD"
-    quests: QuestState[];
 }
