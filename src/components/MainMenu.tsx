@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import type { Region } from '../types';
 import { REGIONS } from '../data/regions';
+import { TUNING } from '../utils/gameLogic';
 import { TurkeyMap } from './TurkeyMap';
-import { Map, ArrowRight, Play, HelpCircle, Users, X, Leaf } from 'lucide-react';
+import { TacticalBackground } from './TacticalBackground';
+import { Map, ArrowLeft, ArrowRight, Play, HelpCircle, Users, X, Leaf, Target, AlertTriangle, Scale, Siren, Lightbulb } from 'lucide-react';
+import { sfx } from '../utils/sfx';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface MainMenuProps {
   onStart: (region: Region) => void;
@@ -10,12 +14,20 @@ interface MainMenuProps {
 
 type MenuPhase = 'SPLASH' | 'REGION_SELECT' | 'HELP' | 'CREDITS';
 
+const LANGUAGES: { code: 'tr' | 'en' | 'de'; label: string }[] = [
+  { code: 'tr', label: 'TR' },
+  { code: 'en', label: 'EN' },
+  { code: 'de', label: 'DE' },
+];
+
 export function MainMenu({ onStart }: MainMenuProps) {
   const [phase, setPhase] = useState<MenuPhase>('SPLASH');
   const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
   const [showWelcomePrompt, setShowWelcomePrompt] = useState(false);
+  const { lang, setLang, t } = useLanguage();
 
   const handlePlayClick = () => {
+    sfx.menuConfirm();
     if (localStorage.getItem('greenTurkiye_hasPlayed')) {
       setPhase('REGION_SELECT');
     } else {
@@ -24,35 +36,40 @@ export function MainMenu({ onStart }: MainMenuProps) {
   };
 
   const handleAcceptTutorial = () => {
+    sfx.menuClick();
     localStorage.setItem('greenTurkiye_hasPlayed', 'true');
     setShowWelcomePrompt(false);
     setPhase('HELP');
   };
 
   const handleDeclineTutorial = () => {
+    sfx.menuClick();
     localStorage.setItem('greenTurkiye_hasPlayed', 'true');
     setShowWelcomePrompt(false);
     setPhase('REGION_SELECT');
   };
 
   const selectedRegion = REGIONS.find(r => r.id === selectedRegionId);
+  const langIndex = LANGUAGES.findIndex(l => l.code === lang);
+
+  // The goal paragraph interleaves plain text with <strong> emphasis, so split
+  // the translated template on its placeholder tokens (they appear in the same
+  // order in both languages) and re-insert the emphasized fragments as JSX.
+  const goalParts = t('menu.help.goalBody1').split(/\{budget\}|\{happiness\}|\{cleanliness\}|\{highlight\}/);
+  const goalHighlight = t('menu.help.goalHighlight')
+    .replace('{threshold}', String(TUNING.sustainThreshold))
+    .replace('{days}', String(TUNING.sustainGoalDays));
+
+  const tip3Parts = t('menu.help.tip3')
+    .replace('{threshold}', String(TUNING.sustainThreshold))
+    .replace('{days}', String(TUNING.sustainGoalDays))
+    .split(/\{stability\}/);
+  const creditsP1Parts = t('menu.credits.p1').split(/\{name\}/);
+  const creditsP3Parts = t('menu.credits.p3').split(/\{link\}/);
 
   return (
     <div className="flex flex-col h-full w-full bg-slate-950 overflow-hidden relative">
-      {/* Tactical Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#0f172a_0%,_#020617_100%)]"></div>
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px)`,
-            backgroundSize: '40px 40px',
-          }}
-        ></div>
-        <div className="absolute top-0 left-0 w-80 h-80 bg-green-500/10 blur-[140px]"></div>
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-emerald-500/10 blur-[140px]"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-green-500/5 blur-[200px] rounded-full"></div>
-      </div>
+      <TacticalBackground />
 
       {/* ===================== WELCOME PROMPT ===================== */}
       {showWelcomePrompt && (
@@ -62,9 +79,9 @@ export function MainMenu({ onStart }: MainMenuProps) {
               <Leaf className="w-8 h-8 text-green-400" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white mb-2">Aramıza Hoş Geldin!</h2>
+              <h2 className="text-2xl font-bold text-white mb-2">{t('menu.welcome.title')}</h2>
               <p className="text-slate-300 text-sm leading-relaxed">
-                Görünüşe göre burada ilk kez buradasın. Oyuna başlamadan önce nasıl oynandığını öğrenmek ister misin?
+                {t('menu.welcome.body')}
               </p>
             </div>
             <div className="flex flex-col gap-3 w-full">
@@ -72,13 +89,13 @@ export function MainMenu({ onStart }: MainMenuProps) {
                 onClick={handleAcceptTutorial}
                 className="w-full bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl py-3 transition-colors"
               >
-                Evet, Göster!
+                {t('menu.welcome.yes')}
               </button>
               <button
                 onClick={handleDeclineTutorial}
                 className="w-full bg-white/5 hover:bg-white/10 text-slate-300 font-medium rounded-xl py-3 border border-white/10 transition-colors"
               >
-                Hayır, Kendim Keşfederim
+                {t('menu.welcome.no')}
               </button>
             </div>
           </div>
@@ -93,17 +110,17 @@ export function MainMenu({ onStart }: MainMenuProps) {
             {/* Logo */}
             <img
               src={import.meta.env.BASE_URL + 'logo.png'}
-              alt="Yeşil Türkiye"
+              alt={t('menu.logoAlt')}
               className="w-48 h-48 object-contain drop-shadow-[0_0_30px_rgba(34,197,94,0.4)] animate-float"
             />
 
             {/* Title */}
             <div className="text-center">
               <h1 className="text-4xl font-black text-white tracking-tight mb-1">
-                YEŞİL TÜRKİYE
+                {t('menu.title')}
               </h1>
               <p className="text-slate-400 text-sm font-medium">
-                Bölgeni seç, çevreyi koru, geleceği inşa et.
+                {t('menu.tagline')}
               </p>
             </div>
 
@@ -114,24 +131,42 @@ export function MainMenu({ onStart }: MainMenuProps) {
                 className="menu-btn menu-btn-primary"
               >
                 <Play className="w-5 h-5" />
-                Oyna
+                {t('menu.play')}
               </button>
 
               <button
-                onClick={() => setPhase('HELP')}
+                onClick={() => { sfx.menuClick(); setPhase('HELP'); }}
                 className="menu-btn menu-btn-secondary"
               >
                 <HelpCircle className="w-5 h-5" />
-                Nasıl Oynanır?
+                {t('menu.howToPlay')}
               </button>
 
               <button
-                onClick={() => setPhase('CREDITS')}
+                onClick={() => { sfx.menuClick(); setPhase('CREDITS'); }}
                 className="menu-btn menu-btn-secondary"
               >
                 <Users className="w-5 h-5" />
-                Hakkında
+                {t('menu.about')}
               </button>
+            </div>
+
+            {/* Language Slider */}
+            <div className="relative flex w-full max-w-[220px] bg-white/5 border border-white/10 rounded-full p-1">
+              <div
+                className="absolute inset-y-1 left-1 rounded-full bg-white/15 transition-transform duration-300 ease-out"
+                style={{ width: 'calc((100% - 8px) / 3)', transform: `translateX(${langIndex * 100}%)` }}
+              />
+              {LANGUAGES.map((l) => (
+                <button
+                  key={l.code}
+                  onClick={() => { sfx.menuClick(); setLang(l.code); }}
+                  className={`relative z-10 flex-1 py-1.5 text-sm font-bold rounded-full transition-colors ${lang === l.code ? 'text-white' : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                >
+                  {l.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -142,79 +177,102 @@ export function MainMenu({ onStart }: MainMenuProps) {
         <div className="absolute inset-0 z-40 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="glass-panel max-w-2xl w-full max-h-[80vh] overflow-y-auto px-8 py-8 relative custom-scrollbar">
             <button
-              onClick={() => setPhase('SPLASH')}
+              onClick={() => { sfx.menuClick(); setPhase('SPLASH'); }}
               className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors cursor-pointer"
             >
               <X className="w-6 h-6" />
             </button>
 
-            <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r text-white mb-6 border-b border-white/10 pb-4">
-              Nasıl Oynanır?
+            <h2 className="text-3xl font-bold text-white mb-6 border-b border-white/10 pb-4">
+              {t('menu.howToPlay')}
             </h2>
 
             <div className="space-y-6 text-slate-300 text-sm leading-relaxed">
 
-              {/* Bölüm 1: Hedef */}
+              {/* Section 1: Goal */}
               <section>
                 <h3 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
-                  <span>🎯</span> Oyunun Hedefi
+                  <Target className="w-5 h-5 text-emerald-400" /> {t('menu.help.goalTitle')}
                 </h3>
                 <p>
-                  Yönettiğiniz bölgede Bütçe, Halkın Mutluluğu ve Çevre Temizliği metriklerini dengeleyin. Tüm göstergeleri %80'in üzerinde tutarak "Yeşil Kahraman" statüsüne ulaşmak temel amacınızdır.
+                  {goalParts[0]}
+                  <strong className="text-white">{t('menu.help.goalBudget')}</strong>
+                  {goalParts[1]}
+                  <strong className="text-white">{t('menu.help.goalHappiness')}</strong>
+                  {goalParts[2]}
+                  <strong className="text-white">{t('menu.help.goalCleanliness')}</strong>
+                  {goalParts[3]}
+                  <strong className="text-emerald-400">{goalHighlight}</strong>
+                  {goalParts[4]}
+                </p>
+                <p className="mt-2 text-amber-300/90 flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+                  <span>{t('menu.help.warning')}</span>
                 </p>
               </section>
 
-              {/* Bölüm 2: Mekanikler */}
+              {/* Section 2: Mechanics */}
               <section className="space-y-4 bg-white/5 p-4 rounded-xl border border-white/10">
                 <div className="flex gap-3">
-                  <span className="text-xl">🗺️</span>
+                  <Map className="w-5 h-5 text-emerald-400 shrink-0" />
                   <div>
-                    <strong className="text-white block mb-1">Bölge Yönetimi</strong>
-                    Harita üzerinden bir bölge seçerek yönetime başlayın. Her bölgenin anlık istatistiklerini sol panelden takip edebilirsiniz.
+                    <strong className="text-white block mb-1">{t('menu.help.regionMgmtTitle')}</strong>
+                    {t('menu.help.regionMgmtBody')}
                     <img
                       src={import.meta.env.BASE_URL + 'region_preview.gif'}
-                      alt="Bölge Yönetimi Önizleme"
+                      alt={t('menu.help.regionMgmtImgAlt')}
                       className="mt-3 w-full max-w-sm rounded-xl border border-white/10 shadow-lg object-cover"
                     />
                   </div>
                 </div>
 
                 <div className="flex gap-3">
-                  <span className="text-xl">⚖️</span>
+                  <Scale className="w-5 h-5 text-emerald-400 shrink-0" />
                   <div>
-                    <strong className="text-white block mb-1">Ekonomi ve Yatırımlar</strong>
-                    Bütçe oluşturmak için vergi oranlarını belirleyin. Yüksek vergilerin halkın mutluluğunu düşüreceğini unutmayın. Elde ettiğiniz gelirleri çevre projelerine (geri dönüşüm, yenilenebilir enerji) aktararak gelişimi hızlandırın.
+                    <strong className="text-white block mb-1">{t('menu.help.economyTitle')}</strong>
+                    {t('menu.help.economyBody')}
                     <img
                       src={import.meta.env.BASE_URL + 'tax_preview.gif'}
-                      alt="Ekonomi ve Yatırımlar Önizleme"
+                      alt={t('menu.help.economyImgAlt')}
                       className="mt-3 w-full max-w-sm rounded-xl border border-white/10 shadow-lg object-cover"
                     />
                   </div>
                 </div>
 
                 <div className="flex gap-3">
-                  <span className="text-xl">🚨</span>
+                  <Siren className="w-5 h-5 text-emerald-400 shrink-0" />
                   <div>
-                    <strong className="text-white block mb-1">Kriz Müdahalesi</strong>
-                    Haritada beliren kırmızı uyarı ikonları acil durumları (fabrika sızıntısı, yangın vb.) belirtir. Çevresel felaketleri önlemek için bu krizlere anında bütçe ayırarak müdahale edin.
+                    <strong className="text-white block mb-1">{t('menu.help.crisisTitle')}</strong>
+                    {t('menu.help.crisisBody')}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-3 text-xs text-slate-400">
+                      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-amber-400"></span> {t('menu.help.crisisNew')}</span>
+                      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-orange-500"></span> {t('menu.help.crisisGrowing')}</span>
+                      <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-red-500"></span> {t('menu.help.crisisCritical')}</span>
+                    </div>
                     <img
                       src={import.meta.env.BASE_URL + 'crisis_preview.gif'}
-                      alt="Kriz Müdahalesi Önizleme"
+                      alt={t('menu.help.crisisImgAlt')}
                       className="mt-3 w-full max-w-sm rounded-xl border border-white/10 shadow-lg object-cover"
                     />
                   </div>
                 </div>
               </section>
 
-              {/* Bölüm 3: Strateji İpuçları */}
+              {/* Section 3: Strategy Tips */}
               <section>
                 <h3 className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
-                  <span>💡</span> Strateji İpuçları
+                  <Lightbulb className="w-5 h-5 text-emerald-400" /> {t('menu.help.tipsTitle')}
                 </h3>
                 <ul className="list-disc list-inside space-y-2 text-slate-400">
-                  <li>Acil durum krizlerine anında müdahale edebilmek için kasanızda her zaman yedek bütçe bulundurun.</li>
-                  <li>Vergi artışlarından kaynaklanan memnuniyetsizliği, yeni çevre projeleri inşa ederek dengeleyin.</li>
-                  <li>Üst paneldeki ilerleme çubuklarını sürekli izleyin ve kritik seviyeye yaklaşan metrikleri önceliklendirin.</li>
+                  <li>{t('menu.help.tip1')}</li>
+                  <li>{t('menu.help.tip2')}</li>
+                  <li>
+                    {tip3Parts[0]}
+                    <strong className="text-slate-300">{t('menu.help.tip3Stability')}</strong>
+                    {tip3Parts[1]}
+                  </li>
+                  <li>{t('menu.help.tip4')}</li>
+                  <li>{t('menu.help.tip5')}</li>
                 </ul>
               </section>
 
@@ -228,27 +286,27 @@ export function MainMenu({ onStart }: MainMenuProps) {
         <div className="absolute inset-0 z-40 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
           <div className="glass-panel max-w-lg w-full px-8 py-8 relative">
             <button
-              onClick={() => setPhase('SPLASH')}
+              onClick={() => { sfx.menuClick(); setPhase('SPLASH'); }}
               className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors cursor-pointer"
             >
               <X className="w-6 h-6" />
             </button>
-            <h2 className="text-2xl font-bold text-white mb-4 border-b border-white/10 pb-4">Hakkında</h2>
+            <h2 className="text-2xl font-bold text-white mb-4 border-b border-white/10 pb-4">{t('menu.credits.title')}</h2>
             <div className="space-y-3 text-slate-300 text-sm leading-relaxed">
               <p>
-                <strong>Yeşil Türkiye</strong>, çevre bilincini artırmayı amaçlayan
-                eğitici bir strateji oyunudur.
+                <strong>{t('menu.credits.name')}</strong>{t('menu.credits.akaNote')}{creditsP1Parts[1]}
               </p>
               <p>
-                Oyuncu olarak bir bölgenin yönetimini üstlenir, çevre politikaları
-                belirler ve doğal afetlerle mücadele edersiniz.
+                {t('menu.credits.p2')}
               </p>
               <p>
-                Oyun şu an geliştirme sürecindedir. Oyuna katkı sağlamak isterseniz, oyunun <a href="https://github.com/ahmojunior/green-turkiye" target="_blank" rel="noopener noreferrer" style={{ color: 'DodgerBlue', textDecorationLine: 'underline' }}>GitHub deposuna</a> göz atabilirsiniz.
+                {creditsP3Parts[0]}
+                <a href="https://github.com/ahmojunior/green-turkiye" target="_blank" rel="noopener noreferrer" style={{ color: 'DodgerBlue', textDecorationLine: 'underline' }}>{t('menu.credits.githubRepo')}</a>
+                {creditsP3Parts[1]}
               </p>
               <hr className="border-white/10 my-3" />
               <p className="text-slate-400 text-xs">
-                Tasarım &amp; Geliştirme — <a href="https://github.com/ahmojunior" target="_blank" rel="noopener noreferrer" style={{ textDecorationLine: 'underline' }}>ahmocodes</a> / <a href="https://github.com/SirAtilotty" target="_blank" rel="noopener noreferrer" style={{ textDecorationLine: 'underline' }}>SirAtilotty</a>
+                {t('menu.credits.designDev')} <a href="https://github.com/ahmojunior" target="_blank" rel="noopener noreferrer" style={{ textDecorationLine: 'underline' }}>ahmocodes</a> / <a href="https://github.com/SirAtilotty" target="_blank" rel="noopener noreferrer" style={{ textDecorationLine: 'underline' }}>SirAtilotty</a>
               </p>
               <p className="text-slate-500 text-xs">v0.2 • 2026</p>
             </div>
@@ -262,24 +320,24 @@ export function MainMenu({ onStart }: MainMenuProps) {
           {/* Back Button */}
           <div className="absolute top-6 left-6 z-30">
             <button
-              onClick={() => { setPhase('SPLASH'); setSelectedRegionId(null); }}
+              onClick={() => { sfx.menuClick(); setPhase('SPLASH'); setSelectedRegionId(null); }}
               className="menu-btn menu-btn-secondary !px-4 !py-2 text-sm"
             >
-              ← Geri
+              <ArrowLeft className="w-4 h-4" /> {t('menu.back')}
             </button>
           </div>
 
           {/* Map Area — centered */}
           <div className="flex-1 relative flex items-center justify-center z-10">
             <TurkeyMap
-              onRegionSelect={setSelectedRegionId}
+              onRegionSelect={(id) => { sfx.menuClick(); setSelectedRegionId(id); }}
               selectedRegionId={selectedRegionId}
             />
 
             {/* Helper Text */}
             {!selectedRegionId && (
               <div className="absolute bottom-10 animate-bounce text-gray-400 font-medium">
-                Başlamak için haritadan bir bölge seçin
+                {t('menu.selectRegionHint')}
               </div>
             )}
           </div>
@@ -291,7 +349,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <Map className="w-6 h-6 text-green-400" />
-                    <h3 className="text-3xl font-bold text-white">{selectedRegion.name}</h3>
+                    <h3 className="text-3xl font-bold text-white">{selectedRegion.name[lang]}</h3>
                     <span
                       className={`px-3 py-1 rounded-full text-sm font-bold ml-2 ${selectedRegion.difficulty === 'Kolay'
                         ? 'bg-green-500/20 text-green-400 border border-green-500/30'
@@ -300,19 +358,19 @@ export function MainMenu({ onStart }: MainMenuProps) {
                           : 'bg-red-500/20 text-red-400 border border-red-500/30'
                         }`}
                     >
-                      {selectedRegion.difficulty}
+                      {t(`difficulty.${selectedRegion.difficulty}`)}
                     </span>
                   </div>
                   <p className="text-slate-300 text-lg leading-relaxed">
-                    {selectedRegion.description}
+                    {selectedRegion.description[lang]}
                   </p>
                 </div>
 
                 <button
-                  onClick={() => onStart(selectedRegion)}
+                  onClick={() => { sfx.menuConfirm(); onStart(selectedRegion); }}
                   className="group flex items-center gap-3 menu-btn menu-btn-primary !px-8 !py-4 !text-xl min-w-[200px] justify-center"
                 >
-                  Oyunu Başlat
+                  {t('menu.startGame')}
                   <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>

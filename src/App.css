@@ -52,6 +52,114 @@
   filter: brightness(1.1);
 }
 
+/* ============================================
+   Ambient map decoration — planes and boats
+   ============================================ */
+/* A plane crosses from its random start to its random end in the first third of
+   the cycle, then waits off-screen for the rest — so planes are only an occasional
+   fly-by, not a constant presence. Start/end points come from per-plane CSS vars. */
+@keyframes plane-fly {
+  0% {
+    left: var(--from-x);
+    top: var(--from-y);
+    opacity: 0;
+  }
+
+  5% {
+    opacity: 1;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  35% {
+    left: var(--to-x);
+    top: var(--to-y);
+    opacity: 0;
+  }
+
+  100% {
+    left: var(--to-x);
+    top: var(--to-y);
+    opacity: 0;
+  }
+}
+
+/* Boats idling in open water — a slow, aimless drift-and-bob in place. */
+@keyframes boat-drift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(-2deg);
+  }
+
+  25% {
+    transform: translate(7px, -3px) rotate(1deg);
+  }
+
+  50% {
+    transform: translate(13px, 1px) rotate(2deg);
+  }
+
+  75% {
+    transform: translate(6px, 4px) rotate(0deg);
+  }
+}
+
+/* A boat sails into view, lingers, then sails off — leaving the sea empty for a
+   while. Staggered per boat so only a couple are ever around at once. */
+@keyframes boat-presence {
+  0% { opacity: 0; }
+  8% { opacity: 1; }
+  42% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* ============================================
+   Project completion — delivery drop + burst
+   ============================================ */
+@keyframes project-flyin {
+  0% {
+    transform: translateY(-120px) scale(0.4) rotate(-15deg);
+    opacity: 0;
+  }
+
+  60% {
+    transform: translateY(8px) scale(1.2) rotate(4deg);
+    opacity: 1;
+  }
+
+  80% {
+    transform: translateY(-4px) scale(0.95) rotate(-2deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-project-flyin {
+  animation: project-flyin 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes project-burst {
+  0% {
+    transform: scale(0.2);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+.animate-project-burst {
+  animation: project-burst 0.7s ease-out both;
+}
+
 /* Secondary (Help / Credits) */
 .menu-btn-secondary {
   background: rgba(255, 255, 255, 0.06);

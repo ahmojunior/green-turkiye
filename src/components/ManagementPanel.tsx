@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { PROJECTS } from '../data/projects';
-import { Coins, Hammer, Clock, CheckCircle, Lock } from 'lucide-react';
+import { Coins, Hammer, Clock, CheckCircle, Lock, X, Check } from 'lucide-react';
 import { useGame } from '../hooks/useGame';
 import { TaxRate } from '../types/enums';
+import { sfx } from '../utils/sfx';
+import { formatBudget } from '../utils/format';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export function ManagementPanel() {
     const {
@@ -11,6 +14,7 @@ export function ManagementPanel() {
         buyProject,
         setPaused
     } = useGame();
+    const { lang, t } = useLanguage();
 
     const { taxRate, budget, activeProjects, completedProjectIds } = gameState;
     const [showProjects, setShowProjects] = useState(false);
@@ -27,13 +31,13 @@ export function ManagementPanel() {
             <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-2">
                 <div className="glass-panel !rounded-xl p-4">
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                        <Coins className="w-4 h-4 text-yellow-400" /> Vergi Oranı
+                        <Coins className="w-4 h-4 text-yellow-400" /> {t('mgmt.taxRate')}
                     </h3>
                     <div className="flex bg-black/40 p-1 rounded-lg border border-white/10 gap-1">
                         {(Object.values(TaxRate) as TaxRate[]).map((rate) => (
                             <button
                                 key={rate}
-                                onClick={() => setTaxRate(rate)}
+                                onClick={() => { sfx.click(); setTaxRate(rate); }}
                                 className={`
                                     px-4 py-2 rounded-md text-sm font-bold transition-all
                                     ${taxRate === rate
@@ -41,16 +45,16 @@ export function ManagementPanel() {
                                         : 'text-slate-400 hover:text-white hover:bg-white/10'}
                                 `}
                             >
-                                {rate === TaxRate.LOW && 'Düşük'}
-                                {rate === TaxRate.NORMAL && 'Normal'}
-                                {rate === TaxRate.HIGH && 'Yüksek'}
+                                {rate === TaxRate.LOW && t('mgmt.taxRate.low')}
+                                {rate === TaxRate.NORMAL && t('mgmt.taxRate.normal')}
+                                {rate === TaxRate.HIGH && t('mgmt.taxRate.high')}
                             </button>
                         ))}
                     </div>
                     <div className="mt-2 text-xs text-slate-500 font-medium h-4">
-                        {taxRate === TaxRate.LOW && '+5 Bütçe, +1 Mutluluk / Gün'}
-                        {taxRate === TaxRate.NORMAL && '+15 Bütçe / Gün'}
-                        {taxRate === TaxRate.HIGH && '+40 Bütçe, -1 Mutluluk / Gün'}
+                        {taxRate === TaxRate.LOW && t('mgmt.taxRate.lowEffect')}
+                        {taxRate === TaxRate.NORMAL && t('mgmt.taxRate.normalEffect')}
+                        {taxRate === TaxRate.HIGH && t('mgmt.taxRate.highEffect')}
                     </div>
                 </div>
             </div>
@@ -58,14 +62,14 @@ export function ManagementPanel() {
             {/* Projects Button - Bottom Right */}
             <div className="absolute bottom-6 right-6 z-20">
                 <button
-                    onClick={() => setShowProjects(true)}
+                    onClick={() => { sfx.click(); setShowProjects(true); }}
                     className="flex items-center gap-3 bg-emerald-600/80 hover:bg-emerald-500/90 backdrop-blur border border-emerald-400/30 text-white px-6 py-4 rounded-xl shadow-[0_4px_20px_rgba(52,211,153,0.25)] hover:shadow-[0_4px_28px_rgba(52,211,153,0.45)] transition-all active:scale-95 font-bold text-lg"
                 >
                     <Hammer className="w-6 h-6" />
-                    Projeler &amp; Yatırımlar
+                    {t('mgmt.projectsButton')}
                     {activeProjects.length > 0 && (
                         <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">
-                            {activeProjects.length} Aktif
+                            {activeProjects.length} {t('mgmt.active')}
                         </span>
                     )}
                 </button>
@@ -79,14 +83,14 @@ export function ManagementPanel() {
                         {/* Modal Header */}
                         <div className="p-6 border-b border-white/10 flex justify-between items-center">
                             <div>
-                                <h2 className="text-2xl font-bold text-white">Şehir Projeleri</h2>
-                                <p className="text-slate-400">Bütçeni kullanarak şehrini geliştir.</p>
+                                <h2 className="text-2xl font-bold text-white">{t('mgmt.modalTitle')}</h2>
+                                <p className="text-slate-400">{t('mgmt.modalSubtitle')}</p>
                             </div>
                             <button
-                                onClick={() => setShowProjects(false)}
+                                onClick={() => { sfx.click(); setShowProjects(false); }}
                                 className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-all"
                             >
-                                ✕
+                                <X className="w-5 h-5" />
                             </button>
                         </div>
 
@@ -106,9 +110,11 @@ export function ManagementPanel() {
                                         onClick={() => {
                                             if (isCompleted || !hasPrereqs || isActive) return;
                                             if (!canAfford) {
+                                                sfx.denied();
                                                 setInsufficientFundsId(project.id);
                                                 setTimeout(() => setInsufficientFundsId(null), 600);
                                             } else {
+                                                sfx.purchase();
                                                 buyProject(project);
                                             }
                                         }}
@@ -126,22 +132,22 @@ export function ManagementPanel() {
                                         `}
                                     >
                                         <div className="flex justify-between items-start mb-2">
-                                            <h3 className="font-bold text-lg text-white">{project.name}</h3>
+                                            <h3 className="font-bold text-lg text-white">{project.name[lang]}</h3>
                                             {isCompleted && <CheckCircle className="text-emerald-400" />}
                                             {isActive && <Clock className="text-blue-400 animate-spin-slow" />}
                                             {!hasPrereqs && (
                                                 <div className="flex items-center gap-1 text-xs font-bold text-red-400 border border-red-500/30 px-2 py-1 rounded bg-red-500/10">
-                                                    <Lock className="w-3 h-3" /> Kilitli
+                                                    <Lock className="w-3 h-3" /> {t('mgmt.locked')}
                                                 </div>
                                             )}
                                         </div>
 
-                                        <p className="text-sm text-slate-400 mb-3">{project.description}</p>
+                                        <p className="text-sm text-slate-400 mb-3">{project.description[lang]}</p>
 
                                         {/* Prereq Info */}
                                         {!hasPrereqs && project.prerequisites && (
                                             <div className="text-xs text-red-400 mb-3 font-medium">
-                                                Gereksinim: {project.prerequisites.map(id => PROJECTS.find(p => p.id === id)?.name).join(', ')}
+                                                {t('mgmt.requirement')}: {project.prerequisites.map(id => PROJECTS.find(p => p.id === id)?.name[lang]).join(', ')}
                                             </div>
                                         )}
 
@@ -151,15 +157,15 @@ export function ManagementPanel() {
                                                 <div className="flex items-center gap-2">
                                                     <Coins className="w-4 h-4 text-yellow-400" />
                                                     <div>
-                                                        <div className="text-slate-400 text-xs">Fiyat</div>
-                                                        <div className="text-white font-bold">{project.cost.toLocaleString()}M</div>
+                                                        <div className="text-slate-400 text-xs">{t('mgmt.price')}</div>
+                                                        <div className="text-white font-bold">{formatBudget(project.cost)}</div>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <Clock className="w-4 h-4 text-blue-400" />
                                                     <div>
-                                                        <div className="text-slate-400 text-xs">Süre</div>
-                                                        <div className="text-white font-bold">{project.duration} Gün</div>
+                                                        <div className="text-slate-400 text-xs">{t('mgmt.duration')}</div>
+                                                        <div className="text-white font-bold">{project.duration} {t('mgmt.durationDays')}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -167,18 +173,21 @@ export function ManagementPanel() {
 
                                         {/* Returns & Effects */}
                                         <div className="space-y-1 text-xs mb-4">
-                                            <div className="text-slate-400 font-bold text-xs uppercase tracking-wider mb-2">Getiriler:</div>
+                                            <div className="text-slate-400 font-bold text-xs uppercase tracking-wider mb-2">{t('mgmt.returns')}</div>
                                             {project.effects.budgetPerTurn ? (
-                                                <div className="text-emerald-400 font-medium">✓ +{project.effects.budgetPerTurn} Bütçe / Gün</div>
+                                                <div className="text-emerald-400 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5" /> +{project.effects.budgetPerTurn} {t('mgmt.budgetPerDay')}</div>
+                                            ) : null}
+                                            {project.effects.cleanlinessPerTurn ? (
+                                                <div className="text-emerald-400 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5" /> +{project.effects.cleanlinessPerTurn} {t('mgmt.cleanlinessPerDay')}</div>
+                                            ) : null}
+                                            {project.effects.happinessPerTurn ? (
+                                                <div className="text-blue-400 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5" /> +{project.effects.happinessPerTurn} {t('mgmt.happinessPerDay')}</div>
                                             ) : null}
                                             {project.effects.cleanliness ? (
-                                                <div className="text-emerald-400 font-medium">✓ +{project.effects.cleanliness} Temizlik</div>
+                                                <div className="text-emerald-400/70 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5" /> +{project.effects.cleanliness} {t('mgmt.cleanlinessOneTime')}</div>
                                             ) : null}
                                             {project.effects.happiness ? (
-                                                <div className="text-blue-400 font-medium">✓ +{project.effects.happiness} Mutluluk</div>
-                                            ) : null}
-                                            {!project.effects.budgetPerTurn && !project.effects.cleanliness && !project.effects.happiness ? (
-                                                <div className="text-slate-500">Henüz belirtilmemiş</div>
+                                                <div className="text-blue-400/70 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5" /> +{project.effects.happiness} {t('mgmt.happinessOneTime')}</div>
                                             ) : null}
                                         </div>
 
@@ -191,7 +200,7 @@ export function ManagementPanel() {
                                                     ></div>
                                                 </div>
                                                 <div className="text-center text-xs text-blue-400 mt-1 font-bold">
-                                                    {activeProject!.daysRemaining} gün kaldı
+                                                    {activeProject!.daysRemaining} {t('mgmt.daysLeft')}
                                                 </div>
                                             </div>
                                         )}
