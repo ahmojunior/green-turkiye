@@ -14,7 +14,7 @@
 ## <div align="center">👋 | Hello!</div>
 I'm [**Ahmet**](https://github.com/ahmojunior), a student who loves coding.
 
-## <div align="center">✅ | About the Project</div>
+## <div align="center">About the Project</div>
 
 **Green Turkiye** is a strategy game that aims to raise awareness about environmental pollution in Turkiye and its possible solutions.
 
@@ -24,7 +24,7 @@ Once the game starts, you must react to **Event Nodes** that spawn periodically 
 
 Can you save nature without bankrupting the region?
 
-## <div align="center">🚀 | Game Features</div>
+## <div align="center">Game Features</div>
 
 ### Dynamic Incident Management
 Handle periodic **Event Nodes** (Crisis Indicators) that appear randomly across the map. Each node has a limited lifetime. If you ignore them, you'll face severe consequences!
@@ -35,7 +35,7 @@ Explore an interactive, SVG-based map of **Turkey** divided into 7 distinct geog
 ### The Sustainability Trilemma
 Every choice matters. Players must choose the best course of action for regional incidents by considering the **strategic trade-offs**. You can also **invest** in special projects to grow your budget over time.
 
-## <div align="center">💻 | Technical Stack</div>
+## <div align="center">Technical Stack</div>
 
 Built with the latest web technologies for maximum performance, fast build times, and an excellent developer experience:
 
@@ -45,7 +45,7 @@ Built with the latest web technologies for maximum performance, fast build times
 * **Vite (Rolldown)**: Providing lightning-fast build times and HMR (Hot Module Replacement).
 * **Lucide React**: Beautiful, consistent icons.
 
-## <div align="center">🛠️ | Getting Started</div>
+## <div align="center">Getting Started</div>
 
 Follow these steps to get the project up and running on your local machine.
 
@@ -78,7 +78,7 @@ Follow these steps to get the project up and running on your local machine.
 * `npm run preview`: Preview the production build locally.
 * `npm run lint`: Run ESLint to check for code quality issues.
 
-## <div align="center">📝 | To-Do</div>
+## <div align="center">To-Do</div>
 
 - [ ] English Language Support
 - [ ] New Country Maps
@@ -87,12 +87,12 @@ Follow these steps to get the project up and running on your local machine.
 
 ---
 
-## <div align="center">⚖️ | License</div>
+## <div align="center">License</div>
 
 This project is licensed under the GNU Affero General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
 
 <br />
 
 <div align="center">
-  <i>Sorry for any grammar mistakes!</i>
+  <i>This project includes images and/or vectors provided from <a href="https://www.vecteezy.com/">Vecteezy.com</a></i>
 </div>
