@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useReducer, useCallback, useRef, type PropsWithChildren } from 'react';
+import React, { createContext, useReducer, useCallback, useRef, type PropsWithChildren } from 'react';
 import type { GameState, Region, Project, TaxRate } from '../types';
 import { gameReducer, INITIAL_STATE } from '../reducers/gameReducer';
+import { TUNING } from '../utils/gameLogic';
 import { useGameLoop } from '../hooks/useGameLoop';
 
 interface GameContextType {
@@ -12,6 +13,7 @@ interface GameContextType {
     setTaxRate: (rate: TaxRate) => void;
     buyProject: (project: Project) => void;
     setPaused: (paused: boolean) => void;
+    clearQuestToast: () => void;
 }
 
 export const GameContext = createContext<GameContextType | null>(null);
@@ -20,20 +22,11 @@ export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [gameState, dispatch] = useReducer(gameReducer, INITIAL_STATE);
 
     const startGame = useCallback((region: Region) => {
-        // Check for "Green Hero" badge in local storage
-        const badges = JSON.parse(localStorage.getItem('green-turkey-badges') || '[]');
-        const hasGreenHero = badges.includes('green-hero');
-        const startBudget = hasGreenHero ? 1500 : 500;
-
-        dispatch({ type: 'START_GAME', payload: { region, startBudget } });
+        dispatch({ type: 'START_GAME', payload: { region, startBudget: TUNING.startBudget } });
     }, []);
 
     const resetGame = useCallback(() => {
         dispatch({ type: 'RESET_GAME' });
-    }, []);
-
-    const openEvent = useCallback((nodeId: string) => {
-        dispatch({ type: 'OPEN_EVENT', payload: nodeId });
     }, []);
 
     const setTaxRate = useCallback((rate: TaxRate) => {
@@ -49,11 +42,15 @@ export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }, []);
 
     const handleNodeClick = useCallback((nodeId: string) => {
-        openEvent(nodeId);
-    }, [openEvent]);
+        dispatch({ type: 'OPEN_EVENT', payload: nodeId });
+    }, []);
 
     const setPaused = useCallback((paused: boolean) => {
         dispatch({ type: 'SET_PAUSED', payload: paused });
+    }, []);
+
+    const clearQuestToast = useCallback(() => {
+        dispatch({ type: 'CLEAR_QUEST_TOAST' });
     }, []);
 
     // Game Loop
@@ -64,9 +61,9 @@ export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
         const safeDelta = Math.min(deltaTime, 100);
 
         timeAccumulator.current += safeDelta;
-        // 1000ms = 1 day
+        // 1000ms = 1 in-game day
         if (timeAccumulator.current >= 1000) {
-            dispatch({ type: 'TICK', payload: { deltaTime: 1000 } });
+            dispatch({ type: 'TICK' });
             timeAccumulator.current -= 1000;
         }
     }, []);
@@ -82,7 +79,8 @@ export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
         handleNodeClick,
         setTaxRate,
         buyProject,
-        setPaused
+        setPaused,
+        clearQuestToast
     };
 
     return (
@@ -91,11 +89,3 @@ export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
         </GameContext.Provider>
     );
 };
-
-export function useGameContext() {
-    const context = useContext(GameContext);
-    if (!context) {
-        throw new Error('useGameContext must be used within a GameProvider');
-    }
-    return context;
-}

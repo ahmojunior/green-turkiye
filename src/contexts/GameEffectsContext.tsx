@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { generateId } from '../utils/id';
 
 interface FloatingText {
   id: string;
@@ -18,7 +19,7 @@ export function GameEffectsProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<FloatingText[]>([]);
 
   const showFloatingText = useCallback((x: number, y: number, text: string, color: string) => {
-    const id = Math.random().toString(36).substr(2, 9);
+    const id = generateId();
     setItems(prev => [...prev, { id, x, y, text, color }]);
 
     setTimeout(() => {
