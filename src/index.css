@@ -3,6 +3,15 @@
 @theme {
   --color-brand-green: #2ecc71;
   --color-brand-dark: #2c3e50;
+  --font-sans: 'Quicksand', sans-serif;
+}
+
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype-variations');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
 }
 
 html,
@@ -15,7 +24,7 @@ body {
   /* Prevent scrolling for the "app" feel */
   background-color: #f0fdf4;
   /* Light green bg */
-  font-family: 'Inter', sans-serif;
+  font-family: 'Quicksand', sans-serif;
 }
 
 #root {

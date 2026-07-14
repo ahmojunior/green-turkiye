@@ -1,34 +1,36 @@
 import { Difficulty, TaxRate } from './enums';
+import type { QuestState } from './quest';
 
-export type Resource = 'budget' | 'happiness' | 'cleanliness';
+export type LocalizedText = { tr: string; en: string; de: string };
 
 export interface RegionModifiers {
-  budgetMultiplier?: number;
-  happinessMultiplier?: number;
-  cleanlinessMultiplier?: number;
-  eventFrequency?: number;
+  budgetMultiplier?: number;           // scales daily tax income
+  happinessDecayMultiplier?: number;   // scales daily happiness decay
+  cleanlinessDecayMultiplier?: number; // scales daily cleanliness decay
+  eventFrequencyMultiplier?: number;   // scales crisis-node spawn chance
 }
 
 export interface Region {
   id: string;
-  name: string;
-  description: string;
+  name: LocalizedText;
+  description: LocalizedText;
   difficulty: Difficulty;
   spawnPoints?: { x: number; y: number }[];
+  // Fixed on-map plot per project id, where its building sprite lands once completed.
+  buildSlots?: Record<string, { x: number; y: number }>;
   modifiers?: RegionModifiers;
 }
 
 export interface GameEvent {
   id: string;
-  title: string;
-  description: string;
+  title: LocalizedText;
+  description: LocalizedText;
   regionId?: string;
   choices: EventChoice[];
 }
 
 export interface EventChoice {
-  text: string;
-  description?: string;
+  text: LocalizedText;
   effects: {
     budget?: number;
     happiness?: number;
@@ -38,15 +40,19 @@ export interface EventChoice {
 
 export interface Project {
   id: string;
-  name: string;
-  description: string;
+  name: LocalizedText;
+  description: LocalizedText;
   cost: number;
   duration: number;
   prerequisites?: string[]; // Project IDs
   effects: {
+    // One-time bonuses applied when the project finishes
     happiness?: number;
     cleanliness?: number;
+    // Passive income applied every day while the project stays completed
     budgetPerTurn?: number;
+    happinessPerTurn?: number;
+    cleanlinessPerTurn?: number;
   };
 }
 
@@ -61,7 +67,7 @@ export interface EventNode {
   eventId: string;
   x: number; // Percentage 0-100
   y: number; // Percentage 0-100
-  expiresAt: number; // Game day when it disappears
+  spawnDay: number; // Game day it appeared — drives severity/escalation
 }
 
 export interface GameState {
@@ -73,10 +79,14 @@ export interface GameState {
   activeProjects: ActiveProject[];
   completedProjectIds: string[];
   isPlaying: boolean;
-  isPaused: boolean; // New pause state
+  isPaused: boolean;
   isGameOver: boolean;
   isVictory: boolean;
   day: number;
   activeNodes: EventNode[];
   activeEvent: GameEvent | null;
+  eventsSolved: number;        // crisis events resolved this run (for goals)
+  sustainDays: number;         // consecutive days both stats held above the win threshold
+  quests: QuestState[];        // active goals
+  questToast: LocalizedText | null;   // title of the most recently completed goal, for UI toast
 }
