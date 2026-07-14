@@ -1,18 +1,26 @@
 import { useState } from 'react';
 import { CheckCircle, Circle, Gift, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ALL_QUESTS } from '../data/quests';
-import type { QuestState } from '../types/quest';
+import type { QuestReward, QuestState } from '../types/quest';
+import type { LocalizedText } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface QuestPanelProps {
     quests: QuestState[];
-    toast: { message: string; visible: boolean } | null;
+    toast: LocalizedText | null; // title of the most recently completed goal
 }
+
+const formatReward = (reward: QuestReward, t: (key: string) => string): string => {
+    const parts: string[] = [];
+    if (reward.budget) parts.push(`+${reward.budget} ${t('quest.reward.budget')}`);
+    if (reward.happiness) parts.push(`+${reward.happiness} ${t('quest.reward.happiness')}`);
+    if (reward.cleanliness) parts.push(`+${reward.cleanliness} ${t('quest.reward.cleanliness')}`);
+    return parts.join(', ');
+};
 
 export function QuestPanel({ quests, toast }: QuestPanelProps) {
     const [isOpen, setIsOpen] = useState(true);
-
-    // In a real app, you might want to only show active quests, 
-    // but here we show all assigned for the day.
+    const { lang, t } = useLanguage();
 
     return (
         <>
@@ -33,7 +41,7 @@ export function QuestPanel({ quests, toast }: QuestPanelProps) {
                     <div className="px-4 py-4 border-b border-white/10 flex justify-between items-center">
                         <h3 className="text-white font-bold text-sm flex items-center gap-2">
                             <Gift className="w-4 h-4 text-amber-400" />
-                            Günlük Görevler
+                            {t('quest.goals')}
                         </h3>
                         <span className="text-xs text-slate-400">
                             {quests.filter(q => q.isCompleted).length}/{quests.length}
@@ -56,10 +64,10 @@ export function QuestPanel({ quests, toast }: QuestPanelProps) {
                                         </div>
                                         <div className="flex-1">
                                             <p className={`text-sm font-medium ${questState.isCompleted ? 'text-emerald-400 line-through opacity-70' : 'text-white'}`}>
-                                                {questDef.title}
+                                                {questDef.title[lang]}
                                             </p>
                                             <p className="text-xs text-slate-400 mt-0.5 leading-tight">
-                                                {questDef.description}
+                                                {questDef.description[lang]}
                                             </p>
 
                                             {/* Progress Bar (if applicable) */}
@@ -74,7 +82,13 @@ export function QuestPanel({ quests, toast }: QuestPanelProps) {
 
                                             {!questState.isCompleted && questDef.target && (
                                                 <p className="text-[10px] text-slate-500 mt-1 text-right">
-                                                    {questState.progress} / {questDef.target}
+                                                    {Math.round(questState.progress)} / {questDef.target}
+                                                </p>
+                                            )}
+
+                                            {!questState.isCompleted && (
+                                                <p className="text-[10px] text-amber-400/80 mt-1 flex items-center gap-1">
+                                                    <Gift className="w-3 h-3" /> {formatReward(questDef.reward, t)}
                                                 </p>
                                             )}
                                         </div>
@@ -86,7 +100,7 @@ export function QuestPanel({ quests, toast }: QuestPanelProps) {
                         {quests.length === 0 && (
                             <div className="p-6 text-center flex flex-col items-center gap-2 animate-pulse">
                                 <Gift className="w-8 h-8 text-slate-500/50" />
-                                <span className="text-sm font-medium text-slate-300">Yeni görevler bekleniyor...</span>
+                                <span className="text-sm font-medium text-slate-300">{t('quest.waitingForNew')}</span>
                             </div>
                         )}
                     </div>
@@ -94,10 +108,10 @@ export function QuestPanel({ quests, toast }: QuestPanelProps) {
             </div>
 
             {/* Toast Notification */}
-            {toast && toast.visible && (
+            {toast && (
                 <div className="absolute top-24 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full flex items-center gap-3 z-50 glass-panel bg-emerald-500/20 border-emerald-500/30 text-white animate-in fade-in slide-in-from-top-4 duration-500">
                     <CheckCircle className="w-5 h-5" />
-                    <span className="font-bold">{toast.message}</span>
+                    <span className="font-bold">{toast[lang]} {t('quest.completedToast')}</span>
                 </div>
             )}
         </>
