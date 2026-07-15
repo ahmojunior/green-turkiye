@@ -1,16 +1,19 @@
 import { useState, memo } from 'react';
-import { PROVINCE_PATHS } from '../data/provincePaths';
+import type { ProvincePath } from '../types';
 import { MapWildlife } from './MapWildlife';
 
-interface TurkeyMapProps {
+interface CountryMapProps {
+  provincePaths: ProvincePath[];
+  viewBoxWidth: number;
+  viewBoxHeight: number;
   onRegionSelect?: (regionId: string) => void;
   selectedRegionId?: string | null;
   interactive?: boolean;
   cleanliness?: number;
-  showWildlife?: boolean; // ambient planes/boats — only during an active game
+  showWildlife?: boolean; // ambient planes/boats — Turkey-only flourish, see MapWildlife
 }
 
-export const TurkeyMap = memo(function TurkeyMap({ onRegionSelect, selectedRegionId, interactive = true, cleanliness = 100, showWildlife = false }: TurkeyMapProps) {
+export const CountryMap = memo(function CountryMap({ provincePaths, viewBoxWidth, viewBoxHeight, onRegionSelect, selectedRegionId, interactive = true, cleanliness = 100, showWildlife = false }: CountryMapProps) {
   const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
 
   // Calculate Visual Filters
@@ -20,7 +23,7 @@ export const TurkeyMap = memo(function TurkeyMap({ onRegionSelect, selectedRegio
 
   const filterStyle = {
     filter: `
-      drop-shadow(0px 10px 10px rgba(0,0,0,0.2)) 
+      drop-shadow(0px 10px 10px rgba(0,0,0,0.2))
       sepia(${pollutionFactor > 30 ? (pollutionFactor - 30) * 1.5 : 0}%)
       brightness(${100 - (pollutionFactor / 3)}%)
       saturate(${100 + (pollutionFactor / 2)}%)
@@ -35,13 +38,13 @@ export const TurkeyMap = memo(function TurkeyMap({ onRegionSelect, selectedRegio
       {/* Locked to the map's own aspect ratio so MapWildlife's percentage
           positions always line up with the rendered SVG, regardless of
           whatever aspect ratio the parent container happens to be. */}
-      <div className="relative w-full max-w-5xl aspect-[1000/422]">
+      <div className="relative w-full max-w-5xl" style={{ aspectRatio: `${viewBoxWidth} / ${viewBoxHeight}` }}>
         <svg
-          viewBox="0 0 1000 422"
+          viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
           className="w-full h-full drop-shadow-2xl transition-all duration-1000"
         >
           <g style={filterStyle}>
-            {PROVINCE_PATHS.map((province, index) => {
+            {provincePaths.map((province, index) => {
               const isSelected = selectedRegionId === province.region;
               const isHovered = hoveredRegion === province.region;
 

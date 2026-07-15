@@ -1,4 +1,4 @@
-import type { GameState, Project, ActiveProject, EventNode, Region } from '../types';
+import type { GameState, Project, ActiveProject, EventNode, Country, Region } from '../types';
 import type { QuestState } from '../types/quest';
 import { TaxRate } from '../types/enums';
 import {
@@ -12,12 +12,12 @@ import {
 } from '../utils/gameLogic';
 import { generateId } from '../utils/id';
 import { EVENTS } from '../data/events';
-import { REGIONS } from '../data/regions';
+import { getRegion } from '../data/countries';
 import { PROJECTS } from '../data/projects';
 import { ALL_QUESTS } from '../data/quests';
 
 export type GameAction =
-    | { type: 'START_GAME'; payload: { region: Region; startBudget: number } }
+    | { type: 'START_GAME'; payload: { country: Country; region: Region; startBudget: number } }
     | { type: 'RESET_GAME' }
     | { type: 'TICK' }
     | { type: 'SET_TAX_RATE'; payload: TaxRate }
@@ -28,6 +28,7 @@ export type GameAction =
     | { type: 'CLEAR_QUEST_TOAST' };
 
 export const INITIAL_STATE: GameState = {
+    countryId: null,
     regionId: null,
     budget: TUNING.startBudget,
     happiness: TUNING.startHappiness,
@@ -57,6 +58,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             return {
                 ...INITIAL_STATE,
                 budget: action.payload.startBudget,
+                countryId: action.payload.country.id,
                 regionId: action.payload.region.id,
                 isPlaying: true,
                 quests: createInitialQuests(),
@@ -135,7 +137,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
         case 'TICK': {
             // One TICK advances the game by a single day; useGameLoop handles the timing.
-            const currentRegion = REGIONS.find(r => r.id === state.regionId);
+            const currentRegion = getRegion(state.countryId, state.regionId);
             const modifiers = currentRegion?.modifiers;
 
             const { dailyBudgetChange, dailyHappinessChange } = calculateDailyTax(state.taxRate, modifiers);

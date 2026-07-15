@@ -21,6 +21,22 @@ export interface Region {
   modifiers?: RegionModifiers;
 }
 
+export interface ProvincePath {
+  name: string;
+  region: string;
+  d: string;
+}
+
+export interface Country {
+  id: string;
+  name: LocalizedText;
+  icon: string; // filename under public/, e.g. 'tr-icon.png'
+  viewBoxWidth: number;
+  viewBoxHeight: number;
+  provincePaths: ProvincePath[];
+  regions: Region[];
+}
+
 export interface GameEvent {
   id: string;
   title: LocalizedText;
@@ -71,6 +87,7 @@ export interface EventNode {
 }
 
 export interface GameState {
+  countryId: string | null;
   regionId: string | null;
   budget: number;
   happiness: number;

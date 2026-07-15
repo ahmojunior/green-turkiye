@@ -11,10 +11,10 @@ import { ManagementPanel } from './components/ManagementPanel';
 import { EventModal } from './components/EventModal';
 import { GameOver } from './components/GameOver';
 import { QuestPanel } from './components/QuestPanel';
-import { TurkeyMap } from './components/TurkeyMap';
+import { CountryMap } from './components/CountryMap';
 import { TacticalBackground } from './components/TacticalBackground';
 import { ProjectSites } from './components/ProjectSites';
-import { REGIONS } from './data/regions';
+import { getCountry, getRegion } from './data/countries';
 import { AlertCircle, Pause, Play, Volume2, VolumeX } from 'lucide-react';
 
 function App() {
@@ -35,7 +35,8 @@ function App() {
 
   const { quests, questToast } = gameState;
 
-  const currentRegion = REGIONS.find(r => r.id === gameState.regionId);
+  const currentCountry = getCountry(gameState.countryId);
+  const currentRegion = getRegion(gameState.countryId, gameState.regionId);
 
   // Determine Game Over reason
   let gameOverReason = t('app.gameOver.regionUnmanageable');
@@ -122,12 +123,18 @@ function App() {
         {/* Map Layer */}
         <div className="absolute inset-0 flex items-center justify-center p-4 transform scale-100 transition-transform duration-1000">
           {/* We wrap the map to control sizing */}
-          <div className="w-full max-w-6xl aspect-[1000/422] relative">
-            <TurkeyMap
+          <div
+            className="w-full max-w-6xl relative"
+            style={{ aspectRatio: `${currentCountry?.viewBoxWidth ?? 1000} / ${currentCountry?.viewBoxHeight ?? 422}` }}
+          >
+            <CountryMap
+              provincePaths={currentCountry?.provincePaths ?? []}
+              viewBoxWidth={currentCountry?.viewBoxWidth ?? 1000}
+              viewBoxHeight={currentCountry?.viewBoxHeight ?? 422}
               selectedRegionId={gameState.regionId}
               interactive={false}
               cleanliness={gameState.cleanliness}
-              showWildlife
+              showWildlife={currentCountry?.id === 'turkey'}
             />
 
             <ProjectSites />

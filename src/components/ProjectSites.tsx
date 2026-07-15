@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Recycle, TreePine, Leaf, Sun, Droplet, Zap, type LucideIcon } from 'lucide-react';
 import { useGame } from '../hooks/useGame';
-import { REGIONS } from '../data/regions';
+import { getRegion } from '../data/countries';
 import { sfx } from '../utils/sfx';
 import { generateId } from '../utils/id';
 
@@ -24,8 +24,8 @@ interface Arrival {
 
 export function ProjectSites() {
   const { gameState } = useGame();
-  const { regionId, completedProjectIds } = gameState;
-  const region = REGIONS.find(r => r.id === regionId);
+  const { countryId, regionId, completedProjectIds } = gameState;
+  const region = getRegion(countryId, regionId);
   const slots = region?.buildSlots;
 
   const [arrivals, setArrivals] = useState<Arrival[]>([]);
