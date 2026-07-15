@@ -95,5 +95,6 @@ This project is licensed under the GNU Affero General Public License v3.0 - see 
 <br />
 
 <div align="center">
-  <i>This project includes images and/or vectors provided from <a href="https://www.vecteezy.com/">Vecteezy.com</a></i>
+  <i>This project includes images and/or vectors provided from <a href="https://www.vecteezy.com/">Vecteezy.com</a></i><br>
+  <i>This project includes vectors of maps provided from <a href="https://www.simplemaps.com/">simplemaps.com</a></i>
 </div>
