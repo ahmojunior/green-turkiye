@@ -1,12 +1,12 @@
 import React, { createContext, useReducer, useCallback, useRef, type PropsWithChildren } from 'react';
-import type { GameState, Region, Project, TaxRate } from '../types';
+import type { GameState, Country, Region, Project, TaxRate } from '../types';
 import { gameReducer, INITIAL_STATE } from '../reducers/gameReducer';
 import { TUNING } from '../utils/gameLogic';
 import { useGameLoop } from '../hooks/useGameLoop';
 
 interface GameContextType {
     gameState: GameState;
-    startGame: (region: Region) => void;
+    startGame: (country: Country, region: Region) => void;
     resetGame: () => void;
     handleChoice: (choiceIndex: number) => void;
     handleNodeClick: (nodeId: string) => void;
@@ -21,8 +21,8 @@ export const GameContext = createContext<GameContextType | null>(null);
 export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [gameState, dispatch] = useReducer(gameReducer, INITIAL_STATE);
 
-    const startGame = useCallback((region: Region) => {
-        dispatch({ type: 'START_GAME', payload: { region, startBudget: TUNING.startBudget } });
+    const startGame = useCallback((country: Country, region: Region) => {
+        dispatch({ type: 'START_GAME', payload: { country, region, startBudget: TUNING.startBudget } });
     }, []);
 
     const resetGame = useCallback(() => {
