@@ -84,7 +84,7 @@ Follow these steps to get the project up and running on your local machine.
 - [ ] New Country Maps
 - [x] ~~Taxation 🤑🤑🤑~~
 - [ ] Mobile Optimization
-- [ ] Gane Loop Improvements
+- [ ] Game Loop Improvements
 
 ---
 
