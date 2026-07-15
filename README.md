@@ -80,10 +80,11 @@ Follow these steps to get the project up and running on your local machine.
 
 ## <div align="center">To-Do</div>
 
-- [x] English Language Support
+- [x] ~~English Language Support~~
 - [ ] New Country Maps
 - [x] ~~Taxation 🤑🤑🤑~~
 - [ ] Mobile Optimization
+- [ ] Gane Loop Improvements
 
 ---
 
