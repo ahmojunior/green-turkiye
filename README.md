@@ -96,6 +96,6 @@ This project is licensed under the GNU Affero General Public License v3.0 - see 
 
 <div align="center">
   <i>This project includes images and/or vectors provided from <a href="https://www.vecteezy.com/">Vecteezy.com</a></i><br>
-  <i>This project includes vectors of maps provided from <a href="https://www.simplemaps.com/">simplemaps.com</a></i>
+  <i>This project includes vectors of maps provided from <a href="https://www.simplemaps.com/">simplemaps.com</a></i><br>
   <i>This project includes icons of countries provided from <b><a href="https://www.flaticon.com/">Flaticon</a></b> by <a href="https://www.flaticon.com/free-icons/germany">Three musketeers</a> and <a href="https://www.flaticon.com/free-icons/turkey">Ranah Pixel Studio</a></i><br>
 </div>
