@@ -126,6 +126,7 @@ export const UI_STRINGS: Record<string, { tr: string; en: string; de: string }> 
   'menu.credits.githubRepo': { tr: 'GitHub deposuna', en: 'GitHub repository', de: 'GitHub-Repository' },
   'menu.credits.designDev': { tr: 'Tasarım & Geliştirme —', en: 'Design & Development —', de: 'Design & Entwicklung —' },
   'menu.back': { tr: 'Geri', en: 'Back', de: 'Zurück' },
+  'menu.countrySelect.title': { tr: 'Bir ülke seç', en: 'Choose a country', de: 'Wähle ein Land' },
   'menu.selectRegionHint': { tr: 'Başlamak için haritadan bir bölge seçin', en: 'Select a region from the map to begin', de: 'Wähle eine Region auf der Karte, um zu beginnen' },
   'menu.startGame': { tr: 'Oyunu Başlat', en: 'Start Game', de: 'Spiel Starten' },
 };

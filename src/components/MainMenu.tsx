@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import type { Region } from '../types';
-import { REGIONS } from '../data/regions';
+import type { Country, Region } from '../types';
+import { COUNTRIES } from '../data/countries';
 import { TUNING } from '../utils/gameLogic';
-import { TurkeyMap } from './TurkeyMap';
+import { CountryMap } from './CountryMap';
 import { TacticalBackground } from './TacticalBackground';
 import { Map, ArrowLeft, ArrowRight, Play, HelpCircle, Users, X, Leaf, Target, AlertTriangle, Scale, Siren, Lightbulb } from 'lucide-react';
 import { sfx } from '../utils/sfx';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface MainMenuProps {
-  onStart: (region: Region) => void;
+  onStart: (country: Country, region: Region) => void;
 }
 
-type MenuPhase = 'SPLASH' | 'REGION_SELECT' | 'HELP' | 'CREDITS';
+type MenuPhase = 'SPLASH' | 'COUNTRY_SELECT' | 'REGION_SELECT' | 'HELP' | 'CREDITS';
 
 const LANGUAGES: { code: 'tr' | 'en' | 'de'; label: string }[] = [
   { code: 'tr', label: 'TR' },
@@ -22,6 +22,7 @@ const LANGUAGES: { code: 'tr' | 'en' | 'de'; label: string }[] = [
 
 export function MainMenu({ onStart }: MainMenuProps) {
   const [phase, setPhase] = useState<MenuPhase>('SPLASH');
+  const [selectedCountryId, setSelectedCountryId] = useState<string | null>(null);
   const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
   const [showWelcomePrompt, setShowWelcomePrompt] = useState(false);
   const { lang, setLang, t } = useLanguage();
@@ -29,7 +30,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
   const handlePlayClick = () => {
     sfx.menuConfirm();
     if (localStorage.getItem('greenTurkiye_hasPlayed')) {
-      setPhase('REGION_SELECT');
+      setPhase('COUNTRY_SELECT');
     } else {
       setShowWelcomePrompt(true);
     }
@@ -46,10 +47,18 @@ export function MainMenu({ onStart }: MainMenuProps) {
     sfx.menuClick();
     localStorage.setItem('greenTurkiye_hasPlayed', 'true');
     setShowWelcomePrompt(false);
+    setPhase('COUNTRY_SELECT');
+  };
+
+  const handleCountrySelect = (countryId: string) => {
+    sfx.menuClick();
+    setSelectedCountryId(countryId);
+    setSelectedRegionId(null);
     setPhase('REGION_SELECT');
   };
 
-  const selectedRegion = REGIONS.find(r => r.id === selectedRegionId);
+  const selectedCountry = COUNTRIES.find(c => c.id === selectedCountryId);
+  const selectedRegion = selectedCountry?.regions.find(r => r.id === selectedRegionId);
   const langIndex = LANGUAGES.findIndex(l => l.code === lang);
 
   // The goal paragraph interleaves plain text with <strong> emphasis, so split
@@ -106,7 +115,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
       {phase === 'SPLASH' && (
         <div className="absolute inset-0 z-30 flex items-center justify-center p-4">
           {/* Glassmorphism Container */}
-          <div className="glass-panel flex flex-col items-center gap-8 px-10 py-12 max-w-md w-full animate-fade-in">
+          <div className="glass-panel flex flex-col items-center gap-8 px-8 py-12 max-w-lg w-full animate-fade-in">
             {/* Logo */}
             <img
               src={import.meta.env.BASE_URL + 'logo.png'}
@@ -119,7 +128,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
               <h1 className="text-4xl font-black text-white tracking-tight mb-1">
                 {t('menu.title')}
               </h1>
-              <p className="text-slate-400 text-sm font-medium">
+              <p className="text-slate-400 text-sm font-medium whitespace-nowrap">
                 {t('menu.tagline')}
               </p>
             </div>
@@ -314,13 +323,50 @@ export function MainMenu({ onStart }: MainMenuProps) {
         </div>
       )}
 
-      {/* ===================== REGION SELECT ===================== */}
-      {(phase === 'REGION_SELECT') && (
+      {/* ===================== COUNTRY SELECT ===================== */}
+      {phase === 'COUNTRY_SELECT' && (
         <>
           {/* Back Button */}
           <div className="absolute top-6 left-6 z-30">
             <button
-              onClick={() => { sfx.menuClick(); setPhase('SPLASH'); setSelectedRegionId(null); }}
+              onClick={() => { sfx.menuClick(); setPhase('SPLASH'); }}
+              className="menu-btn menu-btn-secondary !px-4 !py-2 text-sm"
+            >
+              <ArrowLeft className="w-4 h-4" /> {t('menu.back')}
+            </button>
+          </div>
+
+          <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
+            <div className="glass-panel flex flex-col items-center gap-6 px-8 py-10 max-w-lg w-full animate-fade-in">
+              <h2 className="text-2xl font-bold text-white">{t('menu.countrySelect.title')}</h2>
+              <div className="grid grid-cols-2 gap-4 w-full">
+                {COUNTRIES.map(country => (
+                  <button
+                    key={country.id}
+                    onClick={() => handleCountrySelect(country.id)}
+                    className="flex flex-col items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl py-6 transition-colors cursor-pointer"
+                  >
+                    <img
+                      src={import.meta.env.BASE_URL + country.icon}
+                      alt={country.name[lang]}
+                      className="w-12 h-12 object-contain rounded-full shadow-lg"
+                    />
+                    <span className="text-white font-bold">{country.name[lang]}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ===================== REGION SELECT ===================== */}
+      {(phase === 'REGION_SELECT') && selectedCountry && (
+        <>
+          {/* Back Button */}
+          <div className="absolute top-6 left-6 z-30">
+            <button
+              onClick={() => { sfx.menuClick(); setPhase('COUNTRY_SELECT'); setSelectedRegionId(null); }}
               className="menu-btn menu-btn-secondary !px-4 !py-2 text-sm"
             >
               <ArrowLeft className="w-4 h-4" /> {t('menu.back')}
@@ -329,7 +375,10 @@ export function MainMenu({ onStart }: MainMenuProps) {
 
           {/* Map Area — centered */}
           <div className="flex-1 relative flex items-center justify-center z-10">
-            <TurkeyMap
+            <CountryMap
+              provincePaths={selectedCountry.provincePaths}
+              viewBoxWidth={selectedCountry.viewBoxWidth}
+              viewBoxHeight={selectedCountry.viewBoxHeight}
               onRegionSelect={(id) => { sfx.menuClick(); setSelectedRegionId(id); }}
               selectedRegionId={selectedRegionId}
             />
@@ -367,7 +416,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
                 </div>
 
                 <button
-                  onClick={() => { sfx.menuConfirm(); onStart(selectedRegion); }}
+                  onClick={() => { sfx.menuConfirm(); onStart(selectedCountry, selectedRegion); }}
                   className="group flex items-center gap-3 menu-btn menu-btn-primary !px-8 !py-4 !text-xl min-w-[200px] justify-center"
                 >
                   {t('menu.startGame')}
