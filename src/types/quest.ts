@@ -7,7 +7,8 @@ export interface QuestReward {
 }
 
 // The game stat a goal tracks. 'eventsSolved' counts resolved crisis events.
-export type QuestStat = 'budget' | 'happiness' | 'cleanliness' | 'day' | 'eventsSolved';
+// 'sustainDays' mirrors the win condition's consecutive-days-held-above-threshold counter.
+export type QuestStat = 'budget' | 'happiness' | 'cleanliness' | 'day' | 'eventsSolved' | 'sustainDays';
 
 export interface Quest {
     id: string;

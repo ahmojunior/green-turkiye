@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Country, Region } from '../types';
 import { COUNTRIES } from '../data/countries';
 import { TUNING } from '../utils/gameLogic';
 import { CountryMap } from './CountryMap';
 import { TacticalBackground } from './TacticalBackground';
-import { Map, ArrowLeft, ArrowRight, Play, HelpCircle, Users, X, Leaf, Target, AlertTriangle, Scale, Siren, Lightbulb } from 'lucide-react';
+import { Map, ArrowLeft, ArrowRight, Play, HelpCircle, Users, X, Leaf, Target, AlertTriangle, Scale, Siren, Lightbulb, RotateCw } from 'lucide-react';
 import { sfx } from '../utils/sfx';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -27,8 +27,24 @@ export function MainMenu({ onStart }: MainMenuProps) {
   const [showWelcomePrompt, setShowWelcomePrompt] = useState(false);
   const { lang, setLang, t } = useLanguage();
 
+  // The menu is portrait-only — actively lock back to portrait (undoing the game
+  // screen's landscape lock), covering every path back here (game over, victory,
+  // or a fresh load). Falls back to unlock() so the device can at least rotate
+  // freely if a hard portrait lock isn't supported (e.g. outside fullscreen).
+  useEffect(() => {
+    const orientation = screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void>; unlock?: () => void };
+    try {
+      orientation?.lock?.('portrait')?.catch(() => {
+        try { orientation?.unlock?.(); } catch { /* non-critical */ }
+      });
+    } catch {
+      try { orientation?.unlock?.(); } catch { /* non-critical */ }
+    }
+  }, []);
+
   const handlePlayClick = () => {
     sfx.menuConfirm();
+    try { document.documentElement.requestFullscreen?.()?.catch(() => { }); } catch { /* fullscreen unsupported/denied — non-critical */ }
     if (localStorage.getItem('greenTurkiye_hasPlayed')) {
       setPhase('COUNTRY_SELECT');
     } else {
@@ -78,6 +94,12 @@ export function MainMenu({ onStart }: MainMenuProps) {
 
   return (
     <div className="flex flex-col h-full w-full bg-slate-950 overflow-hidden relative">
+      {/* Rotate-to-portrait nudge — fallback for browsers that can't be orientation-locked (e.g. iOS Safari) */}
+      <div className="hidden mobile-landscape:flex fixed inset-0 z-[100] flex-col items-center justify-center gap-4 bg-slate-950 text-center p-8">
+        <RotateCw className="w-12 h-12 text-emerald-400 animate-pulse" />
+        <p className="text-white font-bold text-lg">{t('menu.rotatePortrait')}</p>
+      </div>
+
       <TacticalBackground />
 
       {/* ===================== WELCOME PROMPT ===================== */}
@@ -128,7 +150,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
               <h1 className="text-4xl font-black text-white tracking-tight mb-1">
                 {t('menu.title')}
               </h1>
-              <p className="text-slate-400 text-sm font-medium whitespace-nowrap">
+              <p className="text-slate-400 text-sm font-medium whitespace-nowrap max-sm:whitespace-normal">
                 {t('menu.tagline')}
               </p>
             </div>
@@ -184,7 +206,7 @@ export function MainMenu({ onStart }: MainMenuProps) {
       {/* ===================== HELP MODAL ===================== */}
       {phase === 'HELP' && (
         <div className="absolute inset-0 z-40 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="glass-panel max-w-2xl w-full max-h-[80vh] overflow-y-auto px-8 py-8 relative custom-scrollbar">
+          <div className="glass-panel max-w-2xl w-full max-h-[80vh] max-sm:max-h-[80dvh] overflow-y-auto px-8 py-8 relative custom-scrollbar">
             <button
               onClick={() => { sfx.menuClick(); setPhase('SPLASH'); }}
               className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors cursor-pointer"
@@ -336,10 +358,10 @@ export function MainMenu({ onStart }: MainMenuProps) {
             </button>
           </div>
 
-          <div className="absolute inset-0 z-20 flex items-center justify-center p-4">
-            <div className="glass-panel flex flex-col items-center gap-6 px-8 py-10 max-w-lg w-full animate-fade-in">
+          <div className="absolute inset-0 z-20 flex items-center justify-center p-4 max-sm:items-start max-sm:pt-20 max-sm:overflow-y-auto">
+            <div className="glass-panel flex flex-col items-center gap-6 px-8 py-10 max-w-xl w-full animate-fade-in">
               <h2 className="text-2xl font-bold text-white">{t('menu.countrySelect.title')}</h2>
-              <div className="grid grid-cols-2 gap-4 w-full">
+              <div className="grid grid-cols-3 gap-4 w-full max-sm:grid-cols-1 max-sm:gap-3">
                 {COUNTRIES.map(country => (
                   <button
                     key={country.id}
@@ -416,7 +438,13 @@ export function MainMenu({ onStart }: MainMenuProps) {
                 </div>
 
                 <button
-                  onClick={() => { sfx.menuConfirm(); onStart(selectedCountry, selectedRegion); }}
+                  onClick={() => {
+                    sfx.menuConfirm();
+                    try {
+                      (screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> })?.lock?.('landscape')?.catch(() => { });
+                    } catch { /* orientation lock unsupported/denied — non-critical */ }
+                    onStart(selectedCountry, selectedRegion);
+                  }}
                   className="group flex items-center gap-3 menu-btn menu-btn-primary !px-8 !py-4 !text-xl min-w-[200px] justify-center"
                 >
                   {t('menu.startGame')}

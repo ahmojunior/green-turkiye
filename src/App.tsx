@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useGame } from './hooks/useGame';
 import { useQuestNotifications } from './hooks/useQuests';
 import { useGameSfx } from './hooks/useGameSfx';
@@ -15,7 +15,7 @@ import { CountryMap } from './components/CountryMap';
 import { TacticalBackground } from './components/TacticalBackground';
 import { ProjectSites } from './components/ProjectSites';
 import { getCountry, getRegion } from './data/countries';
-import { AlertCircle, Pause, Play, Volume2, VolumeX } from 'lucide-react';
+import { AlertCircle, Pause, Play, RotateCw, Volume2, VolumeX } from 'lucide-react';
 
 function App() {
   const {
@@ -32,6 +32,29 @@ function App() {
   const { lang, t } = useLanguage();
 
   const [muted, setMuted] = useState(sfx.isMuted());
+
+  // Auto-pause while the rotate-device prompt covers the screen (mobile portrait),
+  // matching the CSS breakpoint used for that overlay below. Only resumes what we
+  // paused ourselves, so a manual pause the player made survives a rotation.
+  const autoPausedRef = useRef(false);
+  useEffect(() => {
+    if (!gameState.isPlaying || gameState.isGameOver) return;
+    const mql = window.matchMedia('(max-width: 639.98px) and (orientation: portrait)');
+    const handle = (e: MediaQueryList | MediaQueryListEvent) => {
+      if (e.matches) {
+        if (!gameState.isPaused) {
+          autoPausedRef.current = true;
+          setPaused(true);
+        }
+      } else if (autoPausedRef.current) {
+        autoPausedRef.current = false;
+        setPaused(false);
+      }
+    };
+    handle(mql);
+    mql.addEventListener('change', handle);
+    return () => mql.removeEventListener('change', handle);
+  }, [gameState.isPlaying, gameState.isGameOver, gameState.isPaused, setPaused]);
 
   const { quests, questToast } = gameState;
 
@@ -66,6 +89,12 @@ function App() {
   return (
     <div className={`relative h-full w-full bg-slate-950 overflow-hidden flex flex-col font-sans select-none transition-all duration-1000 ${seasonalClass}`}>
 
+      {/* Rotate-device nudge — browsers that can't be orientation-locked (e.g. iOS Safari) need a manual prompt */}
+      <div className="hidden max-sm:portrait:flex fixed inset-0 z-[100] flex-col items-center justify-center gap-4 bg-slate-950 text-center p-8">
+        <RotateCw className="w-12 h-12 text-emerald-400 animate-pulse" />
+        <p className="text-white font-bold text-lg">{t('app.rotateDevice')}</p>
+      </div>
+
       <TacticalBackground>
         {/* Winter Snow Effect — CSS dot pattern, no external asset */}
         {seasonIndex === 3 && (
@@ -82,21 +111,23 @@ function App() {
       {/* HUD */}
       <GameHUD state={gameState} regionName={currentRegion?.name[lang] || t('app.unknownRegion')} />
 
-      {/* Pause/Resume + Mute controls */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
+      {/* Pause/Resume + Mute controls — bottom-center on mobile landscape (the
+          actual play orientation) so they don't compete with the HUD for the
+          cramped top strip; desktop keeps its original top-center placement. */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 mobile-landscape:top-auto mobile-landscape:bottom-2 mobile-landscape:gap-1.5">
         <button
           onClick={() => { sfx.click(); setPaused(!gameState.isPaused); }}
-          className="glass-panel !rounded-full px-4 py-2 flex items-center gap-2 text-white pointer-events-auto hover:bg-white/10 transition-all active:scale-95"
+          className="glass-panel !rounded-full px-4 py-2 flex items-center gap-2 text-white pointer-events-auto hover:bg-white/10 transition-all active:scale-95 mobile-landscape:px-2.5 mobile-landscape:py-1.5"
         >
-          {gameState.isPaused ? <Play className="w-4 h-4 text-emerald-400" /> : <Pause className="w-4 h-4 text-amber-400" />}
-          <span className="text-sm font-bold">{gameState.isPaused ? t('app.controls.resume') : t('app.controls.pause')}</span>
+          {gameState.isPaused ? <Play className="w-4 h-4 text-emerald-400 mobile-landscape:w-3.5 mobile-landscape:h-3.5" /> : <Pause className="w-4 h-4 text-amber-400 mobile-landscape:w-3.5 mobile-landscape:h-3.5" />}
+          <span className="text-sm font-bold mobile-landscape:text-xs">{gameState.isPaused ? t('app.controls.resume') : t('app.controls.pause')}</span>
         </button>
         <button
           onClick={() => setMuted(sfx.toggleMuted())}
           title={muted ? t('app.controls.unmute') : t('app.controls.mute')}
-          className="glass-panel !rounded-full p-2.5 flex items-center justify-center text-white pointer-events-auto hover:bg-white/10 transition-all active:scale-95"
+          className="glass-panel !rounded-full p-2.5 flex items-center justify-center text-white pointer-events-auto hover:bg-white/10 transition-all active:scale-95 max-sm:invisible mobile-landscape:p-1.5"
         >
-          {muted ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-emerald-400" />}
+          {muted ? <VolumeX className="w-4 h-4 text-slate-400 mobile-landscape:w-3.5 mobile-landscape:h-3.5" /> : <Volume2 className="w-4 h-4 text-emerald-400 mobile-landscape:w-3.5 mobile-landscape:h-3.5" />}
         </button>
       </div>
 
@@ -121,11 +152,16 @@ function App() {
       <div className="flex-1 relative w-full h-full flex items-center justify-center z-10">
 
         {/* Map Layer */}
-        <div className="absolute inset-0 flex items-center justify-center p-4 transform scale-100 transition-transform duration-1000">
-          {/* We wrap the map to control sizing */}
+        <div className="absolute inset-0 flex items-center justify-center p-4 transform scale-100 transition-transform duration-1000" style={{ containerType: 'size' }}>
+          {/* We wrap the map to control sizing. Sized via container query units, not
+              aspect-ratio + max-w/max-h — see the matching comment in CountryMap.tsx
+              for why that combo silently shrinks to the SVG's default intrinsic size. */}
           <div
-            className="w-full max-w-6xl relative"
-            style={{ aspectRatio: `${currentCountry?.viewBoxWidth ?? 1000} / ${currentCountry?.viewBoxHeight ?? 422}` }}
+            className="relative"
+            style={{
+              width: `min(100cqw, calc(100cqh * ${(currentCountry?.viewBoxWidth ?? 1000) / (currentCountry?.viewBoxHeight ?? 422)}))`,
+              height: `min(100cqh, calc(100cqw / ${(currentCountry?.viewBoxWidth ?? 1000) / (currentCountry?.viewBoxHeight ?? 422)}))`,
+            }}
           >
             <CountryMap
               provincePaths={currentCountry?.provincePaths ?? []}
@@ -180,7 +216,13 @@ function App() {
 
       {/* Event Popup */}
       {gameState.activeEvent && (
-        <EventModal event={gameState.activeEvent} onChoice={handleChoice} />
+        <EventModal
+          event={gameState.activeEvent}
+          onChoice={handleChoice}
+          budget={gameState.budget}
+          happiness={gameState.happiness}
+          cleanliness={gameState.cleanliness}
+        />
       )}
 
       {/* Game Over / Victory Screen */}

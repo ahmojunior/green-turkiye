@@ -121,6 +121,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             // "events solved" counter over the line — so re-score goals here too.
             const result = evaluateQuests(state.quests, {
                 budget, happiness, cleanliness, day: state.day, eventsSolved,
+                sustainDays: state.sustainDays,
             });
 
             return {
@@ -190,18 +191,20 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             nextHappiness = clampValue(nextHappiness);
             nextCleanliness = clampValue(nextCleanliness);
 
+            // Victory is earned by *sustaining* both stats, not by a one-off spike.
+            // Computed here (before evaluateQuests) so a sustainDays-based goal sees
+            // the correct value for the day that just ticked, not a stale one.
+            const holding = nextHappiness >= TUNING.sustainThreshold && nextCleanliness >= TUNING.sustainThreshold;
+            const nextSustainDays = holding ? state.sustainDays + 1 : 0;
+
             // Goals (day / passive-stat thresholds) may complete this tick.
             const result = evaluateQuests(state.quests, {
                 budget: nextBudget, happiness: nextHappiness, cleanliness: nextCleanliness,
-                day: nextDay, eventsSolved: state.eventsSolved,
+                day: nextDay, eventsSolved: state.eventsSolved, sustainDays: nextSustainDays,
             });
             nextBudget += result.reward.budget;
             nextHappiness = clampValue(nextHappiness + result.reward.happiness);
             nextCleanliness = clampValue(nextCleanliness + result.reward.cleanliness);
-
-            // Victory is earned by *sustaining* both stats, not by a one-off spike.
-            const holding = nextHappiness >= TUNING.sustainThreshold && nextCleanliness >= TUNING.sustainThreshold;
-            const nextSustainDays = holding ? state.sustainDays + 1 : 0;
 
             let isGameOver = false;
             let isVictory = false;

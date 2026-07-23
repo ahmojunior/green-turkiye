@@ -42,5 +42,29 @@ export const ALL_QUESTS: Quest[] = [
         stat: 'day',
         target: 20,
         reward: { cleanliness: 15, happiness: 10 }
+    },
+    {
+        id: 'steady_ground',
+        title: { tr: 'Sağlam Zemin', en: 'Steady Ground', de: 'Fester Boden' },
+        description: { tr: 'Mutluluk ve temizliği eşiğin üzerinde 6 gün boyunca kesintisiz tut.', en: 'Hold both happiness and cleanliness above the threshold for 6 consecutive days.', de: 'Halte Zufriedenheit und Sauberkeit 6 Tage in Folge über dem Schwellenwert.' },
+        stat: 'sustainDays',
+        target: 6,
+        reward: { budget: 150 }
+    },
+    {
+        id: 'long_haul',
+        title: { tr: 'Uzun Soluklu', en: 'Long Haul', de: 'Langstreckenläufer' },
+        description: { tr: '40. güne ulaş.', en: 'Reach day 40.', de: 'Erreiche Tag 40.' },
+        stat: 'day',
+        target: 40,
+        reward: { budget: 200, cleanliness: 10 }
+    },
+    {
+        id: 'crisis_veteran',
+        title: { tr: 'Kriz Kıdemlisi', en: 'Crisis Veteran', de: 'Krisenveteran' },
+        description: { tr: '12 adet krize müdahale et.', en: 'Resolve 12 crises.', de: 'Löse 12 Krisen.' },
+        stat: 'eventsSolved',
+        target: 12,
+        reward: { budget: 200, happiness: 8, cleanliness: 8 }
     }
 ];

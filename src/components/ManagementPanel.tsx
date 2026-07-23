@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PROJECTS } from '../data/projects';
 import { Coins, Hammer, Clock, CheckCircle, Lock, X, Check } from 'lucide-react';
 import { useGame } from '../hooks/useGame';
@@ -20,15 +20,24 @@ export function ManagementPanel() {
     const [showProjects, setShowProjects] = useState(false);
     const [insufficientFundsId, setInsufficientFundsId] = useState<string | null>(null);
 
-    // Pause game when modal is open
+    // Pause game when modal is open. Only resumes if this modal was the one that
+    // paused it — otherwise it would stomp on an unrelated pause (e.g. the manual
+    // Pause button, or the mobile rotate-device prompt) as soon as it mounts/closes.
+    const pausedByModalRef = useRef(false);
     useEffect(() => {
-        setPaused(showProjects);
+        if (showProjects) {
+            pausedByModalRef.current = true;
+            setPaused(true);
+        } else if (pausedByModalRef.current) {
+            pausedByModalRef.current = false;
+            setPaused(false);
+        }
     }, [showProjects, setPaused]);
 
     return (
         <>
             {/* Tax Controls - Bottom Left */}
-            <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-2">
+            <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-2 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:right-auto max-sm:bottom-24 max-sm:w-[calc(100vw-2rem)] max-sm:max-w-xs">
                 <div className="glass-panel !rounded-xl p-4">
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
                         <Coins className="w-4 h-4 text-yellow-400" /> {t('mgmt.taxRate')}
@@ -60,10 +69,10 @@ export function ManagementPanel() {
             </div>
 
             {/* Projects Button - Bottom Right */}
-            <div className="absolute bottom-6 right-6 z-20">
+            <div className="absolute bottom-6 right-6 z-20 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:right-auto">
                 <button
                     onClick={() => { sfx.click(); setShowProjects(true); }}
-                    className="flex items-center gap-3 bg-emerald-600/80 hover:bg-emerald-500/90 backdrop-blur border border-emerald-400/30 text-white px-6 py-4 rounded-xl shadow-[0_4px_20px_rgba(52,211,153,0.25)] hover:shadow-[0_4px_28px_rgba(52,211,153,0.45)] transition-all active:scale-95 font-bold text-lg"
+                    className="flex items-center gap-3 bg-emerald-600/80 hover:bg-emerald-500/90 backdrop-blur border border-emerald-400/30 text-white px-6 py-4 rounded-xl shadow-[0_4px_20px_rgba(52,211,153,0.25)] hover:shadow-[0_4px_28px_rgba(52,211,153,0.45)] transition-all active:scale-95 font-bold text-lg max-sm:px-4 max-sm:py-3 max-sm:text-base"
                 >
                     <Hammer className="w-6 h-6" />
                     {t('mgmt.projectsButton')}
@@ -77,25 +86,25 @@ export function ManagementPanel() {
 
             {/* Projects Modal */}
             {showProjects && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-                    <div className="glass-panel !rounded-2xl w-full max-w-4xl max-h-[80vh] flex flex-col overflow-hidden animate-fade-in">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 mobile-landscape:p-2">
+                    <div className="glass-panel !rounded-2xl w-full max-w-4xl max-h-[80vh] max-sm:max-h-[80dvh] mobile-landscape:max-h-[94dvh] flex flex-col overflow-hidden animate-fade-in">
 
                         {/* Modal Header */}
-                        <div className="p-6 border-b border-white/10 flex justify-between items-center">
+                        <div className="p-6 mobile-landscape:p-2.5 border-b border-white/10 flex justify-between items-center">
                             <div>
-                                <h2 className="text-2xl font-bold text-white">{t('mgmt.modalTitle')}</h2>
-                                <p className="text-slate-400">{t('mgmt.modalSubtitle')}</p>
+                                <h2 className="text-2xl font-bold text-white mobile-landscape:text-sm">{t('mgmt.modalTitle')}</h2>
+                                <p className="text-slate-400 mobile-landscape:text-xs">{t('mgmt.modalSubtitle')}</p>
                             </div>
                             <button
                                 onClick={() => { sfx.click(); setShowProjects(false); }}
-                                className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-all"
+                                className="p-2 mobile-landscape:p-1 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-all"
                             >
-                                <X className="w-5 h-5" />
+                                <X className="w-5 h-5 mobile-landscape:w-4 mobile-landscape:h-4" />
                             </button>
                         </div>
 
                         {/* Project Cards Grid */}
-                        <div className="overflow-y-auto custom-scrollbar max-h-[60vh] p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="overflow-y-auto custom-scrollbar max-h-[60vh] max-sm:max-h-[60dvh] mobile-landscape:max-h-none p-6 mobile-landscape:p-2 grid grid-cols-1 md:grid-cols-2 gap-4 mobile-landscape:gap-2">
                             {PROJECTS.map(project => {
                                 const isCompleted = completedProjectIds.includes(project.id);
                                 const isActive = activeProjects.some(p => p.id === project.id);
@@ -119,7 +128,7 @@ export function ManagementPanel() {
                                             }
                                         }}
                                         className={`
-                                            border rounded-xl p-5 relative overflow-hidden transition-all duration-300 text-left
+                                            border rounded-xl p-5 mobile-landscape:p-2.5 relative overflow-hidden transition-all duration-300 text-left
                                             ${insufficientFundsId === project.id
                                                 ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]'
                                                 : isCompleted
@@ -131,75 +140,75 @@ export function ManagementPanel() {
                                                             : 'border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10 cursor-pointer'}
                                         `}
                                     >
-                                        <div className="flex justify-between items-start mb-2">
-                                            <h3 className="font-bold text-lg text-white">{project.name[lang]}</h3>
-                                            {isCompleted && <CheckCircle className="text-emerald-400" />}
-                                            {isActive && <Clock className="text-blue-400 animate-spin-slow" />}
+                                        <div className="flex justify-between items-start mb-2 mobile-landscape:mb-1">
+                                            <h3 className="font-bold text-lg text-white mobile-landscape:text-sm">{project.name[lang]}</h3>
+                                            {isCompleted && <CheckCircle className="text-emerald-400 w-6 h-6 mobile-landscape:w-4 mobile-landscape:h-4" />}
+                                            {isActive && <Clock className="text-blue-400 animate-spin-slow w-6 h-6 mobile-landscape:w-4 mobile-landscape:h-4" />}
                                             {!hasPrereqs && (
-                                                <div className="flex items-center gap-1 text-xs font-bold text-red-400 border border-red-500/30 px-2 py-1 rounded bg-red-500/10">
+                                                <div className="flex items-center gap-1 text-xs font-bold text-red-400 border border-red-500/30 px-2 py-1 rounded bg-red-500/10 mobile-landscape:px-1.5 mobile-landscape:py-0.5 mobile-landscape:text-[10px]">
                                                     <Lock className="w-3 h-3" /> {t('mgmt.locked')}
                                                 </div>
                                             )}
                                         </div>
 
-                                        <p className="text-sm text-slate-400 mb-3">{project.description[lang]}</p>
+                                        <p className="text-sm text-slate-400 mb-3 mobile-landscape:text-xs mobile-landscape:mb-1.5">{project.description[lang]}</p>
 
                                         {/* Prereq Info */}
                                         {!hasPrereqs && project.prerequisites && (
-                                            <div className="text-xs text-red-400 mb-3 font-medium">
+                                            <div className="text-xs text-red-400 mb-3 font-medium mobile-landscape:mb-1.5">
                                                 {t('mgmt.requirement')}: {project.prerequisites.map(id => PROJECTS.find(p => p.id === id)?.name[lang]).join(', ')}
                                             </div>
                                         )}
 
                                         {/* Cost & Duration */}
-                                        <div className="mb-3 pb-3 border-b border-white/10">
-                                            <div className="grid grid-cols-2 gap-3 text-xs">
-                                                <div className="flex items-center gap-2">
-                                                    <Coins className="w-4 h-4 text-yellow-400" />
+                                        <div className="mb-3 pb-3 border-b border-white/10 mobile-landscape:mb-1.5 mobile-landscape:pb-1.5">
+                                            <div className="grid grid-cols-2 gap-3 text-xs mobile-landscape:gap-2">
+                                                <div className="flex items-center gap-2 mobile-landscape:gap-1">
+                                                    <Coins className="w-4 h-4 text-yellow-400 mobile-landscape:w-3.5 mobile-landscape:h-3.5" />
                                                     <div>
-                                                        <div className="text-slate-400 text-xs">{t('mgmt.price')}</div>
-                                                        <div className="text-white font-bold">{formatBudget(project.cost)}</div>
+                                                        <div className="text-slate-400 text-xs mobile-landscape:text-[10px]">{t('mgmt.price')}</div>
+                                                        <div className="text-white font-bold mobile-landscape:text-xs">{formatBudget(project.cost)}</div>
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center gap-2">
-                                                    <Clock className="w-4 h-4 text-blue-400" />
+                                                <div className="flex items-center gap-2 mobile-landscape:gap-1">
+                                                    <Clock className="w-4 h-4 text-blue-400 mobile-landscape:w-3.5 mobile-landscape:h-3.5" />
                                                     <div>
-                                                        <div className="text-slate-400 text-xs">{t('mgmt.duration')}</div>
-                                                        <div className="text-white font-bold">{project.duration} {t('mgmt.durationDays')}</div>
+                                                        <div className="text-slate-400 text-xs mobile-landscape:text-[10px]">{t('mgmt.duration')}</div>
+                                                        <div className="text-white font-bold mobile-landscape:text-xs">{project.duration} {t('mgmt.durationDays')}</div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         {/* Returns & Effects */}
-                                        <div className="space-y-1 text-xs mb-4">
-                                            <div className="text-slate-400 font-bold text-xs uppercase tracking-wider mb-2">{t('mgmt.returns')}</div>
+                                        <div className="space-y-1 text-xs mb-4 mobile-landscape:mb-2 mobile-landscape:text-[10px]">
+                                            <div className="text-slate-400 font-bold text-xs uppercase tracking-wider mb-2 mobile-landscape:mb-1 mobile-landscape:text-[9px]">{t('mgmt.returns')}</div>
                                             {project.effects.budgetPerTurn ? (
-                                                <div className="text-emerald-400 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5" /> +{project.effects.budgetPerTurn} {t('mgmt.budgetPerDay')}</div>
+                                                <div className="text-emerald-400 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5 mobile-landscape:w-3 mobile-landscape:h-3" /> +{project.effects.budgetPerTurn} {t('mgmt.budgetPerDay')}</div>
                                             ) : null}
                                             {project.effects.cleanlinessPerTurn ? (
-                                                <div className="text-emerald-400 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5" /> +{project.effects.cleanlinessPerTurn} {t('mgmt.cleanlinessPerDay')}</div>
+                                                <div className="text-emerald-400 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5 mobile-landscape:w-3 mobile-landscape:h-3" /> +{project.effects.cleanlinessPerTurn} {t('mgmt.cleanlinessPerDay')}</div>
                                             ) : null}
                                             {project.effects.happinessPerTurn ? (
-                                                <div className="text-blue-400 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5" /> +{project.effects.happinessPerTurn} {t('mgmt.happinessPerDay')}</div>
+                                                <div className="text-blue-400 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5 mobile-landscape:w-3 mobile-landscape:h-3" /> +{project.effects.happinessPerTurn} {t('mgmt.happinessPerDay')}</div>
                                             ) : null}
                                             {project.effects.cleanliness ? (
-                                                <div className="text-emerald-400/70 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5" /> +{project.effects.cleanliness} {t('mgmt.cleanlinessOneTime')}</div>
+                                                <div className="text-emerald-400/70 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5 mobile-landscape:w-3 mobile-landscape:h-3" /> +{project.effects.cleanliness} {t('mgmt.cleanlinessOneTime')}</div>
                                             ) : null}
                                             {project.effects.happiness ? (
-                                                <div className="text-blue-400/70 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5" /> +{project.effects.happiness} {t('mgmt.happinessOneTime')}</div>
+                                                <div className="text-blue-400/70 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5 mobile-landscape:w-3 mobile-landscape:h-3" /> +{project.effects.happiness} {t('mgmt.happinessOneTime')}</div>
                                             ) : null}
                                         </div>
 
                                         {isActive && (
-                                            <div className="mt-2">
+                                            <div className="mt-2 mobile-landscape:mt-1">
                                                 <div className="w-full bg-white/10 rounded-full h-2">
                                                     <div
                                                         className="bg-blue-500 h-2 rounded-full transition-all duration-1000"
                                                         style={{ width: `${((project.duration - activeProject!.daysRemaining) / project.duration) * 100}%` }}
                                                     ></div>
                                                 </div>
-                                                <div className="text-center text-xs text-blue-400 mt-1 font-bold">
+                                                <div className="text-center text-xs text-blue-400 mt-1 font-bold mobile-landscape:text-[10px]">
                                                     {activeProject!.daysRemaining} {t('mgmt.daysLeft')}
                                                 </div>
                                             </div>

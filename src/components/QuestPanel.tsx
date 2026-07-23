@@ -19,14 +19,14 @@ const formatReward = (reward: QuestReward, t: (key: string) => string): string =
 };
 
 export function QuestPanel({ quests, toast }: QuestPanelProps) {
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
     const { lang, t } = useLanguage();
 
     return (
         <>
             {/* Quest Panel - Top Right Overlay */}
             <div
-                className={`absolute top-28 right-4 w-72 z-30 pointer-events-auto transition-transform duration-500 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-[calc(100%-10px)]'
+                className={`absolute top-28 right-4 w-72 z-30 pointer-events-auto transition-transform duration-500 ease-in-out max-sm:top-72 max-sm:w-[min(75vw,280px)] ${isOpen ? 'translate-x-0' : 'translate-x-[calc(100%-10px)]'
                     }`}
             >
                 {/* The Toggle Button */}
@@ -48,7 +48,7 @@ export function QuestPanel({ quests, toast }: QuestPanelProps) {
                         </span>
                     </div>
 
-                    <div className="p-2 space-y-2 max-h-[300px] overflow-y-auto">
+                    <div className="p-2 space-y-2 max-h-[300px] max-sm:max-h-[180px] overflow-y-auto">
                         {quests.map(questState => {
                             const questDef = ALL_QUESTS.find(q => q.id === questState.id);
                             if (!questDef) return null;

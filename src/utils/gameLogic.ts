@@ -112,7 +112,7 @@ export interface QuestEvaluation {
 // contribute their reward, which the reducer then applies to the player's stats.
 export const evaluateQuests = (
     questStates: QuestState[],
-    stats: { budget: number; happiness: number; cleanliness: number; day: number; eventsSolved: number }
+    stats: { budget: number; happiness: number; cleanliness: number; day: number; eventsSolved: number; sustainDays: number }
 ): QuestEvaluation => {
     let changed = false;
     const reward = { budget: 0, happiness: 0, cleanliness: 0 };

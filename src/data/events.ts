@@ -548,5 +548,797 @@ export const EVENTS: GameEvent[] = [
         effects: { budget: -20, happiness: +5, cleanliness: +5 }
       }
     ]
+  },
+
+  // --- NORTH GERMANY (NORD) ---
+  {
+    id: 'nord-offshore-wind',
+    regionId: 'nord',
+    title: { tr: 'Açık Deniz Rüzgar Çiftliği Genişlemesi', en: 'Offshore Wind Farm Expansion', de: 'Ausbau des Offshore-Windparks' },
+    description: { tr: 'Kuzey Denizi\'nde planlanan yeni rüzgar türbinleri balıkçı filolarını endişelendiriyor.', en: 'New wind turbines planned for the North Sea are worrying local fishing fleets.', de: 'Neue Windturbinen, die für die Nordsee geplant sind, beunruhigen die örtlichen Fischereiflotten.' },
+    choices: [
+      {
+        text: { tr: 'Genişlemeyi Onayla', en: 'Approve the Expansion', de: 'Ausbau genehmigen' },
+        effects: { budget: +90, happiness: -10, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Türbin Bölgelerini Sınırla', en: 'Limit the Turbine Zones', de: 'Turbinenzonen begrenzen' },
+        effects: { budget: +30, happiness: +10, cleanliness: +10 }
+      }
+    ]
+  },
+  {
+    id: 'nord-storm-surge',
+    regionId: 'nord',
+    title: { tr: 'Fırtına Kabarması Tehdidi', en: 'Storm Surge Threat', de: 'Sturmflutgefahr' },
+    description: { tr: 'Yükselen deniz seviyesi Kuzey Denizi kıyısındaki setleri zorluyor.', en: 'Rising sea levels are pushing North Sea dikes to their limit.', de: 'Der steigende Meeresspiegel bringt die Deiche an der Nordseeküste an ihre Grenzen.' },
+    choices: [
+      {
+        text: { tr: 'Setleri Güçlendir', en: 'Reinforce the Dikes', de: 'Deiche verstärken' },
+        effects: { budget: -140, happiness: +20 }
+      },
+      {
+        text: { tr: 'Riskli Evleri Taşı', en: 'Relocate At-Risk Homes', de: 'Gefährdete Häuser umsiedeln' },
+        effects: { budget: -60, happiness: -15, cleanliness: +5 }
+      }
+    ]
+  },
+  {
+    id: 'nord-port-emissions',
+    regionId: 'nord',
+    title: { tr: 'Liman Gemi Emisyonları', en: 'Port Shipping Emissions', de: 'Schiffsemissionen im Hafen' },
+    description: { tr: 'Limanda bekleyen konteyner gemileri ağır yakıt yakarak çevre mahalleleri dumana boğuyor.', en: 'Container ships idling in port burn heavy fuel oil, choking nearby neighborhoods in smog.', de: 'Im Hafen wartende Containerschiffe verbrennen Schweröl und hüllen die umliegenden Stadtteile in Smog.' },
+    choices: [
+      {
+        text: { tr: 'Karadan Elektrik Bağlantısını Zorunlu Kıl', en: 'Mandate Shore Power', de: 'Landstrom vorschreiben' },
+        effects: { budget: -90, happiness: +10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Denetimi Gemi Şirketlerine Bırak', en: 'Leave It to the Shipping Lines', de: 'Reedereien selbst entscheiden lassen' },
+        effects: { budget: +40, happiness: -10, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'nord-wadden-sea',
+    regionId: 'nord',
+    title: { tr: 'Vatt Denizi\'nde Marina Planı', en: 'A Marina in the Wadden Sea', de: 'Eine Marina im Wattenmeer' },
+    description: { tr: 'Korunan Vatt Denizi sulak alanının içine yeni bir turist marinası öneriliyor.', en: 'A new tourist marina is proposed inside the protected Wadden Sea wetland.', de: 'Im geschützten Wattenmeer soll eine neue Touristenmarina entstehen.' },
+    choices: [
+      {
+        text: { tr: 'Marinayı Reddet', en: 'Reject the Marina', de: 'Marina ablehnen' },
+        effects: { budget: -20, happiness: -5, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Küçültülmüş Marinayı Onayla', en: 'Approve a Scaled-Down Marina', de: 'Kleinere Marina genehmigen' },
+        effects: { budget: +60, happiness: +10, cleanliness: -10 }
+      }
+    ]
+  },
+
+  // --- RUHR AREA (RUHRGEBIET) ---
+  {
+    id: 'ruhr-river-cleanup',
+    regionId: 'ruhrgebiet',
+    title: { tr: 'Emscher Nehri Islahı', en: 'Emscher River Restoration', de: 'Renaturierung der Emscher' },
+    description: { tr: 'On yıllarca akan sanayi atığı Emscher\'i açık bir lağıma çevirdi; şimdi ıslah projesi masada.', en: 'Decades of industrial sewage turned the Emscher into an open drain; a restoration project is now on the table.', de: 'Jahrzehntelange Industrieabwässer verwandelten die Emscher in einen offenen Kanal; nun steht ein Renaturierungsprojekt zur Debatte.' },
+    choices: [
+      {
+        text: { tr: 'Tam Islahı Finanse Et', en: 'Fund the Full Restoration', de: 'Vollständige Renaturierung finanzieren' },
+        effects: { budget: -160, happiness: +15, cleanliness: +25 }
+      },
+      {
+        text: { tr: 'Sadece En Kötü Kesimleri Onar', en: 'Patch Only the Worst Sections', de: 'Nur die schlimmsten Abschnitte ausbessern' },
+        effects: { budget: -50, happiness: +5, cleanliness: +8 }
+      }
+    ]
+  },
+  {
+    id: 'ruhr-coal-closure',
+    regionId: 'ruhrgebiet',
+    title: { tr: 'Kömür Santralinin Kapatılması', en: 'Closing the Coal Plant', de: 'Stilllegung des Kohlekraftwerks' },
+    description: { tr: 'Bölgenin son kömür santrali hem yaşlanıyor hem kirletiyor, ama aynı zamanda büyük bir işveren.', en: 'The region\'s last coal plant is aging and polluting, but it\'s also a major employer.', de: 'Das letzte Kohlekraftwerk der Region altert und verschmutzt, ist aber auch ein bedeutender Arbeitgeber.' },
+    choices: [
+      {
+        text: { tr: 'Kapat ve İşçileri Yeniden Eğit', en: 'Shut It Down, Retrain Workers', de: 'Schließen und Arbeiter umschulen' },
+        effects: { budget: -120, happiness: -10, cleanliness: +25 }
+      },
+      {
+        text: { tr: 'Birkaç Yıl Daha Çalıştır', en: 'Keep It Running a Few More Years', de: 'Noch ein paar Jahre weiterlaufen lassen' },
+        effects: { budget: +70, happiness: +10, cleanliness: -20 }
+      }
+    ]
+  },
+  {
+    id: 'ruhr-brownfield',
+    regionId: 'ruhrgebiet',
+    title: { tr: 'Terk Edilmiş Çelik Fabrikası', en: 'The Abandoned Steelworks', de: 'Das stillgelegte Stahlwerk' },
+    description: { tr: 'Şehir merkezinde kirlenmiş, harap bir çelik fabrikası duruyor — yeniden mi geliştirilsin, miras olarak mı korunsun?', en: 'A contaminated, derelict steelworks sits in the middle of town — redevelop it, or preserve it as heritage?', de: 'Mitten in der Stadt steht ein verseuchtes, verlassenes Stahlwerk — neu entwickeln oder als Denkmal erhalten?' },
+    choices: [
+      {
+        text: { tr: 'Arındır ve Yeniden Geliştir', en: 'Decontaminate and Redevelop', de: 'Sanieren und neu entwickeln' },
+        effects: { budget: -110, happiness: +10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Sanayi Mirası Olarak Koru', en: 'Preserve It as Industrial Heritage', de: 'Als Industriedenkmal erhalten' },
+        effects: { budget: -20, happiness: +5, cleanliness: -5 }
+      }
+    ]
+  },
+  {
+    id: 'ruhr-smog-alert',
+    regionId: 'ruhrgebiet',
+    title: { tr: 'Kış Dumanı Alarmı', en: 'Winter Smog Alert', de: 'Winter-Smogalarm' },
+    description: { tr: 'Ruhr vadisi üzerinde sıkışan durgun kış havası kirliliği alarm seviyesine taşıdı.', en: 'Stagnant winter air trapped over the Ruhr valley has pushed pollution to alarming levels.', de: 'Stehende Winterluft über dem Ruhrtal hat die Verschmutzung auf alarmierende Werte getrieben.' },
+    choices: [
+      {
+        text: { tr: 'Geçici Trafik Kısıtlaması Getir', en: 'Impose Temporary Driving Restrictions', de: 'Vorübergehende Fahrverbote verhängen' },
+        effects: { budget: -30, happiness: -15, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Sadece Halk Sağlığı Uyarısı Yap', en: 'Issue a Public Health Warning Only', de: 'Nur eine Gesundheitswarnung ausgeben' },
+        effects: { happiness: -5, cleanliness: -5 }
+      }
+    ]
+  },
+
+  // --- RHINE-MAIN (RHEIN-MAIN) ---
+  {
+    id: 'rheinmain-airport',
+    regionId: 'rheinmain',
+    title: { tr: 'Havalimanı Pisti Genişletmesi', en: 'Airport Runway Expansion', de: 'Ausbau der Flughafen-Startbahn' },
+    description: { tr: 'Frankfurt Havalimanı\'na yeni bir pist lojistik ekonomisini güçlendirir ama çevre kasabaları gürültüye boğar.', en: 'A new runway at Frankfurt Airport would boost the logistics economy but blankets nearby towns in noise.', de: 'Eine neue Startbahn am Frankfurter Flughafen würde die Logistikwirtschaft stärken, aber die umliegenden Orte in Lärm hüllen.' },
+    choices: [
+      {
+        text: { tr: 'Genişletmeyi Onayla', en: 'Approve the Expansion', de: 'Ausbau genehmigen' },
+        effects: { budget: +140, happiness: -20, cleanliness: -10 }
+      },
+      {
+        text: { tr: 'Reddet, Sakinleri Koru', en: 'Reject It, Protect Residents', de: 'Ablehnen, Anwohner schützen' },
+        effects: { budget: -30, happiness: +15, cleanliness: +5 }
+      }
+    ]
+  },
+  {
+    id: 'rheinmain-rhine-spill',
+    regionId: 'rheinmain',
+    title: { tr: 'Ren Nehri\'nde Kimyasal Sızıntı', en: 'Chemical Spill in the Rhine', de: 'Chemieunfall im Rhein' },
+    description: { tr: 'Bir kimya fabrikasındaki sızıntı Ren Nehri\'ni kirletti, aşağı yöndeki içme suyu kaynaklarını tehdit ediyor.', en: 'A chemical plant leak has tainted the Rhine, threatening drinking water intakes downstream.', de: 'Ein Leck in einer Chemiefabrik hat den Rhein verunreinigt und bedroht die Trinkwasserentnahme flussabwärts.' },
+    choices: [
+      {
+        text: { tr: 'Acil Kapatma ve Temizlik', en: 'Emergency Shutdown and Cleanup', de: 'Notabschaltung und Reinigung' },
+        effects: { budget: -130, happiness: +10, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Seyreltip Sessizce İzle', en: 'Dilute and Monitor Quietly', de: 'Verdünnen und still überwachen' },
+        effects: { budget: -20, happiness: -15, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'rheinmain-banking-energy',
+    regionId: 'rheinmain',
+    title: { tr: 'Bankacılık Kulelerinin Enerji Açlığı', en: 'The Banking Towers\' Energy Hunger', de: 'Der Energiehunger der Bankentürme' },
+    description: { tr: 'Frankfurt\'un gökdelen bankaları ve veri merkezleri gece gündüz devasa miktarda enerji çekiyor.', en: 'Frankfurt\'s skyscraper banks and data centers draw enormous power around the clock.', de: 'Frankfurts Bankentürme und Rechenzentren verbrauchen rund um die Uhr enorme Mengen an Strom.' },
+    choices: [
+      {
+        text: { tr: 'Kulelere Yeşil Enerji Zorunluluğu Getir', en: 'Mandate Green Energy for the Towers', de: 'Grünen Strom für die Türme vorschreiben' },
+        effects: { budget: -70, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Piyasaya Bırak', en: 'Leave It to the Market', de: 'Dem Markt überlassen' },
+        effects: { budget: +50, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'rheinmain-traffic',
+    regionId: 'rheinmain',
+    title: { tr: 'Frankfurt Çevresinde Trafik Tıkanıklığı', en: 'Gridlock Around Frankfurt', de: 'Stau rund um Frankfurt' },
+    description: { tr: 'Otoyol çevre yolundaki işe gidiş-geliş trafiği artık günlük bir tıkanıklığa ve büyüyen bir emisyon kaynağına dönüştü.', en: 'Commuter traffic on the ring autobahn has become a daily gridlock and a growing source of emissions.', de: 'Der Pendlerverkehr auf dem Autobahnring ist zu einem täglichen Stau und einer wachsenden Emissionsquelle geworden.' },
+    choices: [
+      {
+        text: { tr: 'Banliyö Trenine Yatırım Yap', en: 'Invest in Commuter Rail', de: 'In den Pendlerzug investieren' },
+        effects: { budget: -100, happiness: +15, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'Otoyolu Genişlet', en: 'Widen the Autobahn Instead', de: 'Stattdessen die Autobahn verbreitern' },
+        effects: { budget: -140, happiness: +5, cleanliness: -15 }
+      }
+    ]
+  },
+
+  // --- BAVARIA (BAYERN) ---
+  {
+    id: 'bayern-glacier',
+    regionId: 'bayern',
+    title: { tr: 'Alp Buzulları Eriyor', en: 'The Alpine Glaciers Are Melting', de: 'Die Alpengletscher schmelzen' },
+    description: { tr: 'Küçülen bir buzul, bir kayak merkezini daha fazla yapay kar üretmeye zorluyor ve bu da dağ derelerini kurutuyor.', en: 'A shrinking glacier is forcing a ski resort to make more artificial snow, draining mountain streams.', de: 'Ein schrumpfender Gletscher zwingt ein Skigebiet zu mehr Kunstschnee, was die Bergbäche austrocknet.' },
+    choices: [
+      {
+        text: { tr: 'Kar Yapımını Sınırla', en: 'Limit the Snowmaking', de: 'Beschneiung begrenzen' },
+        effects: { budget: -40, happiness: -10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Tesisin Su Çekmeye Devam Etmesine İzin Ver', en: 'Let the Resort Keep Pumping Water', de: 'Skigebiet weiter Wasser pumpen lassen' },
+        effects: { budget: +60, happiness: +10, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'bayern-oktoberfest-waste',
+    regionId: 'bayern',
+    title: { tr: 'Oktoberfest Çöp Krizi', en: 'Oktoberfest Waste Crisis', de: 'Müllkrise beim Oktoberfest' },
+    description: { tr: 'Milyonlarca festival ziyaretçisi her yıl Theresienwiese\'yi çöpe boğuyor.', en: 'Millions of festival visitors bury the Theresienwiese in waste every year.', de: 'Millionen Festivalbesucher hinterlassen jedes Jahr Müllberge auf der Theresienwiese.' },
+    choices: [
+      {
+        text: { tr: 'Düzgün Bir Temizlik Ekibi Finanse Et', en: 'Fund a Proper Cleanup Crew', de: 'Ein richtiges Reinigungsteam finanzieren' },
+        effects: { budget: -50, happiness: +10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Çöpü Satıcılara Bırak', en: 'Let Vendors Handle Their Own Trash', de: 'Müll den Standbetreibern überlassen' },
+        effects: { budget: +20, happiness: +5, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'bayern-dairy-farmland',
+    regionId: 'bayern',
+    title: { tr: 'Alp Çayırlarında Süt Sığırcılığı', en: 'Dairy Farming in the Alpine Meadows', de: 'Milchviehhaltung auf den Almwiesen' },
+    description: { tr: 'Yoğun süt sığırcılığından sızan atıklar, kartpostallık çayırları besleyen dağ derelerine karışıyor.', en: 'Runoff from intensive dairy farming is seeping into the mountain streams that feed the postcard-perfect meadows.', de: 'Abwässer aus der intensiven Milchviehhaltung sickern in die Bergbäche, die die malerischen Almwiesen speisen.' },
+    choices: [
+      {
+        text: { tr: 'Düşük Atıklı Tarımı Teşvik Et', en: 'Subsidize Low-Runoff Farming', de: 'Umweltschonende Landwirtschaft fördern' },
+        effects: { budget: -80, happiness: +5, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Çiftçilerin Eskisi Gibi Devam Etmesine İzin Ver', en: 'Let Farmers Continue As Is', de: 'Landwirte wie gewohnt weitermachen lassen' },
+        effects: { budget: +20, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'bayern-hydropower',
+    regionId: 'bayern',
+    title: { tr: 'Vadide Küçük Hidroelektrik Barajı', en: 'A Small Hydro Dam in the Valley', de: 'Ein kleines Wasserkraftwerk im Tal' },
+    description: { tr: 'Önerilen mini hidroelektrik baraj bir köyü elektriklendirir ama turistlerin balık tuttuğu bir alabalık deresini bozar.', en: 'A proposed micro-hydro dam would power a village but disrupt a trout stream that draws anglers.', de: 'Ein geplantes Mini-Wasserkraftwerk würde ein Dorf mit Strom versorgen, aber einen bei Anglern beliebten Forellenbach stören.' },
+    choices: [
+      {
+        text: { tr: 'Barajı İnşa Et', en: 'Build the Dam', de: 'Wasserkraftwerk bauen' },
+        effects: { budget: +40, happiness: -5, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'Dereyi Koru', en: 'Protect the Stream Instead', de: 'Stattdessen den Bach schützen' },
+        effects: { budget: -30, happiness: +10, cleanliness: +5 }
+      }
+    ]
+  },
+
+  // --- BADEN-WÜRTTEMBERG ---
+  {
+    id: 'bw-auto-emissions',
+    regionId: 'badenwuerttemberg',
+    title: { tr: 'Otomotiv Emisyon Skandalı', en: 'The Auto Emissions Scandal', de: 'Der Abgasskandal' },
+    description: { tr: 'Yerel bir otomobil üreticisinin emisyon testlerini atlattığı ortaya çıktı, sektörün eski dizel skandalını anımsatıyor.', en: 'A local automaker is caught skirting emissions tests, echoing the industry\'s old diesel scandal.', de: 'Ein örtlicher Autohersteller wird beim Umgehen von Abgastests erwischt — eine Erinnerung an den alten Dieselskandal der Branche.' },
+    choices: [
+      {
+        text: { tr: 'Ağır Para Cezası Kes ve Geri Çağırmayı Zorla', en: 'Fine It Heavily, Force a Recall', de: 'Hohe Strafe verhängen und Rückruf erzwingen' },
+        effects: { budget: +60, happiness: +5, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Sessizce Uzlaş', en: 'Negotiate a Quiet Settlement', de: 'Einen stillen Vergleich aushandeln' },
+        effects: { budget: +100, happiness: -15, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'bw-black-forest',
+    regionId: 'badenwuerttemberg',
+    title: { tr: 'Karaorman\'da Kesim Tartışması', en: 'Logging Dispute in the Black Forest', de: 'Streit um die Abholzung im Schwarzwald' },
+    description: { tr: 'Bir kereste şirketi Karaorman\'da genişletilmiş kesim hakları istiyor.', en: 'A timber company wants expanded logging rights in the Black Forest.', de: 'Ein Holzunternehmen fordert erweiterte Abholzungsrechte im Schwarzwald.' },
+    choices: [
+      {
+        text: { tr: 'Yaşlı Ormanı Koru', en: 'Protect the Old-Growth Forest', de: 'Alten Baumbestand schützen' },
+        effects: { budget: -30, happiness: +10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Sınırlı Kesime İzin Ver', en: 'Approve Limited Logging', de: 'Begrenzte Abholzung genehmigen' },
+        effects: { budget: +70, happiness: -10, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'bw-stuttgart-smog',
+    regionId: 'badenwuerttemberg',
+    title: { tr: 'Stuttgart Çanağında Hava Kirliliği', en: 'Air Pollution in the Stuttgart Basin', de: 'Luftverschmutzung im Stuttgarter Kessel' },
+    description: { tr: 'Stuttgart\'ın vadi coğrafyası egzoz gazlarını hapsediyor ve şehir hava kalitesi sınırlarını defalarca aştı.', en: 'Stuttgart\'s basin-shaped valley traps exhaust fumes, and the city has repeatedly broken air-quality limits.', de: 'Der Kessel von Stuttgart hält die Abgase gefangen, und die Stadt hat wiederholt die Luftqualitätsgrenzwerte überschritten.' },
+    choices: [
+      {
+        text: { tr: 'Düşük Emisyon Bölgesi Getir', en: 'Introduce a Low-Emission Zone', de: 'Umweltzone einführen' },
+        effects: { budget: -50, happiness: -10, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Harekete Geçmeyi Bir Yıl Ertele', en: 'Delay Action Another Year', de: 'Maßnahmen um ein Jahr verschieben' },
+        effects: { budget: +10, happiness: +5, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'bw-ev-transition',
+    regionId: 'badenwuerttemberg',
+    title: { tr: 'Elektrikli Araca Geçişin Bedeli', en: 'The Cost of the EV Transition', de: 'Der Preis der E-Auto-Wende' },
+    description: { tr: 'İçten yanmalı motor parçaları üzerine kurulu küçük kasabalar, sektör elektrikli araca geçtikçe toplu işten çıkarmalarla karşı karşıya.', en: 'Small towns built around combustion-engine parts suppliers face mass layoffs as the industry electrifies.', de: 'Kleinstädte, die auf Zulieferern für Verbrennungsmotoren aufgebaut sind, drohen Massenentlassungen, während die Branche auf Elektroautos umstellt.' },
+    choices: [
+      {
+        text: { tr: 'Yeniden Eğitim Programlarını Finanse Et', en: 'Fund Retraining Programs', de: 'Umschulungsprogramme finanzieren' },
+        effects: { budget: -120, happiness: +15, cleanliness: +5 }
+      },
+      {
+        text: { tr: 'Piyasanın Halletmesine İzin Ver', en: 'Let the Market Sort It Out', de: 'Den Markt entscheiden lassen' },
+        effects: { budget: +30, happiness: -20 }
+      }
+    ]
+  },
+
+  // --- EASTERN GERMANY (OST) ---
+  {
+    id: 'ost-lignite-mine',
+    regionId: 'ost',
+    title: { tr: 'Linyit Madeninin Kapatılması', en: 'Phasing Out the Lignite Mine', de: 'Ausstieg aus dem Braunkohletagebau' },
+    description: { tr: 'Bölgenin devasa linyit madeni büyük bir işveren ama daha büyük bir kirletici; kapatma süreci işliyor.', en: 'The region\'s giant lignite mine is a major employer but an even bigger polluter, and the phase-out clock is ticking.', de: 'Der riesige Braunkohletagebau der Region ist ein bedeutender Arbeitgeber, aber ein noch größerer Umweltverschmutzer — die Ausstiegsuhr tickt.' },
+    choices: [
+      {
+        text: { tr: 'Kapatmayı Hızlandır', en: 'Accelerate the Phase-Out', de: 'Ausstieg beschleunigen' },
+        effects: { budget: -100, happiness: -20, cleanliness: +25 }
+      },
+      {
+        text: { tr: 'İşleri Korumak İçin Ertele', en: 'Delay It to Protect Jobs', de: 'Verzögern, um Arbeitsplätze zu schützen' },
+        effects: { budget: +80, happiness: +10, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'ost-population-decline',
+    regionId: 'ost',
+    title: { tr: 'Gençlerin Göçü', en: 'The Exodus of the Young', de: 'Die Abwanderung der Jungen' },
+    description: { tr: 'Gençler batıdaki şehirlere göç etmeye devam ediyor, geriye yaşlanan bir nüfus ve daralan bir bütçe kalıyor.', en: 'Young people keep leaving for western cities, leaving behind an aging population and a shrinking budget.', de: 'Junge Menschen ziehen weiterhin in westliche Städte, zurück bleiben eine alternde Bevölkerung und ein schrumpfendes Budget.' },
+    choices: [
+      {
+        text: { tr: 'Yerel İş ve Konuta Yatırım Yap', en: 'Invest in Local Jobs and Housing', de: 'In lokale Jobs und Wohnraum investieren' },
+        effects: { budget: -90, happiness: +15 }
+      },
+      {
+        text: { tr: 'Düşüşü Kabul Et, Hizmetleri Kıs', en: 'Accept the Decline, Cut Services', de: 'Rückgang akzeptieren, Leistungen kürzen' },
+        effects: { budget: +40, happiness: -20 }
+      }
+    ]
+  },
+  {
+    id: 'ost-solar-farm-land',
+    regionId: 'ost',
+    title: { tr: 'Eski Maden Arazisine Güneş Çiftliği', en: 'A Solar Farm on Former Mine Land', de: 'Solarpark auf ehemaligem Bergbaugelände' },
+    description: { tr: 'Islah edilmiş bir açık maden sahası dev bir güneş çiftliğine ev sahipliği yapabilir — ya da sulak alana dönüştürülebilir.', en: 'A reclaimed strip-mine site could host a huge solar farm — or be restored to wetland habitat instead.', de: 'Eine rekultivierte Tagebaufläche könnte einen riesigen Solarpark beherbergen — oder stattdessen zu einem Feuchtgebiet renaturiert werden.' },
+    choices: [
+      {
+        text: { tr: 'Güneş Çiftliğini Kur', en: 'Build the Solar Farm', de: 'Solarpark bauen' },
+        effects: { budget: +50, happiness: +5, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Sulak Alana Dönüştür', en: 'Restore It to Wetland', de: 'Zu Feuchtgebiet renaturieren' },
+        effects: { budget: -60, happiness: +10, cleanliness: +20 }
+      }
+    ]
+  },
+  {
+    id: 'ost-heating-subsidy',
+    regionId: 'ost',
+    title: { tr: 'Isınma Yardımı Krizi', en: 'The Heating Subsidy Crisis', de: 'Die Heizkostenkrise' },
+    description: { tr: 'Eski kömürlü bölgesel ısıtma şebekesinin gaza dönüştürülmesi düşük gelirli hanelerin faturalarını fırlattı.', en: 'Converting the old coal-fired district heating network to gas has spiked bills for low-income households.', de: 'Die Umstellung des alten kohlebefeuerten Fernwärmenetzes auf Gas hat die Rechnungen einkommensschwacher Haushalte in die Höhe getrieben.' },
+    choices: [
+      {
+        text: { tr: 'Hane Halkının Isınma Faturalarını Sübvanse Et', en: 'Subsidize Households\' Heating Bills', de: 'Heizkosten der Haushalte subventionieren' },
+        effects: { budget: -110, happiness: +20 }
+      },
+      {
+        text: { tr: 'Fiyatları Olduğu Gibi Bırak', en: 'Let Prices Stand', de: 'Preise unverändert lassen' },
+        effects: { budget: +20, happiness: -25 }
+      }
+    ]
+  },
+
+  // --- SCOTLAND ---
+  {
+    id: 'scotland-highland-wind',
+    regionId: 'scotland',
+    title: { tr: 'Yayla Rüzgar Çiftliği Tartışması', en: 'Highland Wind Farm Dispute', de: 'Streit um den Windpark im Hochland' },
+    description: { tr: 'Manzaralı bir vadi için önerilen rüzgar çiftliği temiz enerji üretir ama turistlerin geldiği manzarayı değiştirir.', en: 'A wind farm proposed for a scenic glen would generate clean power but change the view tourists come for.', de: 'Ein für ein malerisches Tal geplanter Windpark würde sauberen Strom erzeugen, aber die Aussicht verändern, wegen der Touristen kommen.' },
+    choices: [
+      {
+        text: { tr: 'Rüzgar Çiftliğini Onayla', en: 'Approve the Wind Farm', de: 'Windpark genehmigen' },
+        effects: { budget: +90, happiness: -10, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Manzaralı Vadiyi Koru', en: 'Protect the Scenic Glen', de: 'Malerisches Tal schützen' },
+        effects: { budget: -30, happiness: +10, cleanliness: +5 }
+      }
+    ]
+  },
+  {
+    id: 'scotland-salmon-farming',
+    regionId: 'scotland',
+    title: { tr: 'Somon Çiftliği Kirliliği', en: 'Salmon Farm Pollution', de: 'Verschmutzung durch Lachsfarmen' },
+    description: { tr: 'Kıyı somon çiftliklerindeki bit ilaçları ve atıklar yabani balık stoklarına zarar veriyor.', en: 'Sea-lice treatments and waste from coastal salmon farms are damaging wild fish stocks.', de: 'Läusebehandlungen und Abfälle aus küstennahen Lachsfarmen schädigen die Wildfischbestände.' },
+    choices: [
+      {
+        text: { tr: 'Çiftlik Düzenlemelerini Sıkılaştır', en: 'Tighten Farm Regulations', de: 'Vorschriften für Farmen verschärfen' },
+        effects: { budget: -40, happiness: -10, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Sektörün Kendi Kendini Denetlemesine İzin Ver', en: 'Let the Industry Self-Regulate', de: 'Branche sich selbst regulieren lassen' },
+        effects: { budget: +60, happiness: +5, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'scotland-ferry-lifeline',
+    regionId: 'scotland',
+    title: { tr: 'Ada Feribot Hattı Krizi', en: 'The Island Ferry Lifeline', de: 'Die Fährverbindung zur Insel' },
+    description: { tr: 'Eskiyen bir feribot, uzak bir ada topluluğunun tek yaşam hattı ve sürekli arızalanıyor.', en: 'An aging ferry is the only lifeline for a remote island community, and it keeps breaking down.', de: 'Eine alternde Fähre ist die einzige Lebensader einer abgelegenen Inselgemeinde und fällt ständig aus.' },
+    choices: [
+      {
+        text: { tr: 'Yeni Bir Feribot Finanse Et', en: 'Fund a New Ferry', de: 'Eine neue Fähre finanzieren' },
+        effects: { budget: -150, happiness: +20 }
+      },
+      {
+        text: { tr: 'Eskisini Yine Onar', en: 'Patch the Old One Up Again', de: 'Die alte wieder reparieren' },
+        effects: { budget: -30, happiness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'scotland-rewilding',
+    regionId: 'scotland',
+    title: { tr: 'Yaylanın Yeniden Vahşileştirilmesi', en: 'Rewilding the Highlands', de: 'Wiederverwilderung des Hochlands' },
+    description: { tr: 'Doğa koruma savunucuları, şu anda koyunların otladığı çıplak tepelere yerli ormanın geri getirilmesini istiyor.', en: 'Conservationists want to reintroduce native forest to bare hillsides currently grazed by sheep.', de: 'Naturschützer wollen einheimischen Wald auf kahle Hänge zurückbringen, die derzeit von Schafen beweidet werden.' },
+    choices: [
+      {
+        text: { tr: 'Yeniden Vahşileştirme Projesini Destekle', en: 'Back the Rewilding Project', de: 'Wiederverwilderungsprojekt unterstützen' },
+        effects: { budget: -50, happiness: -5, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Koyun Çiftçiliğinin Geçimini Koru', en: 'Protect Sheep Farming Livelihoods', de: 'Lebensgrundlage der Schafzüchter schützen' },
+        effects: { budget: +30, happiness: +10, cleanliness: -5 }
+      }
+    ]
+  },
+
+  // --- NORTHERN ENGLAND ---
+  {
+    id: 'ne-shipyard-legacy',
+    regionId: 'northern-england',
+    title: { tr: 'Tersane Mirası Kirliliği', en: 'The Shipyard\'s Toxic Legacy', de: 'Das toxische Erbe der Werft' },
+    description: { tr: 'Kapanmış bir Tyneside tersanesi, nehir kıyısı topraklarında on yıllarca süren ağır metal kirliliği bıraktı.', en: 'A closed Tyneside shipyard has left decades of heavy-metal contamination in the riverbank soil.', de: 'Eine geschlossene Werft am Tyne hat jahrzehntelange Schwermetallbelastung im Uferboden hinterlassen.' },
+    choices: [
+      {
+        text: { tr: 'Tam Bir Arındırmayı Finanse Et', en: 'Fund a Full Decontamination', de: 'Vollständige Sanierung finanzieren' },
+        effects: { budget: -140, happiness: +10, cleanliness: +25 }
+      },
+      {
+        text: { tr: 'Çevresini Çevir ve Bırak', en: 'Fence It Off and Leave It', de: 'Absperren und liegen lassen' },
+        effects: { budget: -10, happiness: -10, cleanliness: -5 }
+      }
+    ]
+  },
+  {
+    id: 'ne-steel-town',
+    regionId: 'northern-england',
+    title: { tr: 'Çelik Fabrikasının Kapanma Tehdidi', en: 'The Steelworks Closure Threat', de: 'Die drohende Stahlwerksschließung' },
+    description: { tr: 'Zorlanan bir çelik fabrikası kapanma tehdidiyle karşı karşıya ve etrafında kurulu kasabayı çökertebilir.', en: 'A struggling steel plant threatens to close, gutting the town built around it.', de: 'Ein angeschlagenes Stahlwerk droht zu schließen und würde die um es herum gewachsene Stadt ins Mark treffen.' },
+    choices: [
+      {
+        text: { tr: 'Açık Kalması İçin Sübvanse Et', en: 'Subsidize It to Keep It Open', de: 'Subventionieren, um es offen zu halten' },
+        effects: { budget: -130, happiness: +20, cleanliness: -15 }
+      },
+      {
+        text: { tr: 'Kapanmasına İzin Ver, İşçileri Eğit', en: 'Let It Close, Retrain Workers', de: 'Schließen lassen, Arbeiter umschulen' },
+        effects: { budget: -40, happiness: -15, cleanliness: +15 }
+      }
+    ]
+  },
+  {
+    id: 'ne-river-tyne',
+    regionId: 'northern-england',
+    title: { tr: 'Tyne Nehri\'nin Temizlenmesi', en: 'Cleaning Up the River Tyne', de: 'Die Reinigung des Flusses Tyne' },
+    description: { tr: 'Tersaneler kapandıktan yıllar sonra Tyne Nehri somonların dönebileceği kadar iyileşti — ama izleme bütçesi tehlikede.', en: 'Years after the shipyards closed, the River Tyne has recovered enough for salmon to return — but the monitoring budget is at risk.', de: 'Jahre nach der Schließung der Werften hat sich der Tyne so weit erholt, dass Lachse zurückkehren — doch das Budget für die Überwachung ist gefährdet.' },
+    choices: [
+      {
+        text: { tr: 'Su Kalitesi İzlemeyi Finanse Etmeye Devam Et', en: 'Keep Funding Water Quality Monitoring', de: 'Gewässerüberwachung weiter finanzieren' },
+        effects: { budget: -50, happiness: +5, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'İzleme Bütçesini Kes', en: 'Cut the Monitoring Budget', de: 'Überwachungsbudget kürzen' },
+        effects: { budget: +30, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'ne-flood-defense',
+    regionId: 'northern-england',
+    title: { tr: 'Yorkshire\'da Sel Tehlikesi', en: 'Flood Danger in Yorkshire', de: 'Hochwassergefahr in Yorkshire' },
+    description: { tr: 'Pennine\'lerdeki şiddetli yağışlar aşağıdaki vadi kasabalarının eskiyen sel savunmalarını sürekli zorluyor.', en: 'Heavy Pennine rainfall keeps overwhelming aging flood defenses in the valley towns below.', de: 'Starke Regenfälle in den Pennines überfordern immer wieder die alternden Hochwasserschutzanlagen der Talstädte.' },
+    choices: [
+      {
+        text: { tr: 'Sel Savunmalarını Yeniden İnşa Et', en: 'Rebuild the Flood Defenses', de: 'Hochwasserschutz neu aufbauen' },
+        effects: { budget: -120, happiness: +15, cleanliness: +5 }
+      },
+      {
+        text: { tr: 'Kum Torbaları ve Uyarılarla Yetin', en: 'Rely on Sandbags and Warnings', de: 'Auf Sandsäcke und Warnungen setzen' },
+        effects: { budget: -20, happiness: -15 }
+      }
+    ]
+  },
+
+  // --- MIDLANDS ---
+  {
+    id: 'midlands-car-plant',
+    regionId: 'midlands',
+    title: { tr: 'Otomobil Fabrikası Emisyonları', en: 'The Car Plant\'s Emissions', de: 'Die Abgase der Autofabrik' },
+    description: { tr: 'Büyük bir otomobil fabrikası bölgenin en büyük işvereni, aynı zamanda en büyük kirletici.', en: 'A major car plant is the region\'s biggest employer — and its biggest emitter.', de: 'Eine große Autofabrik ist der größte Arbeitgeber der Region — und ihr größter Verschmutzer.' },
+    choices: [
+      {
+        text: { tr: 'Daha Temiz Bir Üretim Hattı Zorunlu Kıl', en: 'Mandate a Cleaner Production Line', de: 'Saubere Produktionslinie vorschreiben' },
+        effects: { budget: -100, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Üretimi Olduğu Gibi Bırak', en: 'Leave Production As Is', de: 'Produktion unverändert lassen' },
+        effects: { budget: +50, happiness: +5, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'midlands-canal-legacy',
+    regionId: 'midlands',
+    title: { tr: 'Kanal Ağının Sanayi Mirası', en: 'The Canal Network\'s Industrial Legacy', de: 'Das industrielle Erbe des Kanalnetzes' },
+    description: { tr: 'Bölgenin tarihi kanalları hâlâ tabanlarında bir yüzyıllık sanayi tortusu taşıyor.', en: 'The region\'s historic canals still carry a century of industrial sediment on their beds.', de: 'Die historischen Kanäle der Region tragen noch immer ein Jahrhundert an industriellen Ablagerungen auf ihrem Grund.' },
+    choices: [
+      {
+        text: { tr: 'Kanalları Tara ve Islah Et', en: 'Dredge and Restore the Canals', de: 'Kanäle ausbaggern und sanieren' },
+        effects: { budget: -90, happiness: +10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Miras Merakı Olarak Bırak', en: 'Leave Them as a Heritage Curiosity', de: 'Als historische Kuriosität belassen' },
+        effects: { happiness: +5, cleanliness: -5 }
+      }
+    ]
+  },
+  {
+    id: 'midlands-foundry-closure',
+    regionId: 'midlands',
+    title: { tr: 'Döküm Fabrikasının Kapanması', en: 'The Foundry Closure', de: 'Die Schließung der Gießerei' },
+    description: { tr: 'Tarihi bir Black Country dökümhanesi yeni emisyon kurallarını karşılayamıyor ve kapanma tehlikesiyle karşı karşıya.', en: 'A historic Black Country foundry can\'t meet the new emissions rules and faces closure.', de: 'Eine historische Gießerei im Black Country kann die neuen Abgasvorschriften nicht erfüllen und steht vor der Schließung.' },
+    choices: [
+      {
+        text: { tr: 'Dönüştürmesine Yardım Et, Açık Kalsın', en: 'Help It Retrofit and Stay Open', de: 'Umrüstung unterstützen, offen halten' },
+        effects: { budget: -110, happiness: +15, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'Kapanmasına İzin Ver', en: 'Let It Close', de: 'Schließen lassen' },
+        effects: { budget: +20, happiness: -15, cleanliness: +15 }
+      }
+    ]
+  },
+  {
+    id: 'midlands-warehouse-sprawl',
+    regionId: 'midlands',
+    title: { tr: 'Deponun Yeşil Kuşağı İşgali', en: 'Warehouses Sprawl Onto the Green Belt', de: 'Lagerhallen breiten sich auf den Grüngürtel aus' },
+    description: { tr: 'E-ticaret depoları şehrin etrafındaki korunan yeşil kuşak arazisine yayılmaya devam ediyor.', en: 'E-commerce warehouses keep spreading onto protected green-belt land around the city.', de: 'E-Commerce-Lagerhallen breiten sich weiter auf geschütztes Grüngürtelland rund um die Stadt aus.' },
+    choices: [
+      {
+        text: { tr: 'Depolara İzin Ver (İş, Lojistik Merkezi)', en: 'Approve the Warehouses (Jobs, Logistics Hub)', de: 'Lagerhallen genehmigen (Jobs, Logistikzentrum)' },
+        effects: { budget: +110, happiness: -10, cleanliness: -15 }
+      },
+      {
+        text: { tr: 'Yeşil Kuşağı Koru', en: 'Protect the Green Belt', de: 'Grüngürtel schützen' },
+        effects: { budget: -30, happiness: +15, cleanliness: +10 }
+      }
+    ]
+  },
+
+  // --- WALES ---
+  {
+    id: 'wales-slate-quarry',
+    regionId: 'wales',
+    title: { tr: 'Terk Edilmiş Arduvaz Ocağı', en: 'The Abandoned Slate Quarry', de: 'Der stillgelegte Schieferbruch' },
+    description: { tr: 'Kullanılmayan bir arduvaz ocağı vadide bir yara gibi duruyor — arazi tamamen ıslah mı edilsin, yoksa sanayi mirası turizmine mi açılsın?', en: 'A disused slate quarry scars a valley — restore the land fully, or open it as an industrial-heritage tourist site?', de: 'Ein stillgelegter Schieferbruch hinterlässt eine Narbe im Tal — das Land vollständig renaturieren oder als Industriedenkmal für Touristen öffnen?' },
+    choices: [
+      {
+        text: { tr: 'Araziyi Tamamen Islah Et', en: 'Restore the Land Fully', de: 'Land vollständig renaturieren' },
+        effects: { budget: -70, happiness: +5, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Miras Turizm Alanı Olarak Aç', en: 'Open It as a Heritage Tourist Site', de: 'Als touristisches Denkmal öffnen' },
+        effects: { budget: +50, happiness: +10, cleanliness: -5 }
+      }
+    ]
+  },
+  {
+    id: 'wales-coal-valley',
+    regionId: 'wales',
+    title: { tr: 'Maden Vadisinde Çökme Riski', en: 'Subsidence in the Coal Valley', de: 'Bergsenkung im Kohletal' },
+    description: { tr: 'Eski bir maden vadisinin üzerindeki cüruf yığınları dengesiz ve aşağıdaki köyü tehdit ediyor.', en: 'Old slag heaps above a former mining valley are unstable and threaten the village below.', de: 'Alte Schlackenhalden über einem ehemaligen Bergbautal sind instabil und bedrohen das Dorf darunter.' },
+    choices: [
+      {
+        text: { tr: 'Cüruf Yığınlarını Sağlamlaştır', en: 'Stabilize the Slag Heaps', de: 'Schlackenhalden stabilisieren' },
+        effects: { budget: -100, happiness: +20, cleanliness: +5 }
+      },
+      {
+        text: { tr: 'Riskli Evleri Tahliye Et', en: 'Evacuate the At-Risk Homes Instead', de: 'Stattdessen gefährdete Häuser evakuieren' },
+        effects: { budget: -50, happiness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'wales-afforestation',
+    regionId: 'wales',
+    title: { tr: 'Ağaçlandırma mı Koyun Otlatma mı', en: 'Afforestation vs. Sheep Grazing', de: 'Aufforstung gegen Schafweide' },
+    description: { tr: 'Ulusal bir ağaçlandırma hedefi, tepe çiftliklerinin otlak arazisini yeni ormana dönüştürecek.', en: 'A national afforestation target would convert hill-farm grazing land into new forest.', de: 'Ein nationales Aufforstungsziel würde Weideland der Hügelbauern in neuen Wald verwandeln.' },
+    choices: [
+      {
+        text: { tr: 'Ağaçlandırmaya Öncelik Ver', en: 'Prioritize Afforestation', de: 'Aufforstung priorisieren' },
+        effects: { budget: -40, happiness: -15, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Çiftçilerin Otlak Arazisini Koru', en: 'Protect the Hill Farmers\' Grazing Land', de: 'Weideland der Hügelbauern schützen' },
+        effects: { budget: +20, happiness: +10, cleanliness: -5 }
+      }
+    ]
+  },
+  {
+    id: 'wales-hydro-valley',
+    regionId: 'wales',
+    title: { tr: 'Snowdonia\'da Hidroelektrik Planı', en: 'A Hydro Plan for Snowdonia', de: 'Ein Wasserkraftplan für Snowdonia' },
+    description: { tr: 'Snowdonia vadisindeki yeni bir hidroelektrik projesi temiz enerji vadediyor ama nadir bir habitatı sular altında bırakacak.', en: 'A new hydro scheme in a Snowdonia valley promises clean power but would flood a rare habitat.', de: 'Ein neues Wasserkraftprojekt in einem Snowdonia-Tal verspricht sauberen Strom, würde aber einen seltenen Lebensraum überfluten.' },
+    choices: [
+      {
+        text: { tr: 'Hidroelektrik Projesini İnşa Et', en: 'Build the Hydro Scheme', de: 'Wasserkraftprojekt bauen' },
+        effects: { budget: +50, happiness: -5, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'Bunun Yerine Habitatı Koru', en: 'Protect the Habitat Instead', de: 'Stattdessen den Lebensraum schützen' },
+        effects: { budget: -30, happiness: +10, cleanliness: +10 }
+      }
+    ]
+  },
+
+  // --- SOUTHERN ENGLAND ---
+  {
+    id: 'se-ulez',
+    regionId: 'southern-england',
+    title: { tr: 'Düşük Emisyon Bölgesi Genişletmesi', en: 'Low-Emission Zone Expansion', de: 'Ausweitung der Umweltzone' },
+    description: { tr: 'Şehrin düşük emisyon bölgesini genişletmek dumanı azaltır ama en çok eski araç sahiplerini vurur.', en: 'Expanding the city\'s low-emission zone would cut smog but hits owners of older cars hardest.', de: 'Die Ausweitung der städtischen Umweltzone würde den Smog verringern, träfe aber Besitzer älterer Autos am härtesten.' },
+    choices: [
+      {
+        text: { tr: 'Bölgeyi Genişlet', en: 'Expand the Zone', de: 'Zone ausweiten' },
+        effects: { budget: +40, happiness: -15, cleanliness: +25 }
+      },
+      {
+        text: { tr: 'Genişletmeyi Ertele', en: 'Hold Off on Expansion', de: 'Ausweitung zurückstellen' },
+        effects: { budget: -10, happiness: +10, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'se-thames-quality',
+    regionId: 'southern-england',
+    title: { tr: 'Thames Nehri\'ne Kanalizasyon Taşkını', en: 'Sewage Overflow Into the Thames', de: 'Abwasserüberlauf in die Themse' },
+    description: { tr: 'Viktorya dönemi kanalizasyon şebekesi her şiddetli yağmurda Thames Nehri\'ne taşıyor.', en: 'Aging Victorian-era sewers overflow into the Thames every time it rains heavily.', de: 'Die alternde viktorianische Kanalisation läuft bei jedem starken Regen in die Themse über.' },
+    choices: [
+      {
+        text: { tr: 'Kanalizasyon Yükseltmesini Finanse Et', en: 'Fund the Sewer Upgrade', de: 'Kanalisationsausbau finanzieren' },
+        effects: { budget: -170, happiness: +15, cleanliness: +25 }
+      },
+      {
+        text: { tr: 'Sadece En Kötü Taşkın Noktalarını Onar', en: 'Patch Only the Worst Overflow Points', de: 'Nur die schlimmsten Überlaufstellen ausbessern' },
+        effects: { budget: -50, cleanliness: +5 }
+      }
+    ]
+  },
+  {
+    id: 'se-green-belt-housing',
+    regionId: 'southern-england',
+    title: { tr: 'Yeşil Kuşakta Konut Baskısı', en: 'Housing Pressure on the Green Belt', de: 'Wohnungsdruck auf den Grüngürtel' },
+    description: { tr: 'Ciddi bir konut kıtlığı, geliştiricileri korunan yeşil kuşak arazisine göz dikmeye itiyor.', en: 'A severe housing shortage is pushing developers to eye protected green-belt land.', de: 'Ein schwerer Wohnungsmangel lässt Bauträger nach geschütztem Grüngürtelland verlangen.' },
+    choices: [
+      {
+        text: { tr: 'Sınırlı Yeşil Kuşak Gelişimine İzin Ver', en: 'Allow Limited Green-Belt Development', de: 'Begrenzte Bebauung des Grüngürtels erlauben' },
+        effects: { budget: +130, happiness: -10, cleanliness: -15 }
+      },
+      {
+        text: { tr: 'Yeşil Kuşağı Koru, Yoğun İnşa Et', en: 'Protect the Green Belt, Build Densely Instead', de: 'Grüngürtel schützen, stattdessen dicht bauen' },
+        effects: { budget: -40, happiness: +10, cleanliness: +10 }
+      }
+    ]
+  },
+  {
+    id: 'se-financial-district-energy',
+    regionId: 'southern-england',
+    title: { tr: 'Finans Merkezinin Enerji Talebi', en: 'The Financial District\'s Energy Demands', de: 'Der Energiebedarf des Finanzviertels' },
+    description: { tr: 'Şehrin cam ofis kuleleri, gece gündüz süren işlem salonları ve sunucular için devasa enerji talep ediyor.', en: 'The city\'s glass office towers demand enormous power for round-the-clock trading floors and servers.', de: 'Die gläsernen Bürotürme der Stadt benötigen enorme Energiemengen für rund um die Uhr laufende Handelsräume und Server.' },
+    choices: [
+      {
+        text: { tr: 'Verimlilik Dönüşümünü Zorunlu Kıl', en: 'Mandate Efficiency Retrofits', de: 'Effizienzsanierungen vorschreiben' },
+        effects: { budget: -90, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Kulelerin Kendi Enerjisini Yönetmesine İzin Ver', en: 'Leave Towers to Manage Their Own Energy', de: 'Türme ihre eigene Energie verwalten lassen' },
+        effects: { budget: +60, cleanliness: -10 }
+      }
+    ]
+  },
+
+  // --- NORTHERN IRELAND ---
+  {
+    id: 'ni-shipyard-titanic',
+    regionId: 'northern-ireland',
+    title: { tr: 'Tersane Mirasının Yeniden Kullanımı', en: 'Repurposing the Shipyard\'s Legacy', de: 'Die Nachnutzung des Werftgeländes' },
+    description: { tr: 'Titanic\'i inşa eden tarihi tersane büyük ölçüde atıl duruyor — alan yeniden mi geliştirilsin, miras olarak mı korunsun?', en: 'The historic shipyard that built the Titanic sits mostly idle — redevelop the site, or preserve it as heritage?', de: 'Die historische Werft, in der die Titanic gebaut wurde, liegt größtenteils brach — das Gelände neu entwickeln oder als Denkmal erhalten?' },
+    choices: [
+      {
+        text: { tr: 'Yeşil Sanayi İçin Yeniden Geliştir', en: 'Redevelop for Green Industry', de: 'Für grüne Industrie neu entwickeln' },
+        effects: { budget: -100, happiness: +10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Miras/Turizm Alanı Olarak Koru', en: 'Preserve It as a Heritage/Tourist Site', de: 'Als Denkmal und Touristenziel erhalten' },
+        effects: { budget: +40, happiness: +15 }
+      }
+    ]
+  },
+  {
+    id: 'ni-lough-neagh',
+    regionId: 'northern-ireland',
+    title: { tr: 'Lough Neagh\'de Yosun Patlaması', en: 'Algae Bloom in Lough Neagh', de: 'Algenblüte im Lough Neagh' },
+    description: { tr: 'Tarımsal akış, bölgenin en büyük gölünde zehirli bir yosun patlamasını tetikledi.', en: 'Agricultural runoff has triggered a toxic algae bloom across the region\'s largest lake.', de: 'Landwirtschaftliche Abflüsse haben eine giftige Algenblüte im größten See der Region ausgelöst.' },
+    choices: [
+      {
+        text: { tr: 'Tarımsal Akışı Sıkı Denetle', en: 'Regulate Farm Runoff Strictly', de: 'Landwirtschaftliche Abflüsse streng regulieren' },
+        effects: { budget: -80, happiness: -15, cleanliness: +25 }
+      },
+      {
+        text: { tr: 'Çiftçilere Sadece Gönüllü Rehberlik Sun', en: 'Offer Farmers Voluntary Guidance Only', de: 'Landwirten nur freiwillige Beratung anbieten' },
+        effects: { budget: -10, happiness: +5, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'ni-peace-investment',
+    regionId: 'northern-ireland',
+    title: { tr: 'Barış Sonrası Kalkınma Yatırımı', en: 'Post-Peace Regeneration Investment', de: 'Investitionen in die Nachfriedensregion' },
+    description: { tr: 'Uluslararası kalkınma fonu mevcut, ama ancak hazinenin zar zor karşılayabileceği yerel yatırımla eşleştirilirse.', en: 'International regeneration funding is available, but only if matched by local investment the treasury can barely afford.', de: 'Internationale Fördermittel für den Wiederaufbau stehen bereit, aber nur bei einer lokalen Kofinanzierung, die die Kasse kaum stemmen kann.' },
+    choices: [
+      {
+        text: { tr: 'Fonu Eşleştir', en: 'Match the Funding', de: 'Kofinanzierung leisten' },
+        effects: { budget: -120, happiness: +20, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'Reddet, Bütçe Çok Sıkı', en: 'Decline, the Budget Is Too Tight', de: 'Ablehnen, Budget zu knapp' },
+        effects: { budget: +10, happiness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'ni-dairy-runoff',
+    regionId: 'northern-ireland',
+    title: { tr: 'Tarımsal Akışın Nehirlere Etkisi', en: 'Agricultural Runoff Into the Rivers', de: 'Landwirtschaftliche Abflüsse in die Flüsse' },
+    description: { tr: 'Yoğun süt sığırcılığı akıntısı kırsal nehirleri yosunla boğuyor ve balık stoklarını öldürüyor.', en: 'Intensive dairy farming runoff is choking rural rivers with algae and killing fish stocks.', de: 'Abflüsse aus der intensiven Milchviehhaltung ersticken ländliche Flüsse mit Algen und töten Fischbestände.' },
+    choices: [
+      {
+        text: { tr: 'Çiftlikler İçin Gübre Depolama Yükseltmesini Finanse Et', en: 'Fund Slurry Storage Upgrades for Farms', de: 'Gülle-Lagerung der Höfe modernisieren' },
+        effects: { budget: -90, happiness: -5, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Tarım Uygulamalarını Değiştirme', en: 'Leave Farming Practices Unchanged', de: 'Landwirtschaftliche Praktiken unverändert lassen' },
+        effects: { budget: +30, happiness: +5, cleanliness: -15 }
+      }
+    ]
   }
 ];
