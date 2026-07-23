@@ -16,7 +16,7 @@ I'm [**Ahmet**](https://github.com/ahmojunior), a student who loves coding.
 
 ## <div align="center">About the Project</div>
 
-**Green Turkiye** is a strategy game that aims to raise awareness about environmental pollution in Turkiye and its possible solutions.
+**Green Turkiye** is a strategy game that aims to raise awareness about environmental pollution in Turkiye, Germany and United Kingdom and their possible solutions.
 
 Players first select a **region** on the interactive map. Each region presents unique environmental challenges—from **landslides in the Black Sea** to **droughts in Central Anatolia**.
 
@@ -30,7 +30,7 @@ Can you save nature without bankrupting the region?
 Handle periodic **Event Nodes** (Crisis Indicators) that appear randomly across the map. Each node has a limited lifetime. If you ignore them, you'll face severe consequences!
 
 ### Authentic Regional Experience
-Explore an interactive, SVG-based map of **Turkey** divided into 7 distinct geographical regions. Face real-world environmental challenges specific to each location.
+Explore an interactive, SVG-based map of countries divided into regions. Face real-world enviromental challenges specific to each location.
 
 ### The Sustainability Trilemma
 Every choice matters. Players must choose the best course of action for regional incidents by considering the **strategic trade-offs**. You can also **invest** in special projects to grow your budget over time.
@@ -50,7 +50,7 @@ Built with the latest web technologies for maximum performance, fast build times
 Follow these steps to get the project up and running on your local machine.
 
 ### Prerequisites
-* Node.js (Latest LTS recommended)
+* [Node.js](https://nodejs.org/en/download/) 
 * npm, yarn, or pnpm
 
 ### Installation
@@ -81,7 +81,7 @@ Follow these steps to get the project up and running on your local machine.
 ## <div align="center">To-Do</div>
 
 - [x] ~~English Language Support~~
-- [ ] New Country Maps
+- [ ] ~~New Country Maps~~ (added Germany & UK)
 - [x] ~~Taxation 🤑🤑🤑~~
 - [ ] Mobile Optimization
 - [ ] Game Loop Improvements
@@ -90,12 +90,12 @@ Follow these steps to get the project up and running on your local machine.
 
 ## <div align="center">License</div>
 
-This project is licensed under the GNU Affero General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU Affero General Public License v3.0 | check [LICENSE](LICENSE) for details.
 
 <br />
 
 <div align="center">
   <i>This project includes images and/or vectors provided from <a href="https://www.vecteezy.com/">Vecteezy.com</a></i><br>
   <i>This project includes vectors of maps provided from <a href="https://www.simplemaps.com/">simplemaps.com</a></i><br>
-  <i>This project includes icons of countries provided from <b><a href="https://www.flaticon.com/">Flaticon</a></b> by <a href="https://www.flaticon.com/free-icons/germany">Three musketeers</a> and <a href="https://www.flaticon.com/free-icons/turkey">Ranah Pixel Studio</a></i><br>
+  <i>This project includes icons of country maps provided from <b><a href="https://www.flaticon.com/">Flaticon</a></b> by <a href="https://www.flaticon.com/free-icons/germany">Three Musketeers</a> and <a href="https://www.flaticon.com/free-icons/turkey">Ranah Pixel Studio</a></i><br>
 </div>
