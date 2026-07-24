@@ -81,7 +81,7 @@ Follow these steps to get the project up and running on your local machine.
 ## <div align="center">To-Do</div>
 
 - [x] ~~English Language Support~~
-- [ ] ~~New Country Maps~~ (added Germany & UK)
+- [x] ~~New Country Maps~~ (added Germany & UK)
 - [x] ~~Taxation 🤑🤑🤑~~
 - [ ] Mobile Optimization
 - [ ] Game Loop Improvements
