@@ -16,9 +16,9 @@ I'm [**Ahmet**](https://github.com/ahmojunior), a student who loves coding.
 
 ## <div align="center">About the Project</div>
 
-**Green Turkiye** is a strategy game that aims to raise awareness about environmental pollution in Turkiye, Germany and United Kingdom and their possible solutions.
+**Green Turkiye** is a strategy game that aims to raise awareness about environmental pollution and its possible solutions.
 
-Players first select a **region** on the interactive map. Each region presents unique environmental challenges—from **landslides in the Black Sea** to **droughts in Central Anatolia**.
+Players first select a **region** on the interactive map. Each region presents unique environmental challenges from **landslides in the Black Sea** to **droughts in Central Anatolia**.
 
 Once the game starts, you must react to **Event Nodes** that spawn periodically across the map to maintain regional stability. You will face the "Sustainability Trilemma," forcing you to choose the best course of action by balancing strategic trade-offs between **Budget**, **Public Happiness**, and **Environmental Health**.
 
