@@ -47,6 +47,7 @@ export const INITIAL_STATE: GameState = {
     sustainDays: 0,
     quests: [],
     questToast: null,
+    usedEventIds: [],
 };
 
 const createInitialQuests = (): QuestState[] =>
@@ -217,12 +218,26 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
             // Spawn a new crisis node (region frequency scales the odds).
             let newNodes = survivingNodes;
+            let newUsedEventIds = state.usedEventIds;
             if (!isGameOver) {
                 const spawnChance = TUNING.baseSpawnChance * (modifiers?.eventFrequencyMultiplier ?? 1);
                 if (Math.random() < spawnChance && newNodes.length < TUNING.maxNodes) {
                     const relevantEvents = EVENTS.filter(e => !e.regionId || e.regionId === state.regionId);
-                    if (relevantEvents.length > 0) {
-                        const randomEvent = relevantEvents[Math.floor(Math.random() * relevantEvents.length)];
+                    // Draw from the events not yet seen this cycle so the same crisis can't
+                    // resurface right away; once every relevant event has been drawn, the
+                    // bag reshuffles (starting fresh with just this draw) instead of the
+                    // pool going dry and starving the player of new content. The just-drawn
+                    // event is excluded from the reshuffled bag too, so a cycle boundary
+                    // can't produce the exact back-to-back repeat this is meant to prevent.
+                    const lastDrawnId = state.usedEventIds[state.usedEventIds.length - 1];
+                    const unseen = relevantEvents.filter(e => !state.usedEventIds.includes(e.id));
+                    const reshuffled = relevantEvents.filter(e => e.id !== lastDrawnId);
+                    const pool = unseen.length > 0 ? unseen : (reshuffled.length > 0 ? reshuffled : relevantEvents);
+                    if (pool.length > 0) {
+                        const randomEvent = pool[Math.floor(Math.random() * pool.length)];
+                        newUsedEventIds = unseen.length > 0
+                            ? [...state.usedEventIds, randomEvent.id]
+                            : [randomEvent.id];
                         let spawnX = 50;
                         let spawnY = 50;
 
@@ -253,6 +268,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
                 activeProjects: nextActiveProjects,
                 completedProjectIds: nextCompletedProjects,
                 activeNodes: newNodes,
+                usedEventIds: newUsedEventIds,
                 sustainDays: nextSustainDays,
                 quests: result.quests,
                 questToast: result.completedTitle ?? state.questToast,

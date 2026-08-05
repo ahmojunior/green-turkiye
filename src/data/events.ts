@@ -1340,5 +1340,703 @@ export const EVENTS: GameEvent[] = [
         effects: { budget: +30, happiness: +5, cleanliness: -15 }
       }
     ]
+  },
+
+  // ---------------------------------------------------------------------
+  // ADDITIONAL EVENTS — grows the no-repeat pool so crises don't feel
+  // like they're on a short loop over a long run.
+  // ---------------------------------------------------------------------
+
+  // --- Genel Olaylar (More Global Events) ---
+  {
+    id: 'urban-heatwave',
+    title: { tr: 'Kentsel Isı Dalgası', en: 'Urban Heatwave', de: 'Städtische Hitzewelle' },
+    description: { tr: 'Rekor sıcaklıklar şebekeyi zorluyor ve halk soğuma merkezleri talep ediyor.', en: 'Record heat is straining the power grid, and residents are demanding cooling centers.', de: 'Rekordhitze belastet das Stromnetz, und die Bevölkerung fordert Kühlzentren.' },
+    choices: [
+      {
+        text: { tr: 'Halka Açık Soğuma Merkezleri Aç', en: 'Open Public Cooling Centers', de: 'Öffentliche Kühlzentren eröffnen' },
+        effects: { budget: -60, happiness: +15 }
+      },
+      {
+        text: { tr: 'Enerji Tasarrufu Çağrısı Yap', en: 'Issue an Energy-Saving Appeal', de: 'Zum Energiesparen aufrufen' },
+        effects: { happiness: -10, cleanliness: +5 }
+      }
+    ]
+  },
+  {
+    id: 'microplastic-water',
+    title: { tr: 'İçme Suyunda Mikroplastik', en: 'Microplastics in the Drinking Water', de: 'Mikroplastik im Trinkwasser' },
+    description: { tr: 'Yeni bir çalışma musluk suyunda endişe verici düzeyde mikroplastik parçacığı buldu.', en: 'A new study has found worrying levels of microplastic particles in tap water.', de: 'Eine neue Studie hat besorgniserregende Mengen an Mikroplastikpartikeln im Leitungswasser gefunden.' },
+    choices: [
+      {
+        text: { tr: 'Gelişmiş Filtrasyona Yatırım Yap', en: 'Invest in Advanced Filtration', de: 'In fortschrittliche Filtration investieren' },
+        effects: { budget: -100, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Sonuçları Kamuoyuna Açıklama', en: "Don't Publicize the Results", de: 'Ergebnisse nicht veröffentlichen' },
+        effects: { happiness: +5, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'green-jobs-training',
+    title: { tr: 'Yeşil İş Eğitimi Talebi', en: 'A Call for Green Jobs Training', de: 'Forderung nach Ausbildung für grüne Jobs' },
+    description: { tr: 'İşsiz gençler yenilenebilir enerji sektöründe iş bulmak için eğitim programı talep ediyor.', en: 'Unemployed young people are demanding a training program to find jobs in the renewable energy sector.', de: 'Arbeitslose junge Menschen fordern ein Ausbildungsprogramm für Jobs im Sektor erneuerbare Energien.' },
+    choices: [
+      {
+        text: { tr: 'Programı Finanse Et', en: 'Fund the Program', de: 'Programm finanzieren' },
+        effects: { budget: -90, happiness: +20, cleanliness: +5 }
+      },
+      {
+        text: { tr: 'Özel Sektörün Öncülük Etmesini Bekle', en: 'Wait for the Private Sector to Lead', de: 'Auf die Privatwirtschaft warten' },
+        effects: { happiness: -10 }
+      }
+    ]
+  },
+
+  // --- Marmara (More) ---
+  {
+    id: 'marmara-earthquake-retrofit',
+    regionId: 'marmara',
+    title: { tr: 'Deprem Güçlendirme Tartışması', en: 'The Earthquake Retrofit Debate', de: 'Die Debatte um die Erdbebensicherung' },
+    description: { tr: 'Uzmanlar İstanbul\'daki binlerce binanın büyük depreme dayanamayacağını uyarıyor, ama güçlendirme maliyeti devasa.', en: "Experts warn thousands of Istanbul buildings won't survive the big one, but retrofitting costs are enormous.", de: 'Experten warnen, dass Tausende Gebäude in Istanbul dem großen Beben nicht standhalten würden, doch die Nachrüstung ist enorm teuer.' },
+    choices: [
+      {
+        text: { tr: 'Zorunlu Güçlendirmeyi Başlat', en: 'Launch Mandatory Retrofitting', de: 'Verpflichtende Nachrüstung einführen' },
+        effects: { budget: -180, happiness: +10 }
+      },
+      {
+        text: { tr: 'Gönüllü Teşvik Programı Sun', en: 'Offer a Voluntary Incentive Program', de: 'Freiwilliges Förderprogramm anbieten' },
+        effects: { budget: -50, happiness: -5 }
+      }
+    ]
+  },
+  {
+    id: 'marmara-bosphorus-traffic',
+    regionId: 'marmara',
+    title: { tr: 'Boğaz\'da Gemi Trafiği Kirliliği', en: 'Bosphorus Shipping Traffic Pollution', de: 'Schiffsverkehrsverschmutzung am Bosporus' },
+    description: { tr: 'Boğaz\'dan geçen yoğun tanker trafiği hem kaza riskini hem hava kirliliğini artırıyor.', en: 'Heavy tanker traffic through the Bosphorus is raising both accident risk and air pollution.', de: 'Der dichte Tankerverkehr durch den Bosporus erhöht sowohl das Unfallrisiko als auch die Luftverschmutzung.' },
+    choices: [
+      {
+        text: { tr: 'Trafik Kontrolünü Sıkılaştır', en: 'Tighten Traffic Control', de: 'Verkehrskontrolle verschärfen' },
+        effects: { budget: -40, happiness: +5, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Ticareti Aksatma', en: "Don't Disrupt Trade", de: 'Handel nicht stören' },
+        effects: { budget: +50, cleanliness: -10 }
+      }
+    ]
+  },
+
+  // --- Ege / Aegean (More) ---
+  {
+    id: 'aegean-beach-erosion',
+    regionId: 'aegean',
+    title: { tr: 'Kumsal Erozyonu', en: 'Beach Erosion', de: 'Strandabtragung' },
+    description: { tr: 'Aşırı otel inşaatı Ege kıyılarındaki kumsalları hızla eritiyor.', en: 'Overdevelopment of hotels is rapidly eroding beaches along the Aegean coast.', de: 'Übermäßiger Hotelbau lässt die Strände an der Ägäisküste rapide erodieren.' },
+    choices: [
+      {
+        text: { tr: 'Kıyı İnşaatını Sınırla', en: 'Restrict Coastal Construction', de: 'Küstenbebauung einschränken' },
+        effects: { budget: -50, happiness: -10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'İnşaata Devam Et', en: 'Let Construction Continue', de: 'Bau fortsetzen lassen' },
+        effects: { budget: +90, happiness: +5, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'aegean-sponge-divers',
+    regionId: 'aegean',
+    title: { tr: 'Sünger Avcılığında Aşırı Avlanma', en: 'Overfishing the Sponge Beds', de: 'Überfischung der Schwammgründe' },
+    description: { tr: 'Bodrum açıklarındaki sünger yatakları geleneksel dalgıçların aşırı avlanması yüzünden tükeniyor.', en: "Sponge beds off Bodrum are being depleted by traditional divers' overharvesting.", de: 'Die Schwammgründe vor Bodrum werden durch die Überfischung traditioneller Taucher erschöpft.' },
+    choices: [
+      {
+        text: { tr: 'Avlanma Kotası Getir', en: 'Introduce a Harvest Quota', de: 'Fangquote einführen' },
+        effects: { budget: -20, happiness: -10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Geleneği Serbest Bırak', en: 'Leave the Tradition Unregulated', de: 'Tradition unreguliert lassen' },
+        effects: { budget: +10, happiness: +10, cleanliness: -10 }
+      }
+    ]
+  },
+
+  // --- Akdeniz / Mediterranean (More) ---
+  {
+    id: 'med-greenhouse-plastic',
+    regionId: 'mediterranean',
+    title: { tr: 'Sera Plastiği Kirliliği', en: 'Greenhouse Plastic Pollution', de: 'Plastikmüll aus Gewächshäusern' },
+    description: { tr: 'Antalya\'nın seracılık bölgesinde kullanılmış plastik örtüler tarlalarda ve derelerde birikiyor.', en: "Used plastic sheeting from Antalya's greenhouse belt is piling up in fields and streams.", de: 'Gebrauchte Plastikfolien aus dem Gewächshausgürtel von Antalya häufen sich auf Feldern und in Bächen an.' },
+    choices: [
+      {
+        text: { tr: 'Geri Dönüşüm Zorunluluğu Getir', en: 'Mandate Plastic Recycling', de: 'Recyclingpflicht einführen' },
+        effects: { budget: -60, happiness: -5, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Çiftçilere Karışma', en: "Don't Interfere with Farmers", de: 'Landwirte nicht einschränken' },
+        effects: { budget: +20, happiness: +5, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'med-citrus-irrigation',
+    regionId: 'mediterranean',
+    title: { tr: 'Narenciye Sulamasında Su Kıtlığı', en: 'Water Scarcity in Citrus Irrigation', de: 'Wasserknappheit bei der Zitrusbewässerung' },
+    description: { tr: 'Kuraklık narenciye bahçelerini sulayan yeraltı sularını tüketiyor.', en: 'Drought is depleting the groundwater that irrigates the citrus orchards.', de: 'Dürre erschöpft das Grundwasser, das die Zitrushaine bewässert.' },
+    choices: [
+      {
+        text: { tr: 'Damla Sulamaya Geçişi Sübvanse Et', en: 'Subsidize the Switch to Drip Irrigation', de: 'Umstieg auf Tröpfchenbewässerung subventionieren' },
+        effects: { budget: -100, happiness: +5, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'Çiftçileri Kendi Başına Bırak', en: 'Leave Farmers to Manage on Their Own', de: 'Landwirte auf sich allein gestellt lassen' },
+        effects: { happiness: -15, cleanliness: -5 }
+      }
+    ]
+  },
+
+  // --- İç Anadolu / Anatolian (More) ---
+  {
+    id: 'anatolian-ankara-traffic',
+    regionId: 'anatolian',
+    title: { tr: 'Ankara\'da Trafik Emisyonu', en: 'Traffic Emissions in Ankara', de: 'Verkehrsemissionen in Ankara' },
+    description: { tr: 'Başkentteki artan araç sayısı kış aylarında hava kalitesini ciddi düşürüyor.', en: "The capital's growing car count is seriously worsening winter air quality.", de: 'Die wachsende Zahl an Autos in der Hauptstadt verschlechtert die Luftqualität im Winter erheblich.' },
+    choices: [
+      {
+        text: { tr: 'Toplu Taşımaya Yatırım Yap', en: 'Invest in Public Transit', de: 'In den öffentlichen Nahverkehr investieren' },
+        effects: { budget: -110, happiness: +10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Araç Sahiplerine Dokunma', en: "Don't Touch Car Owners", de: 'Autobesitzer nicht belasten' },
+        effects: { budget: +20, happiness: +5, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'anatolian-cappadocia-balloons',
+    regionId: 'anatolian',
+    title: { tr: 'Kapadokya\'da Balon Turizmi Baskısı', en: 'Balloon Tourism Pressure in Cappadocia', de: 'Ballontourismus-Druck in Kappadokien' },
+    description: { tr: 'Her sabah gökyüzünü dolduran yüzlerce sıcak hava balonu gürültü ve yakıt emisyonu şikayetlerine yol açıyor.', en: 'Hundreds of hot-air balloons filling the sky each morning are drawing complaints about noise and fuel emissions.', de: 'Hunderte Heißluftballons, die jeden Morgen den Himmel füllen, sorgen für Beschwerden über Lärm und Treibstoffemissionen.' },
+    choices: [
+      {
+        text: { tr: 'Günlük Balon Sayısını Sınırla', en: 'Cap the Number of Daily Flights', de: 'Zahl der täglichen Flüge begrenzen' },
+        effects: { budget: -40, happiness: -10, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'Turizm Gelirine Öncelik Ver', en: 'Prioritize Tourism Revenue', de: 'Tourismuseinnahmen priorisieren' },
+        effects: { budget: +80, happiness: +5, cleanliness: -10 }
+      }
+    ]
+  },
+
+  // --- Karadeniz / Black Sea (More) ---
+  {
+    id: 'blacksea-anchovy-overfishing',
+    regionId: 'blacksea',
+    title: { tr: 'Hamsi Stoklarında Aşırı Avlanma', en: 'Overfishing the Anchovy Stocks', de: 'Überfischung der Sardellenbestände' },
+    description: { tr: 'Balıkçı filoları hamsi stoklarını sürdürülebilir sınırların çok üzerinde avlıyor.', en: 'Fishing fleets are hauling in anchovy stocks well beyond sustainable limits.', de: 'Fischereiflotten fangen Sardellen weit über nachhaltige Grenzen hinaus.' },
+    choices: [
+      {
+        text: { tr: 'Avlanma Sezonunu Kısalt', en: 'Shorten the Fishing Season', de: 'Fangsaison verkürzen' },
+        effects: { budget: -50, happiness: -15, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Filoları Kısıtlama', en: "Don't Restrict the Fleets", de: 'Flotten nicht einschränken' },
+        effects: { budget: +60, happiness: +10, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'blacksea-coal-mine-runoff',
+    regionId: 'blacksea',
+    title: { tr: 'Zonguldak Kömür Madeni Akıntısı', en: 'Zonguldak Coal Mine Runoff', de: 'Grubenwasser aus dem Kohlebergwerk Zonguldak' },
+    description: { tr: 'Eski kömür madenlerinden sızan asitli su kıyı sularını kirletiyor.', en: 'Acidic water leaking from old coal mines is polluting the coastal waters.', de: 'Saures Wasser aus alten Kohlebergwerken verschmutzt die Küstengewässer.' },
+    choices: [
+      {
+        text: { tr: 'Arıtma Tesisi Kur', en: 'Build a Treatment Facility', de: 'Aufbereitungsanlage errichten' },
+        effects: { budget: -120, happiness: +5, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'İzlemeyle Yetin', en: 'Settle for Monitoring Only', de: 'Nur überwachen' },
+        effects: { budget: -10, cleanliness: -10 }
+      }
+    ]
+  },
+
+  // --- Doğu Anadolu / Eastern (More) ---
+  {
+    id: 'eastern-wolf-livestock',
+    regionId: 'eastern',
+    title: { tr: 'Kurt Saldırıları ve Hayvancılık', en: 'Wolf Attacks and Livestock', de: 'Wolfsangriffe und Viehzucht' },
+    description: { tr: 'Korunan kurt popülasyonu köy sürülerine saldırıyor, çiftçiler tazminat istiyor.', en: 'A protected wolf population is attacking village herds, and farmers are demanding compensation.', de: 'Eine geschützte Wolfspopulation greift Dorfherden an, und Landwirte fordern Entschädigung.' },
+    choices: [
+      {
+        text: { tr: 'Çiftçilere Tazminat Öde', en: 'Compensate the Farmers', de: 'Landwirte entschädigen' },
+        effects: { budget: -70, happiness: +15 }
+      },
+      {
+        text: { tr: 'Popülasyonu Korumaya Devam Et, Ödeme Yok', en: 'Keep Protecting the Population, No Payouts', de: 'Population weiter schützen, keine Zahlungen' },
+        effects: { happiness: -20, cleanliness: +10 }
+      }
+    ]
+  },
+  {
+    id: 'eastern-euphrates-water-rights',
+    regionId: 'eastern',
+    title: { tr: 'Fırat\'ta Su Hakkı Anlaşmazlığı', en: 'Water Rights Dispute on the Euphrates', de: 'Streit um Wasserrechte am Euphrat' },
+    description: { tr: 'Yukarı havzadaki barajlar aşağı yöndeki çiftçiler için su akışını azaltıyor.', en: 'Upstream dams are reducing water flow for farmers downriver.', de: 'Stauseen im Oberlauf verringern den Wasserfluss für Landwirte flussabwärts.' },
+    choices: [
+      {
+        text: { tr: 'Su Tahsisini Yeniden Müzakere Et', en: 'Renegotiate the Water Allocation', de: 'Wasserverteilung neu verhandeln' },
+        effects: { budget: -60, happiness: +15 }
+      },
+      {
+        text: { tr: 'Mevcut Anlaşmayı Koru', en: 'Keep the Current Agreement', de: 'Bestehende Vereinbarung beibehalten' },
+        effects: { budget: +20, happiness: -15, cleanliness: -5 }
+      }
+    ]
+  },
+
+  // --- Güneydoğu Anadolu / Southeastern (More) ---
+  {
+    id: 'southeastern-tigris-dye-pollution',
+    regionId: 'southeastern',
+    title: { tr: 'Dicle\'de Tekstil Boyama Kirliliği', en: 'Textile Dye Pollution in the Tigris', de: 'Textilfarbstoff-Verschmutzung im Tigris' },
+    description: { tr: 'Küçük tekstil atölyeleri boyama atıklarını arıtmadan Dicle Nehri\'ne boşaltıyor.', en: 'Small textile workshops are dumping untreated dye waste into the Tigris River.', de: 'Kleine Textilwerkstätten leiten ungeklärte Farbstoffabwässer in den Tigris.' },
+    choices: [
+      {
+        text: { tr: 'Ortak Arıtma Tesisi Kur', en: 'Build a Shared Treatment Facility', de: 'Gemeinsame Kläranlage bauen' },
+        effects: { budget: -90, happiness: +5, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Küçük İşletmeleri Zorlama', en: "Don't Burden Small Businesses", de: 'Kleinbetriebe nicht belasten' },
+        effects: { budget: +20, happiness: +5, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'southeastern-desertification',
+    regionId: 'southeastern',
+    title: { tr: 'Otlak Arazisinin Çölleşmesi', en: 'Desertification of Grazing Land', de: 'Wüstenbildung auf Weideland' },
+    description: { tr: 'Aşırı otlatma ve azalan yağış geniş otlak alanlarını çorak araziye çeviriyor.', en: 'Overgrazing and declining rainfall are turning vast grazing lands into barren ground.', de: 'Überweidung und abnehmender Niederschlag verwandeln weite Weideflächen in Ödland.' },
+    choices: [
+      {
+        text: { tr: 'Otlatmayı Sınırla ve Ağaçlandır', en: 'Limit Grazing and Reforest', de: 'Beweidung begrenzen und aufforsten' },
+        effects: { budget: -80, happiness: -10, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Çobanların Geçimine Karışma', en: "Don't Interfere with Herders' Livelihoods", de: 'Hirten nicht in ihrer Existenz einschränken' },
+        effects: { happiness: +10, cleanliness: -15 }
+      }
+    ]
+  },
+
+  // --- North Germany (Nord, More) ---
+  {
+    id: 'nord-fishing-quota',
+    regionId: 'nord',
+    title: { tr: 'Kuzey Denizi Balıkçılık Kotası', en: 'North Sea Fishing Quota Cut', de: 'Kürzung der Fangquote in der Nordsee' },
+    description: { tr: 'AB balık stoklarını korumak için kotaları kesiyor, yerel balıkçılar geçimlerinin tehdit altında olduğunu söylüyor.', en: 'The EU is cutting quotas to protect fish stocks, and local fishermen say their livelihoods are at risk.', de: 'Die EU kürzt die Quoten zum Schutz der Fischbestände, lokale Fischer sehen ihre Existenz bedroht.' },
+    choices: [
+      {
+        text: { tr: 'Kotayı Kabul Et', en: 'Accept the Quota Cut', de: 'Quotenkürzung akzeptieren' },
+        effects: { budget: -40, happiness: -15, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Ulusal İstisna İçin Lobi Yap', en: 'Lobby for a National Exemption', de: 'Für nationale Ausnahme lobbyieren' },
+        effects: { budget: +30, happiness: +10, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'nord-elbe-dredging',
+    regionId: 'nord',
+    title: { tr: 'Elbe Nehri\'nin Derinleştirilmesi', en: 'Dredging the Elbe for Shipping', de: 'Vertiefung der Elbe für die Schifffahrt' },
+    description: { tr: 'Daha büyük konteyner gemilerine izin vermek için Elbe\'nin derinleştirilmesi nehir tabanı ekosistemini bozuyor.', en: 'Deepening the Elbe to allow bigger container ships is disrupting the riverbed ecosystem.', de: 'Die Vertiefung der Elbe für größere Containerschiffe stört das Ökosystem des Flussbetts.' },
+    choices: [
+      {
+        text: { tr: 'Derinleştirmeye Devam Et', en: 'Proceed with the Dredging', de: 'Vertiefung fortsetzen' },
+        effects: { budget: +90, happiness: -5, cleanliness: -15 }
+      },
+      {
+        text: { tr: 'Projeyi Askıya Al', en: 'Suspend the Project', de: 'Projekt aussetzen' },
+        effects: { budget: -30, happiness: +5, cleanliness: +10 }
+      }
+    ]
+  },
+
+  // --- Ruhr Area (More) ---
+  {
+    id: 'ruhr-canal-noise',
+    regionId: 'ruhrgebiet',
+    title: { tr: 'Kanal Mavna Trafiği Gürültüsü', en: 'Canal Barge Traffic Noise', de: 'Lärm durch den Kanal-Frachtverkehr' },
+    description: { tr: 'Gece boyunca çalışan mavnalar kanal kenarındaki mahallelerde uykuyu bölüyor.', en: 'Barges running through the night are disturbing sleep in canal-side neighborhoods.', de: 'Nachts fahrende Frachtkähne stören den Schlaf in den Vierteln entlang des Kanals.' },
+    choices: [
+      {
+        text: { tr: 'Gece Trafiğini Kısıtla', en: 'Restrict Night Traffic', de: 'Nachtverkehr einschränken' },
+        effects: { budget: -30, happiness: +15 }
+      },
+      {
+        text: { tr: 'Lojistiği Aksatma', en: "Don't Disrupt Logistics", de: 'Logistik nicht stören' },
+        effects: { budget: +40, happiness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'ruhr-urban-greening',
+    regionId: 'ruhrgebiet',
+    title: { tr: 'Terk Edilmiş Sanayi Sahalarının Yeşillendirilmesi', en: 'Greening the Derelict Industrial Sites', de: 'Begrünung der stillgelegten Industrieflächen' },
+    description: { tr: 'Onlarca terk edilmiş fabrika sahası ya park haline getirilebilir ya da yeniden sanayiye açılabilir.', en: 'Dozens of derelict factory sites could become parks — or be reopened to industry.', de: 'Dutzende verlassene Fabrikgelände könnten zu Parks werden — oder wieder der Industrie geöffnet werden.' },
+    choices: [
+      {
+        text: { tr: 'Parklara Dönüştür', en: 'Convert Them into Parks', de: 'In Parks umwandeln' },
+        effects: { budget: -70, happiness: +15, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Sanayiye Yeniden Aç', en: 'Reopen Them to Industry', de: 'Wieder für Industrie öffnen' },
+        effects: { budget: +100, happiness: -5, cleanliness: -10 }
+      }
+    ]
+  },
+
+  // --- Rhine-Main (More) ---
+  {
+    id: 'rheinmain-flood-housing',
+    regionId: 'rheinmain',
+    title: { tr: 'Taşkın Ovasında Konut Baskısı', en: 'Housing Pressure on the Floodplain', de: 'Wohnungsdruck auf der Flussaue' },
+    description: { tr: 'Konut kıtlığı geliştiricileri Ren\'in taşkın ovasına inşaat yapmaya itiyor.', en: "Housing shortages are pushing developers to build on the Rhine's floodplain.", de: 'Wohnungsmangel drängt Bauträger dazu, auf der Flussaue des Rheins zu bauen.' },
+    choices: [
+      {
+        text: { tr: 'İnşaatı Yasakla', en: 'Ban Construction There', de: 'Bau dort verbieten' },
+        effects: { budget: -20, happiness: -10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Sınırlı İnşaata İzin Ver', en: 'Allow Limited Construction', de: 'Begrenzten Bau erlauben' },
+        effects: { budget: +100, happiness: +5, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'rheinmain-datacenter-cooling',
+    regionId: 'rheinmain',
+    title: { tr: 'Veri Merkezlerinin Su Talebi', en: "Data Centers' Water Demand", de: 'Wasserbedarf der Rechenzentren' },
+    description: { tr: 'Frankfurt\'un devasa veri merkezleri soğutma için yerel su kaynaklarından büyük miktarda su çekiyor.', en: "Frankfurt's massive data centers are drawing huge amounts of water from local supplies for cooling.", de: 'Frankfurts riesige Rechenzentren entnehmen für die Kühlung große Mengen Wasser aus lokalen Quellen.' },
+    choices: [
+      {
+        text: { tr: 'Su Çekimini Sınırla', en: 'Cap Their Water Usage', de: 'Wasserverbrauch begrenzen' },
+        effects: { budget: -50, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Sektörü Büyütmeye Devam Et', en: 'Keep Growing the Sector', de: 'Sektor weiter wachsen lassen' },
+        effects: { budget: +90, cleanliness: -15 }
+      }
+    ]
+  },
+
+  // --- Bavaria (More) ---
+  {
+    id: 'bayern-urban-heat-munich',
+    regionId: 'bayern',
+    title: { tr: 'Münih\'te Kentsel Isı Adası', en: 'Urban Heat Island in Munich', de: 'Städtische Wärmeinsel in München' },
+    description: { tr: 'Beton yüzeyler yaz sıcaklarını yükseltiyor, halk daha fazla gölgeli park istiyor.', en: 'Concrete surfaces are pushing up summer temperatures, and residents want more shaded parks.', de: 'Betonflächen treiben die Sommertemperaturen in die Höhe, die Bevölkerung fordert mehr schattige Parks.' },
+    choices: [
+      {
+        text: { tr: 'Yeni Şehir Parkları Aç', en: 'Open New City Parks', de: 'Neue Stadtparks anlegen' },
+        effects: { budget: -80, happiness: +15, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'Mevcut Planlamaya Devam Et', en: 'Stick with Current Planning', de: 'Bei bisheriger Planung bleiben' },
+        effects: { budget: +10, happiness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'bayern-auto-supply-chain',
+    regionId: 'bayern',
+    title: { tr: 'Otomotiv Tedarik Zincirinin Emisyonları', en: "The Auto Supply Chain's Emissions", de: 'Die Emissionen der Automobil-Zulieferkette' },
+    description: { tr: 'Bir otomobil devinin yerel tedarikçileri emisyon standartlarını karşılamakta zorlanıyor.', en: "A car giant's local suppliers are struggling to meet emissions standards.", de: 'Lokale Zulieferer eines Autoriesen haben Mühe, die Emissionsstandards zu erfüllen.' },
+    choices: [
+      {
+        text: { tr: 'Tedarikçilere Geçiş Süresi Tanı', en: 'Give Suppliers a Transition Period', de: 'Zulieferern eine Übergangsfrist gewähren' },
+        effects: { budget: -50, happiness: +10, cleanliness: +5 }
+      },
+      {
+        text: { tr: 'Standartları Anında Uygula', en: 'Enforce Standards Immediately', de: 'Standards sofort durchsetzen' },
+        effects: { budget: -20, happiness: -15, cleanliness: +20 }
+      }
+    ]
+  },
+
+  // --- Baden-Württemberg (More) ---
+  {
+    id: 'bw-lake-constance-quality',
+    regionId: 'badenwuerttemberg',
+    title: { tr: 'Constance Gölü\'nde Su Kalitesi', en: 'Water Quality in Lake Constance', de: 'Wasserqualität im Bodensee' },
+    description: { tr: 'Tarımsal akış ve tekne trafiği içme suyu kaynağı olan gölü tehdit ediyor.', en: 'Agricultural runoff and boat traffic are threatening the lake that serves as a drinking water source.', de: 'Landwirtschaftliche Abflüsse und Bootsverkehr bedrohen den See, der als Trinkwasserquelle dient.' },
+    choices: [
+      {
+        text: { tr: 'Tekne Trafiğini Sınırla', en: 'Restrict Boat Traffic', de: 'Bootsverkehr einschränken' },
+        effects: { budget: -30, happiness: -10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Turizme Öncelik Ver', en: 'Prioritize Tourism', de: 'Tourismus priorisieren' },
+        effects: { budget: +60, happiness: +10, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'bw-neckar-discharge',
+    regionId: 'badenwuerttemberg',
+    title: { tr: 'Neckar Nehri\'nde Sanayi Deşarjı', en: 'Industrial Discharge in the Neckar', de: 'Industrielle Einleitungen in den Neckar' },
+    description: { tr: 'Bir kimya tesisi soğutma suyunu Neckar\'a normalden sıcak deşarj ediyor, balık ölümlerine yol açıyor.', en: 'A chemical plant is discharging cooling water into the Neckar hotter than normal, causing fish kills.', de: 'Eine Chemiefabrik leitet ihr Kühlwasser wärmer als üblich in den Neckar, was Fischsterben verursacht.' },
+    choices: [
+      {
+        text: { tr: 'Deşarj Sıcaklığını Sınırla', en: 'Cap the Discharge Temperature', de: 'Einleitungstemperatur begrenzen' },
+        effects: { budget: -60, happiness: +5, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Tesisi Uyar, Devam Etsin', en: 'Warn the Plant, Let It Continue', de: 'Fabrik verwarnen, weiterlaufen lassen' },
+        effects: { budget: +30, cleanliness: -15 }
+      }
+    ]
+  },
+
+  // --- Eastern Germany (Ost, More) ---
+  {
+    id: 'ost-wind-nimby',
+    regionId: 'ost',
+    title: { tr: 'Brandenburg\'da Rüzgar Türbini Direnişi', en: 'Wind Turbine Resistance in Brandenburg', de: 'Widerstand gegen Windräder in Brandenburg' },
+    description: { tr: 'Köylüler yeni rüzgar türbinlerinin manzarayı ve mülk değerlerini bozacağını söyleyerek karşı çıkıyor.', en: 'Villagers are opposing new wind turbines, saying they will ruin the view and property values.', de: 'Dorfbewohner lehnen neue Windräder ab und befürchten, sie würden die Aussicht und Immobilienwerte beeinträchtigen.' },
+    choices: [
+      {
+        text: { tr: 'Türbinlerin İnşasına Devam Et', en: 'Proceed with the Turbines', de: 'Windräder trotzdem bauen' },
+        effects: { budget: +70, happiness: -15, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Köylülerin İsteğine Uy, İptal Et', en: 'Bow to Villagers, Cancel It', de: 'Dorfbewohnern nachgeben, absagen' },
+        effects: { budget: -20, happiness: +15, cleanliness: -5 }
+      }
+    ]
+  },
+  {
+    id: 'ost-sandstone-tourism',
+    regionId: 'ost',
+    title: { tr: 'Elbe Kumtaşları\'nda Turizm Baskısı', en: 'Tourism Pressure in the Elbe Sandstone Mountains', de: 'Tourismusdruck im Elbsandsteingebirge' },
+    description: { tr: 'Artan yürüyüşçü sayısı hassas kaya oluşumlarını ve patikaları aşındırıyor.', en: 'A growing number of hikers is eroding the fragile rock formations and trails.', de: 'Eine wachsende Zahl an Wanderern erodiert die empfindlichen Felsformationen und Wege.' },
+    choices: [
+      {
+        text: { tr: 'Ziyaretçi Sayısını Sınırla', en: 'Limit Visitor Numbers', de: 'Besucherzahl begrenzen' },
+        effects: { budget: -20, happiness: -10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Turizmi Sınırlama', en: "Don't Limit Tourism", de: 'Tourismus nicht einschränken' },
+        effects: { budget: +50, happiness: +10, cleanliness: -10 }
+      }
+    ]
+  },
+
+  // --- Scotland (More) ---
+  {
+    id: 'scotland-oil-decommissioning',
+    regionId: 'scotland',
+    title: { tr: 'Kuzey Denizi Petrol Platformlarının Sökümü', en: 'North Sea Oil Rig Decommissioning', de: 'Rückbau der Nordsee-Ölplattformen' },
+    description: { tr: 'Eski petrol platformlarının sökümü pahalı ama bırakılmaları deniz kirliliği riski taşıyor.', en: 'Decommissioning old oil rigs is expensive, but leaving them risks marine pollution.', de: 'Der Rückbau alter Ölplattformen ist teuer, doch sie stehenzulassen birgt das Risiko der Meeresverschmutzung.' },
+    choices: [
+      {
+        text: { tr: 'Tam Sökümü Finanse Et', en: 'Fund Full Decommissioning', de: 'Vollständigen Rückbau finanzieren' },
+        effects: { budget: -160, happiness: +10, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Platformları Yerinde Bırak', en: 'Leave the Rigs in Place', de: 'Plattformen an Ort und Stelle belassen' },
+        effects: { budget: +40, happiness: -10, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'scotland-peatland-restoration',
+    regionId: 'scotland',
+    title: { tr: 'Turbalık Restorasyonu', en: 'Peatland Restoration', de: 'Wiederherstellung der Moorlandschaften' },
+    description: { tr: 'Bozulmuş turbalıkların restorasyonu karbon kredisi geliri sağlar ama koyun çiftçilerinin arazisini azaltır.', en: "Restoring degraded peatlands would earn carbon-credit revenue but shrink sheep farmers' land.", de: 'Die Wiederherstellung geschädigter Moore würde Einnahmen aus CO2-Zertifikaten bringen, aber das Land der Schafzüchter verkleinern.' },
+    choices: [
+      {
+        text: { tr: 'Restorasyon Programını Başlat', en: 'Launch the Restoration Program', de: 'Wiederherstellungsprogramm starten' },
+        effects: { budget: +40, happiness: -10, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Çiftçi Arazisini Koru', en: "Protect the Farmers' Land", de: 'Land der Landwirte schützen' },
+        effects: { budget: -10, happiness: +10, cleanliness: -5 }
+      }
+    ]
+  },
+
+  // --- Northern England (More) ---
+  {
+    id: 'ne-bus-fleet-emissions',
+    regionId: 'northern-england',
+    title: { tr: 'Otobüs Filosu Emisyonları', en: 'The Bus Fleet Emissions', de: 'Die Emissionen der Busflotte' },
+    description: { tr: 'Şehrin dizel otobüs filosu hava kalitesi hedeflerine ulaşmayı engelliyor.', en: "The city's diesel bus fleet is blocking progress toward air-quality targets.", de: 'Die Dieselbusflotte der Stadt verhindert Fortschritte bei den Luftqualitätszielen.' },
+    choices: [
+      {
+        text: { tr: 'Elektrikli Otobüslere Geç', en: 'Switch to Electric Buses', de: 'Auf Elektrobusse umsteigen' },
+        effects: { budget: -130, happiness: +10, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Filoyu Olduğu Gibi Kullanmaya Devam Et', en: 'Keep Running the Fleet As Is', de: 'Flotte unverändert weiterbetreiben' },
+        effects: { budget: +20, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'ne-moorland-wildfire',
+    regionId: 'northern-england',
+    title: { tr: 'Bozkırda Yangın Riski', en: 'Wildfire Risk on the Moors', de: 'Waldbrandgefahr im Moorland' },
+    description: { tr: 'Kurak bir yaz, Pennine bozkırlarında yangın riskini artırıyor ve turba yataklarını tehdit ediyor.', en: 'A dry summer is raising wildfire risk on the Pennine moors, threatening peat deposits.', de: 'Ein trockener Sommer erhöht die Waldbrandgefahr in den Pennine-Mooren und bedroht die Torfvorkommen.' },
+    choices: [
+      {
+        text: { tr: 'Yangın Devriyelerini Artır', en: 'Increase Fire Patrols', de: 'Feuerwachen verstärken' },
+        effects: { budget: -50, happiness: +5, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'Riski Göz Ardı Et', en: 'Ignore the Risk', de: 'Risiko ignorieren' },
+        effects: { happiness: -15, cleanliness: -15 }
+      }
+    ]
+  },
+
+  // --- Midlands (More) ---
+  {
+    id: 'midlands-hs2-disruption',
+    regionId: 'midlands',
+    title: { tr: 'Yüksek Hızlı Tren İnşaatının Bozduğu Doğa', en: 'High-Speed Rail Construction Disruption', de: 'Störungen durch den Hochgeschwindigkeitsbahnbau' },
+    description: { tr: 'Yeni yüksek hızlı demiryolu hattının inşaatı eski ormanlık alanları kesip geçiyor.', en: 'Construction of the new high-speed rail line is cutting through ancient woodland.', de: 'Der Bau der neuen Hochgeschwindigkeitsstrecke durchschneidet alten Waldbestand.' },
+    choices: [
+      {
+        text: { tr: 'Güzergahı Değiştir (Ekstra Maliyet)', en: 'Reroute It (Extra Cost)', de: 'Streckenverlauf ändern (Mehrkosten)' },
+        effects: { budget: -100, happiness: +10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Mevcut Güzergaha Devam Et', en: 'Proceed with the Current Route', de: 'Bei aktueller Streckenführung bleiben' },
+        effects: { budget: +50, happiness: -10, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'midlands-tree-canopy-loss',
+    regionId: 'midlands',
+    title: { tr: 'Kentsel Ağaç Örtüsü Kaybı', en: 'Urban Tree Canopy Loss', de: 'Verlust der städtischen Baumkronen' },
+    description: { tr: 'Yol genişletme çalışmaları Birmingham\'ın cadde ağaçlarının çoğunu kesiyor.', en: "Road-widening works are felling much of Birmingham's street tree canopy.", de: 'Straßenausbauarbeiten fällen einen Großteil von Birminghams Straßenbäumen.' },
+    choices: [
+      {
+        text: { tr: 'Yerine Yeni Ağaç Dik', en: 'Replant to Compensate', de: 'Zum Ausgleich neu bepflanzen' },
+        effects: { budget: -40, happiness: +10, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'Yol Genişletmesine Öncelik Ver', en: 'Prioritize the Road Widening', de: 'Straßenausbau priorisieren' },
+        effects: { budget: +60, happiness: -10, cleanliness: -10 }
+      }
+    ]
+  },
+
+  // --- Wales (More) ---
+  {
+    id: 'wales-cardiff-bay-barrage',
+    regionId: 'wales',
+    title: { tr: 'Cardiff Körfezi Bariyeri ve Vahşi Yaşam', en: 'The Cardiff Bay Barrage and Wildlife', de: 'Die Cardiff-Bay-Sperre und die Tierwelt' },
+    description: { tr: 'Körfez bariyeri tatlı su gölünü korur ama göçmen kuşların beslenme alanlarını ortadan kaldırdı.', en: 'The bay barrage preserves a freshwater lagoon but has eliminated feeding grounds for migratory birds.', de: 'Die Buchtsperre erhält eine Süßwasserlagune, hat aber die Nahrungsgründe für Zugvögel zerstört.' },
+    choices: [
+      {
+        text: { tr: 'Alternatif Habitat Oluştur', en: 'Create an Alternative Habitat', de: 'Alternativen Lebensraum schaffen' },
+        effects: { budget: -70, happiness: +5, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Bariyeri Olduğu Gibi Bırak', en: 'Leave the Barrage As Is', de: 'Sperre unverändert lassen' },
+        effects: { budget: +30, happiness: +5, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'wales-offshore-wind-fishing',
+    regionId: 'wales',
+    title: { tr: 'Kıyı Rüzgar Çiftliği ve Balıkçılık Anlaşmazlığı', en: 'Offshore Wind Farm vs. Fishing Grounds', de: 'Offshore-Windpark gegen Fanggründe' },
+    description: { tr: 'Galler kıyısına önerilen bir rüzgar çiftliği balıkçı teknelerinin geleneksel avlanma alanlarını kapatacak.', en: 'A proposed wind farm off the Welsh coast would close off traditional fishing grounds for local boats.', de: 'Ein geplanter Windpark vor der walisischen Küste würde traditionelle Fanggründe für örtliche Boote sperren.' },
+    choices: [
+      {
+        text: { tr: 'Rüzgar Çiftliğini Onayla', en: 'Approve the Wind Farm', de: 'Windpark genehmigen' },
+        effects: { budget: +80, happiness: -15, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Balıkçı Bölgelerini Koru', en: 'Protect the Fishing Grounds', de: 'Fanggründe schützen' },
+        effects: { budget: -20, happiness: +15, cleanliness: -5 }
+      }
+    ]
+  },
+
+  // --- Southern England (More) ---
+  {
+    id: 'se-new-forest-roads',
+    regionId: 'southern-england',
+    title: { tr: 'New Forest\'ta Yol Genişletmesi', en: 'Road Widening Through the New Forest', de: 'Straßenausbau durch den New Forest' },
+    description: { tr: 'Trafik sıkışıklığını azaltmak için önerilen bir yol genişletmesi eski koruluk alanını kesecek.', en: 'A proposed road widening to ease congestion would cut through ancient woodland.', de: 'Ein geplanter Straßenausbau zur Entlastung des Verkehrs würde durch alten Waldbestand führen.' },
+    choices: [
+      {
+        text: { tr: 'Ormanı Koru, Genişletmeyi İptal Et', en: 'Protect the Forest, Cancel the Widening', de: 'Wald schützen, Ausbau absagen' },
+        effects: { budget: -30, happiness: +10, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Genişletmeye Devam Et', en: 'Proceed with the Widening', de: 'Ausbau fortsetzen' },
+        effects: { budget: +70, happiness: -10, cleanliness: -15 }
+      }
+    ]
+  },
+  {
+    id: 'se-chalk-stream-abstraction',
+    regionId: 'southern-england',
+    title: { tr: 'Tebeşir Derelerinden Aşırı Su Çekimi', en: 'Overabstraction from the Chalk Streams', de: 'Übermäßige Wasserentnahme aus den Kalkbächen' },
+    description: { tr: 'Su şirketlerinin nadir tebeşir derelerinden çektiği su seviyeleri tehlikeli derecede düşürüyor.', en: "Water companies' abstraction from the rare chalk streams is dropping levels to dangerous lows.", de: 'Die Wasserentnahme der Versorger aus den seltenen Kalkbächen senkt die Pegel auf gefährlich niedrige Werte.' },
+    choices: [
+      {
+        text: { tr: 'Su Çekimini Sınırla', en: 'Limit the Abstraction', de: 'Wasserentnahme begrenzen' },
+        effects: { budget: -60, happiness: -5, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Su Şirketlerine Karışma', en: "Don't Interfere with Water Companies", de: 'Wasserversorger nicht einschränken' },
+        effects: { budget: +40, cleanliness: -15 }
+      }
+    ]
+  },
+
+  // --- Northern Ireland (More) ---
+  {
+    id: 'ni-peatbog-turf-cutting',
+    regionId: 'northern-ireland',
+    title: { tr: 'Turba Bataklığı Kesim Anlaşmazlığı', en: 'Peat Bog Turf-Cutting Dispute', de: 'Streit ums Torfstechen im Moor' },
+    description: { tr: 'Geleneksel turba kesimi yakıt sağlıyor ama korunan bataklık habitatını yok ediyor.', en: 'Traditional turf-cutting provides fuel but is destroying protected bog habitat.', de: 'Traditionelles Torfstechen liefert Brennstoff, zerstört aber geschütztes Moorhabitat.' },
+    choices: [
+      {
+        text: { tr: 'Kesimi Yasakla', en: 'Ban the Turf-Cutting', de: 'Torfstechen verbieten' },
+        effects: { budget: -20, happiness: -15, cleanliness: +20 }
+      },
+      {
+        text: { tr: 'Geleneği Koru', en: 'Preserve the Tradition', de: 'Tradition bewahren' },
+        effects: { budget: +10, happiness: +10, cleanliness: -10 }
+      }
+    ]
+  },
+  {
+    id: 'ni-antrim-wind-land-dispute',
+    regionId: 'northern-ireland',
+    title: { tr: 'Antrim\'de Rüzgar Çiftliği Arazi Anlaşmazlığı', en: 'Wind Farm Land Dispute in Antrim', de: 'Landstreit um Windpark in Antrim' },
+    description: { tr: 'Bir çiftlik arazisi üzerine kurulacak rüzgar türbinleri komşu araziler için tazminat anlaşmazlığına yol açtı.', en: 'Wind turbines planned for a farm have sparked a compensation dispute with neighboring landowners.', de: 'Geplante Windräder auf einem Bauernhof haben einen Entschädigungsstreit mit benachbarten Landbesitzern ausgelöst.' },
+    choices: [
+      {
+        text: { tr: 'Komşulara Tazminat Öde', en: 'Compensate the Neighbors', de: 'Nachbarn entschädigen' },
+        effects: { budget: -50, happiness: +15, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'Türbinlere İzin Ver, Anlaşmazlığı Yoksay', en: 'Approve the Turbines, Ignore the Dispute', de: 'Windräder genehmigen, Streit ignorieren' },
+        effects: { budget: +60, happiness: -10, cleanliness: +15 }
+      }
+    ]
   }
 ];

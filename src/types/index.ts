@@ -106,4 +106,5 @@ export interface GameState {
   sustainDays: number;         // consecutive days both stats held above the win threshold
   quests: QuestState[];        // active goals
   questToast: LocalizedText | null;   // title of the most recently completed goal, for UI toast
+  usedEventIds: string[];      // events already drawn this cycle — spawn draws from the complement, reshuffling once exhausted
 }
