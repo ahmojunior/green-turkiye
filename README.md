@@ -1,6 +1,7 @@
-# Green Turkiye
 
 <div align="center">
+
+  # Green Turkiye
 
   ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
   ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
@@ -10,6 +11,10 @@
   ![Rolldown](https://img.shields.io/badge/Rolldown-EF4444?style=for-the-badge&logo=rust&logoColor=white)
 
 </div>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/ahmojunior/green-turkiye/main/banner.png" alt="New Update on Green Turkiye" />
+</p>
 
 ## <div align="center">👋 | Hello!</div>
 I'm [**Ahmet**](https://github.com/ahmojunior), a student who loves coding.
