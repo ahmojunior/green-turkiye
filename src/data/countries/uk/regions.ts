@@ -20,7 +20,7 @@ export const UK_REGIONS: Region[] = [
       { x: 57, y: 48 },
       { x: 68, y: 39 }
     ],
-    buildSlots: buildSlotsAt(49, 35),
+    buildSlots: buildSlotsAt('scotland', 49, 35, [{ x: 63, y: 38 }, { x: 65, y: 42 }]),
     modifiers: {
       budgetMultiplier: 1.0,
       cleanlinessDecayMultiplier: 0.9,   // Wind and hydro keep the air clean
@@ -39,7 +39,7 @@ export const UK_REGIONS: Region[] = [
       { x: 69, y: 70 },
       { x: 80, y: 61 }
     ],
-    buildSlots: buildSlotsAt(61, 57),
+    buildSlots: buildSlotsAt('northern-england', 61, 57, [{ x: 75, y: 60 }, { x: 77, y: 64 }]),
     modifiers: {
       budgetMultiplier: 1.3,             // Industry hub — strong tax base
       cleanlinessDecayMultiplier: 1.6,   // Heavy pollution
@@ -58,7 +58,7 @@ export const UK_REGIONS: Region[] = [
       { x: 70, y: 80 },
       { x: 81, y: 71 }
     ],
-    buildSlots: buildSlotsAt(62, 67),
+    buildSlots: buildSlotsAt('midlands', 62, 67, [{ x: 75, y: 77 }, { x: 79, y: 75 }]),
     modifiers: {
       budgetMultiplier: 1.1,
       cleanlinessDecayMultiplier: 1.15,  // Factory emissions
@@ -77,7 +77,7 @@ export const UK_REGIONS: Region[] = [
       { x: 59, y: 85 },
       { x: 70, y: 76 }
     ],
-    buildSlots: buildSlotsAt(51, 72),
+    buildSlots: buildSlotsAt('wales', 51, 72, [{ x: 63, y: 81 }, { x: 67, y: 79 }]),
     modifiers: {
       budgetMultiplier: 1.2,
       cleanlinessDecayMultiplier: 0.85,  // Clean rural air
@@ -96,7 +96,7 @@ export const UK_REGIONS: Region[] = [
       { x: 76, y: 90 },
       { x: 87, y: 81 }
     ],
-    buildSlots: buildSlotsAt(68, 77),
+    buildSlots: buildSlotsAt('southern-england', 68, 77, [{ x: 77, y: 86 }, { x: 82, y: 86 }]),
     modifiers: {
       budgetMultiplier: 1.25,            // Wealthy financial hub
       cleanlinessDecayMultiplier: 1.15,  // Traffic and density
@@ -115,7 +115,7 @@ export const UK_REGIONS: Region[] = [
       { x: 41, y: 63 },
       { x: 52, y: 54 }
     ],
-    buildSlots: buildSlotsAt(33, 50),
+    buildSlots: buildSlotsAt('northern-ireland', 33, 50, [{ x: 45, y: 60 }, { x: 49, y: 58 }]),
     modifiers: {
       budgetMultiplier: 0.8,             // Weak tax base
       cleanlinessDecayMultiplier: 1.05,

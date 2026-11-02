@@ -16,7 +16,7 @@ export const GERMANY_REGIONS: Region[] = [
       { x: 40, y: 20 },
       { x: 60, y: 12 }
     ],
-    buildSlots: buildSlotsAt(35, 5),
+    buildSlots: buildSlotsAt('nord', 35, 5, [{ x: 47, y: 25 }, { x: 50, y: 29 }]),
     modifiers: {
       budgetMultiplier: 1.0,
       cleanlinessDecayMultiplier: 0.9,  // Wind energy keeps the air clean
@@ -35,7 +35,7 @@ export const GERMANY_REGIONS: Region[] = [
       { x: 18, y: 42 },
       { x: 25, y: 30 }
     ],
-    buildSlots: buildSlotsAt(14, 33),
+    buildSlots: buildSlotsAt('ruhrgebiet', 14, 33, [{ x: 28, y: 49 }, { x: 32, y: 46 }]),
     modifiers: {
       budgetMultiplier: 1.3,            // Industry hub — strong tax base
       cleanlinessDecayMultiplier: 1.6,  // Heavy pollution
@@ -54,7 +54,7 @@ export const GERMANY_REGIONS: Region[] = [
       { x: 28, y: 55 },
       { x: 35, y: 45 }
     ],
-    buildSlots: buildSlotsAt(20, 46),
+    buildSlots: buildSlotsAt('rheinmain', 20, 46, [{ x: 32, y: 64 }, { x: 36, y: 61 }]),
     modifiers: {
       budgetMultiplier: 1.15,
       cleanlinessDecayMultiplier: 1.1,
@@ -73,7 +73,7 @@ export const GERMANY_REGIONS: Region[] = [
       { x: 58, y: 80 },
       { x: 65, y: 65 }
     ],
-    buildSlots: buildSlotsAt(52, 66),
+    buildSlots: buildSlotsAt('bayern', 52, 66, [{ x: 55, y: 76 }, { x: 60, y: 75 }]),
     modifiers: {
       budgetMultiplier: 1.2,            // Wealthy tax base
       cleanlinessDecayMultiplier: 0.85, // Alpine air stays clean
@@ -92,7 +92,7 @@ export const GERMANY_REGIONS: Region[] = [
       { x: 30, y: 78 },
       { x: 38, y: 65 }
     ],
-    buildSlots: buildSlotsAt(22, 66),
+    buildSlots: buildSlotsAt('badenwuerttemberg', 22, 66, [{ x: 39, y: 81 }, { x: 43, y: 84 }]),
     modifiers: {
       budgetMultiplier: 1.1,
       cleanlinessDecayMultiplier: 1.15, // Factory emissions
@@ -111,7 +111,7 @@ export const GERMANY_REGIONS: Region[] = [
       { x: 58, y: 45 },
       { x: 65, y: 28 }
     ],
-    buildSlots: buildSlotsAt(50, 30),
+    buildSlots: buildSlotsAt('ost', 50, 30, [{ x: 62, y: 42 }, { x: 66, y: 45 }]),
     modifiers: {
       budgetMultiplier: 0.8,            // Weak tax base
       cleanlinessDecayMultiplier: 1.05,

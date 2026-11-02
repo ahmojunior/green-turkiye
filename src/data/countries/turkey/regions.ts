@@ -16,7 +16,7 @@ export const TURKEY_REGIONS: Region[] = [
       { x: 10, y: 30 },
       { x: 25, y: 15 }
     ],
-    buildSlots: buildSlotsAt(6, 36),
+    buildSlots: buildSlotsAt('marmara', 6, 36, [{ x: 16, y: 14 }, { x: 21, y: 31 }]),
     modifiers: {
       budgetMultiplier: 1.3,            // Industry hub — strong tax base
       cleanlinessDecayMultiplier: 1.6,  // Heavy pollution
@@ -35,7 +35,7 @@ export const TURKEY_REGIONS: Region[] = [
       { x: 70, y: 18 },
       { x: 80, y: 15 }
     ],
-    buildSlots: buildSlotsAt(52, 26),
+    buildSlots: buildSlotsAt('blacksea', 52, 26, [{ x: 48, y: 26 }, { x: 51, y: 18 }]),
     modifiers: {
       budgetMultiplier: 1.0,
       cleanlinessDecayMultiplier: 0.9,  // Forests slow pollution
@@ -54,7 +54,7 @@ export const TURKEY_REGIONS: Region[] = [
       { x: 22, y: 55 },
       { x: 20, y: 42 }
     ],
-    buildSlots: buildSlotsAt(24, 48),
+    buildSlots: buildSlotsAt('aegean', 24, 48, [{ x: 18, y: 60 }, { x: 22, y: 66 }]),
     modifiers: {
       budgetMultiplier: 1.1,
       cleanlinessDecayMultiplier: 1.0,
@@ -73,7 +73,7 @@ export const TURKEY_REGIONS: Region[] = [
       { x: 50, y: 55 },
       { x: 40, y: 40 }
     ],
-    buildSlots: buildSlotsAt(38, 26),
+    buildSlots: buildSlotsAt('anatolian', 38, 26, [{ x: 41, y: 51 }, { x: 45, y: 56 }]),
     modifiers: {
       budgetMultiplier: 0.95,
       cleanlinessDecayMultiplier: 0.8,  // Low industry
@@ -92,7 +92,7 @@ export const TURKEY_REGIONS: Region[] = [
       { x: 55, y: 78 },
       { x: 40, y: 85 }
     ],
-    buildSlots: buildSlotsAt(38, 62),
+    buildSlots: buildSlotsAt('mediterranean', 38, 62, [{ x: 50, y: 77 }, { x: 54, y: 67 }]),
     modifiers: {
       budgetMultiplier: 1.15,
       cleanlinessDecayMultiplier: 1.1,
@@ -111,7 +111,7 @@ export const TURKEY_REGIONS: Region[] = [
       { x: 75, y: 35 },
       { x: 82, y: 45 }
     ],
-    buildSlots: buildSlotsAt(64, 42),
+    buildSlots: buildSlotsAt('eastern', 64, 42, [{ x: 81, y: 56 }, { x: 85, y: 37 }]),
     modifiers: {
       budgetMultiplier: 0.85,           // Weak tax base
       cleanlinessDecayMultiplier: 1.1,
@@ -130,7 +130,7 @@ export const TURKEY_REGIONS: Region[] = [
       { x: 65, y: 75 },
       { x: 80, y: 72 }
     ],
-    buildSlots: buildSlotsAt(58, 56),
+    buildSlots: buildSlotsAt('southeastern', 58, 56, [{ x: 70, y: 81 }, { x: 74, y: 76 }]),
     modifiers: {
       budgetMultiplier: 0.9,
       cleanlinessDecayMultiplier: 1.3,  // Drought-driven degradation

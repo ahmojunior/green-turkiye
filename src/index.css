@@ -88,3 +88,8 @@ body {
 .animate-slide-up {
   animation: slide-up 0.35s ease-out both;
 }
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.25) transparent;
+}

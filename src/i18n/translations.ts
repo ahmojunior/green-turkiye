@@ -43,6 +43,7 @@ export const UI_STRINGS: Record<string, { tr: string; en: string; de: string }> 
   'mgmt.taxRate.lowEffect': { tr: '-2 Bütçe, +2 Mutluluk / Gün', en: '-2 Budget, +2 Happiness / Day', de: '-2 Budget, +2 Zufriedenheit / Tag' },
   'mgmt.taxRate.normalEffect': { tr: '+8 Bütçe / Gün', en: '+8 Budget / Day', de: '+8 Budget / Tag' },
   'mgmt.taxRate.highEffect': { tr: '+18 Bütçe, -2 Mutluluk / Gün', en: '+18 Budget, -2 Happiness / Day', de: '+18 Budget, -2 Zufriedenheit / Tag' },
+  'mgmt.regional': { tr: 'Bölgeye Özel', en: 'Regional', de: 'Regional' },
   'mgmt.projectsButton': { tr: 'Projeler & Yatırımlar', en: 'Projects & Investments', de: 'Projekte & Investitionen' },
   'mgmt.active': { tr: 'Aktif', en: 'Active', de: 'Aktiv' },
   'mgmt.modalTitle': { tr: 'Şehir Projeleri', en: 'City Projects', de: 'Stadtprojekte' },
