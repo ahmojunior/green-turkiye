@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { PROJECTS } from '../data/projects';
-import { Coins, Hammer, Clock, CheckCircle, Lock, X, Check } from 'lucide-react';
+import { PROJECTS, getProjectsForRegion } from '../data/projects';
+import { Coins, Hammer, Clock, CheckCircle, Lock, X, Check, MapPin } from 'lucide-react';
 import { useGame } from '../hooks/useGame';
 import { TaxRate } from '../types/enums';
 import { sfx } from '../utils/sfx';
@@ -16,7 +16,7 @@ export function ManagementPanel() {
     } = useGame();
     const { lang, t } = useLanguage();
 
-    const { taxRate, budget, activeProjects, completedProjectIds } = gameState;
+    const { taxRate, budget, activeProjects, completedProjectIds, regionId } = gameState;
     const [showProjects, setShowProjects] = useState(false);
     const [insufficientFundsId, setInsufficientFundsId] = useState<string | null>(null);
 
@@ -104,8 +104,8 @@ export function ManagementPanel() {
                         </div>
 
                         {/* Project Cards Grid */}
-                        <div className="overflow-y-auto custom-scrollbar max-h-[60vh] max-sm:max-h-[60dvh] mobile-landscape:max-h-none p-6 mobile-landscape:p-2 grid grid-cols-1 md:grid-cols-2 gap-4 mobile-landscape:gap-2">
-                            {PROJECTS.map(project => {
+                        <div className="overflow-y-auto custom-scrollbar max-h-[60vh] max-sm:max-h-[60dvh] mobile-landscape:max-h-none p-6 mobile-landscape:p-2 grid grid-cols-1 md:grid-cols-2 auto-rows-max gap-4 mobile-landscape:gap-2">
+                            {getProjectsForRegion(regionId).map(project => {
                                 const isCompleted = completedProjectIds.includes(project.id);
                                 const isActive = activeProjects.some(p => p.id === project.id);
                                 const activeProject = activeProjects.find(p => p.id === project.id);
@@ -150,6 +150,12 @@ export function ManagementPanel() {
                                                 </div>
                                             )}
                                         </div>
+
+                                        {project.regionId && (
+                                            <div className="inline-flex items-center gap-1 text-xs font-bold text-emerald-300 border border-emerald-400/30 px-2 py-0.5 rounded bg-emerald-500/10 mb-2 mobile-landscape:text-[10px] mobile-landscape:mb-1">
+                                                <MapPin className="w-3 h-3" /> {t('mgmt.regional')}
+                                            </div>
+                                        )}
 
                                         <p className="text-sm text-slate-400 mb-3 mobile-landscape:text-xs mobile-landscape:mb-1.5">{project.description[lang]}</p>
 

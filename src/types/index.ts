@@ -58,6 +58,7 @@ export interface Project {
   id: string;
   name: LocalizedText;
   description: LocalizedText;
+  regionId?: string; // Only offered in this region; shared by every region when absent
   cost: number;
   duration: number;
   prerequisites?: string[]; // Project IDs
