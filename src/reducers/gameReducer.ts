@@ -1,4 +1,4 @@
-import type { GameState, Project, ActiveProject, EventNode, Country, Region } from '../types';
+import type { GameState, Project, ActiveProject, EventNode, Country, Region, ScheduledEffect } from '../types';
 import type { QuestState } from '../types/quest';
 import { TaxRate } from '../types/enums';
 import {
@@ -10,20 +10,22 @@ import {
     clampValue,
     TUNING,
 } from '../utils/gameLogic';
-import { generateId } from '../utils/id';
+import { nextRandom } from '../utils/rng';
+import { getProvinceSpawnPoints, getRegionSpawnPoints } from '../utils/geometry';
 import { EVENTS } from '../data/events';
 import { getRegion } from '../data/countries';
 import { PROJECTS } from '../data/projects';
 import { ALL_QUESTS } from '../data/quests';
 
 export type GameAction =
-    | { type: 'START_GAME'; payload: { country: Country; region: Region; startBudget: number } }
+    | { type: 'START_GAME'; payload: { country: Country; region: Region; startBudget: number; seed: number } }
     | { type: 'RESET_GAME' }
     | { type: 'TICK' }
     | { type: 'SET_TAX_RATE'; payload: TaxRate }
     | { type: 'BUY_PROJECT'; payload: Project }
     | { type: 'OPEN_EVENT'; payload: string } // nodeId
     | { type: 'HANDLE_CHOICE'; payload: number } // choiceIndex
+    | { type: 'DISMISS_OUTCOME' }
     | { type: 'SET_PAUSED'; payload: boolean }
     | { type: 'CLEAR_QUEST_TOAST' };
 
@@ -43,10 +45,13 @@ export const INITIAL_STATE: GameState = {
     day: 1,
     activeNodes: [],
     activeEvent: null,
+    pendingOutcome: null,
     eventsSolved: 0,
     sustainDays: 0,
     quests: [],
-    questToast: null,
+    toasts: [],
+    scheduled: [],
+    rngSeed: 0,
     usedEventIds: [],
 };
 
@@ -61,6 +66,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
                 budget: action.payload.startBudget,
                 countryId: action.payload.country.id,
                 regionId: action.payload.region.id,
+                rngSeed: action.payload.seed,
                 isPlaying: true,
                 quests: createInitialQuests(),
             };
@@ -75,7 +81,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             return { ...state, isPaused: action.payload };
 
         case 'CLEAR_QUEST_TOAST':
-            return { ...state, questToast: null };
+            // Drops the toast on screen and lets the next queued one through.
+            return { ...state, toasts: state.toasts.slice(1) };
 
         case 'BUY_PROJECT': {
             const project = action.payload;
@@ -105,12 +112,16 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             return {
                 ...state,
                 activeEvent: event,
+                pendingOutcome: null,
                 activeNodes: state.activeNodes.filter(n => n.id !== action.payload) // Remove node on open
             };
         }
 
+        case 'DISMISS_OUTCOME':
+            return { ...state, activeEvent: null, pendingOutcome: null };
+
         case 'HANDLE_CHOICE': {
-            if (!state.activeEvent) return state;
+            if (!state.activeEvent || state.pendingOutcome) return state;
             const choice = state.activeEvent.choices[action.payload];
 
             const budget = state.budget + (choice.effects.budget || 0);
@@ -125,15 +136,41 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
                 sustainDays: state.sustainDays,
             });
 
+            const nextBudget = budget + result.reward.budget;
+            const nextHappiness = clampValue(happiness + result.reward.happiness);
+            const nextCleanliness = clampValue(cleanliness + result.reward.cleanliness);
+
+            // A choice can bankrupt the region outright, so the run ends here.
+            // Deferring the check to the next TICK let the player keep playing on
+            // stats that were already fatal, and even recover from them.
+            const isGameOver = nextBudget <= 0 || nextHappiness <= 0 || nextCleanliness <= 0;
+
+            // Where the choice carries an explainer, the modal stays open on it:
+            // the effect is already applied, and the card is the only place the
+            // player is told *why* it happened. A run that just ended skips it,
+            // because the game-over screen takes the screen anyway.
+            const explain = !!choice.outcome && !isGameOver;
+
             return {
                 ...state,
-                budget: budget + result.reward.budget,
-                happiness: clampValue(happiness + result.reward.happiness),
-                cleanliness: clampValue(cleanliness + result.reward.cleanliness),
+                budget: nextBudget,
+                happiness: nextHappiness,
+                cleanliness: nextCleanliness,
                 eventsSolved,
                 quests: result.quests,
-                questToast: result.completedTitle ?? state.questToast,
-                activeEvent: null,
+                toasts: [...state.toasts, ...result.completedTitles.map(text => ({ text, kind: 'quest' as const }))],
+                // Consequences this choice books for later. They land on their own
+                // day, long after the modal is closed and forgotten.
+                scheduled: [
+                    ...state.scheduled,
+                    ...(choice.delayed ?? []).map(d => ({ dueDay: state.day + d.inDays, effects: d.effects, message: d.message })),
+                ],
+                activeEvent: explain ? state.activeEvent : null,
+                pendingOutcome: explain
+                    ? { eventId: state.activeEvent.id, choiceIndex: action.payload }
+                    : null,
+                isPlaying: !isGameOver,
+                isGameOver,
             };
         }
 
@@ -152,6 +189,19 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             let nextBudget = state.budget + dailyBudgetChange + passive.budget;
             let nextHappiness = state.happiness + dailyHappinessChange + passive.happiness - happinessDecay;
             let nextCleanliness = state.cleanliness + passive.cleanliness - cleanlinessDecay;
+
+            // Consequences booked days ago come due. Using <= rather than === so a
+            // scheduled item can never be skipped.
+            const dueToday: ScheduledEffect[] = [];
+            const stillPending: ScheduledEffect[] = [];
+            for (const item of state.scheduled) {
+                (item.dueDay <= state.day + 1 ? dueToday : stillPending).push(item);
+            }
+            for (const item of dueToday) {
+                nextBudget += item.effects.budget ?? 0;
+                nextHappiness += item.effects.happiness ?? 0;
+                nextCleanliness += item.effects.cleanliness ?? 0;
+            }
 
             // Advance projects; apply one-time effects for the ones that finish today.
             const nextActiveProjects: ActiveProject[] = [];
@@ -219,9 +269,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             // Spawn a new crisis node (region frequency scales the odds).
             let newNodes = survivingNodes;
             let newUsedEventIds = state.usedEventIds;
+            // Every random draw threads the seed through state, so a run with the
+            // same seed and the same inputs always plays out identically.
+            let rngSeed = state.rngSeed;
             if (!isGameOver) {
                 const spawnChance = TUNING.baseSpawnChance * (modifiers?.eventFrequencyMultiplier ?? 1);
-                if (Math.random() < spawnChance && newNodes.length < TUNING.maxNodes) {
+                const spawnRoll = nextRandom(rngSeed);
+                rngSeed = spawnRoll.seed;
+                if (spawnRoll.value < spawnChance && newNodes.length < TUNING.maxNodes) {
                     const relevantEvents = EVENTS.filter(e => !e.regionId || e.regionId === state.regionId);
                     // Draw from the events not yet seen this cycle so the same crisis can't
                     // resurface right away; once every relevant event has been drawn, the
@@ -234,21 +289,41 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
                     const reshuffled = relevantEvents.filter(e => e.id !== lastDrawnId);
                     const pool = unseen.length > 0 ? unseen : (reshuffled.length > 0 ? reshuffled : relevantEvents);
                     if (pool.length > 0) {
-                        const randomEvent = pool[Math.floor(Math.random() * pool.length)];
+                        const eventDraw = nextRandom(rngSeed);
+                        rngSeed = eventDraw.seed;
+                        const randomEvent = pool[Math.floor(eventDraw.value * pool.length)];
                         newUsedEventIds = unseen.length > 0
                             ? [...state.usedEventIds, randomEvent.id]
                             : [randomEvent.id];
+                        // A crisis lands on a spot measured inside a province of this
+                        // region, so it can no longer appear in a neighbouring region,
+                        // across a border or out at sea. Where the event names the
+                        // provinces it is actually about, it spawns on one of those:
+                        // the Konya sinkhole appears on Konya, not wherever the region
+                        // happens to have room. Spots already taken are skipped, so two
+                        // nodes cannot hide each other.
+                        const located = getProvinceSpawnPoints(state.countryId, state.regionId, randomEvent.location?.provinces);
+                        const spawnPoints = located.length > 0
+                            ? located
+                            : getRegionSpawnPoints(state.countryId, state.regionId);
+                        const free = spawnPoints.filter(
+                            p => !newNodes.some(n => n.x === p.x && n.y === p.y)
+                        );
+                        const usable = free.length > 0 ? free : spawnPoints;
                         let spawnX = 50;
                         let spawnY = 50;
 
-                        if (currentRegion?.spawnPoints && currentRegion.spawnPoints.length > 0) {
-                            const randomPoint = currentRegion.spawnPoints[Math.floor(Math.random() * currentRegion.spawnPoints.length)];
-                            spawnX = randomPoint.x + (Math.random() * 5 - 2.5);
-                            spawnY = randomPoint.y + (Math.random() * 5 - 2.5);
+                        if (usable.length > 0) {
+                            const placeDraw = nextRandom(rngSeed);
+                            rngSeed = placeDraw.seed;
+                            const point = usable[Math.floor(placeDraw.value * usable.length)];
+                            spawnX = point.x;
+                            spawnY = point.y;
                         }
 
                         const newNode: EventNode = {
-                            id: generateId(),
+                            // One spawn per tick, so the day is a stable unique id.
+                            id: `node-${nextDay}`,
                             eventId: randomEvent.id,
                             x: spawnX,
                             y: spawnY,
@@ -269,9 +344,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
                 completedProjectIds: nextCompletedProjects,
                 activeNodes: newNodes,
                 usedEventIds: newUsedEventIds,
+                rngSeed,
                 sustainDays: nextSustainDays,
+                scheduled: stillPending,
                 quests: result.quests,
-                questToast: result.completedTitle ?? state.questToast,
+                toasts: [
+                    ...state.toasts,
+                    ...dueToday.map(item => ({ text: item.message, kind: 'delayed' as const })),
+                    ...result.completedTitles.map(text => ({ text, kind: 'quest' as const })),
+                ],
                 isPlaying: !isGameOver,
                 isGameOver,
                 isVictory,

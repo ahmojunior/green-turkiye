@@ -42,10 +42,9 @@ export const PROJECTS: Project[] = [
   {
     id: 'solar-farm',
     name: { tr: 'Güneş Enerjisi Santrali', en: 'Solar Power Plant', de: 'Solarkraftwerk' },
-    description: { tr: 'Temiz enerji satarak kasaya günlük gelir getirir. Geri Dönüşüm Tesisi gerektirir.', en: 'Sells clean energy for daily income to the treasury. Requires the Recycling Plant.', de: 'Verkauft saubere Energie und bringt der Kasse tägliches Einkommen. Erfordert die Recyclinganlage.' },
+    description: { tr: 'Temiz enerji satarak kasaya günlük gelir getirir.', en: 'Sells clean energy for daily income to the treasury.', de: 'Verkauft saubere Energie und bringt der Kasse tägliches Einkommen.' },
     cost: 500,
     duration: 8,
-    prerequisites: ['recycle-plant'],
     effects: {
       cleanliness: 5,
       budgetPerTurn: 15,
@@ -54,8 +53,8 @@ export const PROJECTS: Project[] = [
   },
   {
     id: 'water-filter',
-    name: { tr: 'Su Arıtma Tesisi', en: 'Water Treatment Plant', de: 'Wasseraufbereitungsanlage' },
-    description: { tr: 'Pahalı ve uzun soluklu, ama temizlikte en güçlü kalıcı kaynak.', en: 'Expensive and long-term, but the strongest permanent source of cleanliness.', de: 'Teuer und langwierig, aber die stärkste dauerhafte Quelle für Sauberkeit.' },
+    name: { tr: 'Atık Su Arıtma Tesisi', en: 'Wastewater Treatment Plant', de: 'Kläranlage' },
+    description: { tr: 'Kanalizasyonu denize ve dereye vermeden önce arıtır. Pahalı ve uzun soluklu, ama temizlikte en güçlü kalıcı kaynak.', en: 'Treats sewage before it reaches the sea or the streams. Expensive and long-term, but the strongest permanent source of cleanliness.', de: 'Reinigt Abwasser, bevor es Meer und Bäche erreicht. Teuer und langwierig, aber die stärkste dauerhafte Quelle für Sauberkeit.' },
     cost: 560,
     duration: 14,
     effects: {

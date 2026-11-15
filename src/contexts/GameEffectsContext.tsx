@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
+import { useState, useCallback, type ReactNode } from 'react';
 import { generateId } from '../utils/id';
+import { GameEffectsContext } from './game-effects-context';
 
 interface FloatingText {
   id: string;
@@ -8,12 +9,6 @@ interface FloatingText {
   text: string;
   color: string;
 }
-
-interface GameEffectsContextType {
-  showFloatingText: (x: number, y: number, text: string, color: string) => void;
-}
-
-const GameEffectsContext = createContext<GameEffectsContextType | undefined>(undefined);
 
 export function GameEffectsProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<FloatingText[]>([]);
@@ -45,12 +40,4 @@ export function GameEffectsProvider({ children }: { children: ReactNode }) {
       ))}
     </GameEffectsContext.Provider>
   );
-}
-
-export function useGameEffects() {
-  const context = useContext(GameEffectsContext);
-  if (!context) {
-    throw new Error('useGameEffects must be used within a GameEffectsProvider');
-  }
-  return context;
 }

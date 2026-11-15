@@ -5,7 +5,7 @@ import { useGame } from '../hooks/useGame';
 import { TaxRate } from '../types/enums';
 import { sfx } from '../utils/sfx';
 import { formatBudget } from '../utils/format';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../contexts/language-context';
 
 export function ManagementPanel() {
     const {

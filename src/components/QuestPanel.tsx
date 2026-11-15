@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { CheckCircle, Circle, Gift, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CheckCircle, Circle, Gift, ChevronLeft, ChevronRight, History } from 'lucide-react';
 import { ALL_QUESTS } from '../data/quests';
 import type { QuestReward, QuestState } from '../types/quest';
-import type { LocalizedText } from '../types';
-import { useLanguage } from '../contexts/LanguageContext';
+import type { Toast } from '../types';
+import { useLanguage } from '../contexts/language-context';
 
 interface QuestPanelProps {
     quests: QuestState[];
-    toast: LocalizedText | null; // title of the most recently completed goal
+    toast: Toast | null; // goal completion or delayed consequence, whichever is next
 }
 
 const formatReward = (reward: QuestReward, t: (key: string) => string): string => {
@@ -109,9 +109,13 @@ export function QuestPanel({ quests, toast }: QuestPanelProps) {
 
             {/* Toast Notification */}
             {toast && (
-                <div className="absolute top-24 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full flex items-center gap-3 z-50 glass-panel bg-emerald-500/20 border-emerald-500/30 text-white animate-in fade-in slide-in-from-top-4 duration-500">
-                    <CheckCircle className="w-5 h-5" />
-                    <span className="font-bold">{toast[lang]} {t('quest.completedToast')}</span>
+                <div className={`absolute top-24 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-full flex items-center gap-3 z-50 glass-panel text-white animate-in fade-in slide-in-from-top-4 duration-500 max-w-md ${toast.kind === 'delayed' ? 'bg-amber-500/20 border-amber-500/30' : 'bg-emerald-500/20 border-emerald-500/30'}`}>
+                    {toast.kind === 'delayed' ? <History className="w-5 h-5 shrink-0" /> : <CheckCircle className="w-5 h-5 shrink-0" />}
+                    <span className="font-bold text-sm">
+                        {toast.kind === 'delayed'
+                            ? `${t('quest.delayedToast')} ${toast.text[lang]}`
+                            : `${toast.text[lang]} ${t('quest.completedToast')}`}
+                    </span>
                 </div>
             )}
         </>

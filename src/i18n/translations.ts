@@ -19,6 +19,25 @@ export const UI_STRINGS: Record<string, { tr: string; en: string; de: string }> 
   'app.severity.critical': { tr: 'Kritik kriz', en: 'Critical crisis', de: 'Kritische Krise' },
   'app.severity.growing': { tr: 'Büyüyen kriz', en: 'Growing crisis', de: 'Wachsende Krise' },
   'app.severity.new': { tr: 'Yeni kriz', en: 'New crisis', de: 'Neue Krise' },
+  'app.openCrisis': { tr: 'Krizi aç', en: 'Open crisis', de: 'Krise öffnen' },
+
+  // --- EventModal.tsx: the "Ne oldu?" explainer shown after a decision ---
+  'event.whatHappened': { tr: 'Ne oldu?', en: 'What happened?', de: 'Was ist passiert?' },
+  'event.why': { tr: 'Neden?', en: 'Why?', de: 'Warum?' },
+  'event.effectLabel': { tr: 'Bu kararın etkisi', en: 'Effect of this decision', de: 'Wirkung dieser Entscheidung' },
+  'event.sources': { tr: 'Kaynak', en: 'Sources', de: 'Quellen' },
+  'event.source.verified': { tr: 'doğrulandı', en: 'verified', de: 'geprüft' },
+  'event.source.partly': { tr: 'kısmen doğrulandı', en: 'partly verified', de: 'teilweise geprüft' },
+  'event.cost': { tr: 'Maliyet', en: 'Cost', de: 'Kosten' },
+  'event.gain': { tr: 'Gelir', en: 'Income', de: 'Einnahme' },
+  'event.tier.none': { tr: 'yok', en: 'none', de: 'keine' },
+  'event.tier.low': { tr: 'düşük', en: 'low', de: 'gering' },
+  'event.tier.medium': { tr: 'orta', en: 'medium', de: 'mittel' },
+  'event.tier.high': { tr: 'yüksek', en: 'high', de: 'hoch' },
+  'event.predictPrompt': { tr: 'Sence bu karardan sonra ne olacak?', en: 'What do you think follows from this decision?', de: 'Was folgt deiner Meinung nach auf diese Entscheidung?' },
+  'event.predictCorrect': { tr: 'Tahminin doğru', en: 'Your prediction was right', de: 'Deine Vorhersage war richtig' },
+  'event.predictWrong': { tr: 'Tahminin yanlış', en: 'Your prediction was wrong', de: 'Deine Vorhersage war falsch' },
+  'event.continue': { tr: 'Devam', en: 'Continue', de: 'Weiter' },
 
   // --- GameHUD.tsx ---
   'hud.day': { tr: 'Gün', en: 'Day', de: 'Tag' },
@@ -63,6 +82,7 @@ export const UI_STRINGS: Record<string, { tr: string; en: string; de: string }> 
   // --- QuestPanel.tsx ---
   'quest.goals': { tr: 'Hedefler', en: 'Goals', de: 'Ziele' },
   'quest.waitingForNew': { tr: 'Yeni görevler bekleniyor...', en: 'Waiting for new goals...', de: 'Neue Ziele werden erwartet …' },
+  'quest.delayedToast': { tr: 'Geçmiş kararının sonucu:', en: 'Consequence of an earlier decision:', de: 'Folge einer früheren Entscheidung:' },
   'quest.completedToast': { tr: 'tamamlandı!', en: 'completed!', de: 'abgeschlossen!' },
   'quest.reward.budget': { tr: 'Bütçe', en: 'Budget', de: 'Budget' },
   'quest.reward.happiness': { tr: 'Mutluluk', en: 'Happiness', de: 'Zufriedenheit' },

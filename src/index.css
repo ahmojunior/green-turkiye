@@ -88,3 +88,18 @@ body {
 .animate-slide-up {
   animation: slide-up 0.35s ease-out both;
 }
+
+/* Respect the OS "reduce motion" setting. The pulsing crisis nodes, the floating
+   numbers and the map filters are decorative, and a permanently pinging alarm is
+   exactly the kind of motion that causes trouble for motion-sensitive players.
+   Durations are collapsed rather than removed so a state change still registers. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

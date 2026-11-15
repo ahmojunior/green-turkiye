@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import type { GameState, LocalizedText } from '../types';
+import type { GameState, Toast } from '../types';
 import { getNodeSeverity } from '../utils/gameLogic';
 import { sfx } from '../utils/sfx';
 
@@ -9,7 +9,8 @@ interface Snapshot {
     severities: Record<string, number>;
     day: number;
     isGameOver: boolean;
-    questToast: LocalizedText | null;
+    // Head of the notification queue: a new head means a new toast just appeared.
+    toast: Toast | null;
 }
 
 // Watches gameState for transitions that don't have a single obvious click
@@ -33,7 +34,7 @@ export function useGameSfx(gameState: GameState) {
                 severities: nextSeverities,
                 day: gameState.day,
                 isGameOver: gameState.isGameOver,
-                questToast: gameState.questToast,
+                toast: gameState.toasts[0] ?? null,
             };
             return;
         }
@@ -60,8 +61,12 @@ export function useGameSfx(gameState: GameState) {
             else sfx.gameOver();
         }
 
-        if (gameState.questToast && gameState.questToast !== prev.questToast) {
-            sfx.quest();
+        const toast = gameState.toasts[0] ?? null;
+        if (toast && toast !== prev.toast) {
+            // A consequence landing is news of the same weight as a fresh crisis;
+            // a completed goal is a reward.
+            if (toast.kind === 'delayed') sfx.crisisAppear();
+            else sfx.quest();
         }
 
         prevRef.current = {
@@ -70,7 +75,7 @@ export function useGameSfx(gameState: GameState) {
             severities: nextSeverities,
             day: gameState.day,
             isGameOver: gameState.isGameOver,
-            questToast: gameState.questToast,
+            toast,
         };
     }, [gameState]);
 }

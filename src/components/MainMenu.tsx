@@ -6,7 +6,7 @@ import { CountryMap } from './CountryMap';
 import { TacticalBackground } from './TacticalBackground';
 import { Map, ArrowLeft, ArrowRight, Play, HelpCircle, Users, X, Leaf, Target, AlertTriangle, Scale, Siren, Lightbulb, RotateCw } from 'lucide-react';
 import { sfx } from '../utils/sfx';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../contexts/language-context';
 
 interface MainMenuProps {
   onStart: (country: Country, region: Region) => void;

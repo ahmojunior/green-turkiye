@@ -104,8 +104,9 @@ export const clampValue = (value: number, min: number = 0, max: number = 100) =>
 export interface QuestEvaluation {
     quests: QuestState[];
     reward: { budget: number; happiness: number; cleanliness: number };
-    // Title of a goal completed during this evaluation, for the UI toast (last one wins).
-    completedTitle: LocalizedText | null;
+    // Titles of every goal completed during this evaluation, in order, so the UI
+    // can show each one instead of dropping all but the last.
+    completedTitles: LocalizedText[];
 }
 
 // Re-scores every active goal against the current stats. Newly completed goals
@@ -116,7 +117,7 @@ export const evaluateQuests = (
 ): QuestEvaluation => {
     let changed = false;
     const reward = { budget: 0, happiness: 0, cleanliness: 0 };
-    let completedTitle: LocalizedText | null = null;
+    const completedTitles: LocalizedText[] = [];
 
     const quests = questStates.map(qs => {
         if (qs.isCompleted) return qs;
@@ -131,7 +132,7 @@ export const evaluateQuests = (
             reward.budget += def.reward.budget ?? 0;
             reward.happiness += def.reward.happiness ?? 0;
             reward.cleanliness += def.reward.cleanliness ?? 0;
-            completedTitle = def.title;
+            completedTitles.push(def.title);
             return { ...qs, progress: def.target, isCompleted: true };
         }
 
@@ -143,5 +144,5 @@ export const evaluateQuests = (
         return qs;
     });
 
-    return { quests: changed ? quests : questStates, reward, completedTitle };
+    return { quests: changed ? quests : questStates, reward, completedTitles };
 };

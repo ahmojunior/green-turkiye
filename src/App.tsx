@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useGame } from './hooks/useGame';
 import { useQuestNotifications } from './hooks/useQuests';
 import { useGameSfx } from './hooks/useGameSfx';
-import { useLanguage } from './contexts/LanguageContext';
+import { useLanguage } from './contexts/language-context';
 import { TUNING, getNodeSeverity } from './utils/gameLogic';
 import { sfx } from './utils/sfx';
 import { MainMenu } from './components/MainMenu';
@@ -22,6 +22,7 @@ function App() {
     gameState,
     startGame,
     handleChoice,
+    dismissOutcome,
     handleNodeClick,
     resetGame,
     setPaused,
@@ -56,7 +57,7 @@ function App() {
     return () => mql.removeEventListener('change', handle);
   }, [gameState.isPlaying, gameState.isGameOver, gameState.isPaused, setPaused]);
 
-  const { quests, questToast } = gameState;
+  const { quests, toasts } = gameState;
 
   const currentCountry = getCountry(gameState.countryId);
   const currentRegion = getRegion(gameState.countryId, gameState.regionId);
@@ -143,7 +144,7 @@ function App() {
       )}
 
       {/* Goals Panel */}
-      <QuestPanel quests={quests} toast={questToast} />
+      <QuestPanel quests={quests} toast={toasts[0] ?? null} />
 
       {/* Management Panel */}
       <ManagementPanel />
@@ -151,32 +152,25 @@ function App() {
       {/* Main Game Area - Map & Nodes */}
       <div className="flex-1 relative w-full h-full flex items-center justify-center z-10">
 
-        {/* Map Layer */}
-        <div className="absolute inset-0 flex items-center justify-center p-4 transform scale-100 transition-transform duration-1000" style={{ containerType: 'size' }}>
-          {/* We wrap the map to control sizing. Sized via container query units, not
-              aspect-ratio + max-w/max-h — see the matching comment in CountryMap.tsx
-              for why that combo silently shrinks to the SVG's default intrinsic size. */}
-          <div
-            className="relative"
-            style={{
-              width: `min(100cqw, calc(100cqh * ${(currentCountry?.viewBoxWidth ?? 1000) / (currentCountry?.viewBoxHeight ?? 422)}))`,
-              height: `min(100cqh, calc(100cqw / ${(currentCountry?.viewBoxWidth ?? 1000) / (currentCountry?.viewBoxHeight ?? 422)}))`,
-            }}
+        {/* Map Layer — the overlays go to CountryMap as children so they share the
+            map's own aspect-locked box. Sizing them in a second wrapper offset every
+            node and project coordinate against the SVG by the map's padding, by a
+            different amount at every viewport size. */}
+        <div className="absolute inset-0 transform scale-100 transition-transform duration-1000">
+          <CountryMap
+            provincePaths={currentCountry?.provincePaths ?? []}
+            viewBoxWidth={currentCountry?.viewBoxWidth ?? 1000}
+            viewBoxHeight={currentCountry?.viewBoxHeight ?? 422}
+            selectedRegionId={gameState.regionId}
+            interactive={false}
+            cleanliness={gameState.cleanliness}
+            showWildlife={currentCountry?.id === 'turkey'}
           >
-            <CountryMap
-              provincePaths={currentCountry?.provincePaths ?? []}
-              viewBoxWidth={currentCountry?.viewBoxWidth ?? 1000}
-              viewBoxHeight={currentCountry?.viewBoxHeight ?? 422}
-              selectedRegionId={gameState.regionId}
-              interactive={false}
-              cleanliness={gameState.cleanliness}
-              showWildlife={currentCountry?.id === 'turkey'}
-            />
-
             <ProjectSites />
 
-            {/* Event Nodes Layer — colour & size scale with severity, so the player
-                can tell a fresh minor crisis from one about to erupt at a glance. */}
+            {/* Event Nodes Layer — colour, size and a number all scale with severity,
+                so a fresh minor crisis reads differently from one about to erupt
+                without the difference resting on colour alone. */}
             <div className="absolute inset-0 pointer-events-none">
               {gameState.activeNodes.map(node => {
                 const severity = getNodeSeverity(node.spawnDay, gameState.day);
@@ -189,12 +183,13 @@ function App() {
                   <button
                     key={node.id}
                     title={style.label}
+                    aria-label={`${t('app.openCrisis')}: ${style.label} (${severity}/${TUNING.nodeMaxSeverity})`}
                     onClick={() => { sfx.click(); handleNodeClick(node.id); }}
                     style={{
                       left: `${node.x}%`,
                       top: `${node.y}%`
                     }}
-                    className="absolute transform -translate-x-1/2 -translate-y-1/2 group pointer-events-auto transition-all duration-300 hover:scale-125 z-50"
+                    className="absolute transform -translate-x-1/2 -translate-y-1/2 group pointer-events-auto transition-all duration-300 hover:scale-125 focus-visible:scale-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white z-50"
                   >
                     {/* Pulse Effect */}
                     <div className={`absolute inset-0 ${style.ping} rounded-full animate-ping opacity-75`} style={{ animationDuration: style.dur }}></div>
@@ -206,11 +201,21 @@ function App() {
                     >
                       <AlertCircle className={style.icon} />
                     </div>
+
+                    {/* Severity as a digit as well — size and colour alone are not
+                        readable for colour-blind players, and the aria-label above
+                        carries the same information for screen readers. */}
+                    <span
+                      aria-hidden="true"
+                      className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-slate-950 border border-white/70 text-[10px] leading-[14px] font-black text-white text-center"
+                    >
+                      {severity}
+                    </span>
                   </button>
                 );
               })}
             </div>
-          </div>
+          </CountryMap>
         </div>
       </div>
 
@@ -219,6 +224,8 @@ function App() {
         <EventModal
           event={gameState.activeEvent}
           onChoice={handleChoice}
+          outcomeChoiceIndex={gameState.pendingOutcome?.choiceIndex ?? null}
+          onContinue={dismissOutcome}
           budget={gameState.budget}
           happiness={gameState.happiness}
           cleanliness={gameState.cleanliness}

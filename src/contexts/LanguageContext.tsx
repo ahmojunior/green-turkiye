@@ -1,17 +1,8 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { useState, useCallback, useEffect, type ReactNode } from 'react';
 import { UI_STRINGS } from '../i18n/translations';
-
-export type Lang = 'tr' | 'en' | 'de';
+import { LanguageContext, type Lang } from './language-context';
 
 const STORAGE_KEY = 'gt_lang';
-
-interface LanguageContextType {
-  lang: Lang;
-  setLang: (lang: Lang) => void;
-  t: (key: string) => string;
-}
-
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 const warnedKeys = new Set<string>();
 
@@ -26,6 +17,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, lang);
+    // Screen readers take their pronunciation from this attribute, and the UI
+    // defaults to Turkish — a static lang="en" had them read every label wrong.
+    document.documentElement.lang = lang;
   }, [lang]);
 
   const setLang = useCallback((next: Lang) => {
@@ -51,10 +45,3 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useLanguage() {
-  const context = useContext(LanguageContext);
-  if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
-  }
-  return context;
-}

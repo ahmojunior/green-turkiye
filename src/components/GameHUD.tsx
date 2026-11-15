@@ -2,7 +2,7 @@ import type { GameState } from '../types';
 import { Wallet, Smile, Leaf, Calendar, Trophy } from 'lucide-react';
 import { TUNING } from '../utils/gameLogic';
 import { formatBudget } from '../utils/format';
-import { useLanguage } from '../contexts/LanguageContext';
+import { useLanguage } from '../contexts/language-context';
 
 interface GameHUDProps {
   state: GameState;

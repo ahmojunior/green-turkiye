@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Recycle, TreePine, Leaf, Sun, Droplet, Zap, type LucideIcon } from 'lucide-react';
 import { useGame } from '../hooks/useGame';
-import { getRegion } from '../data/countries';
+import { getRegionBuildSlots } from '../utils/buildSlots';
 import { sfx } from '../utils/sfx';
 import { generateId } from '../utils/id';
 
@@ -25,8 +25,8 @@ interface Arrival {
 export function ProjectSites() {
   const { gameState } = useGame();
   const { countryId, regionId, completedProjectIds } = gameState;
-  const region = getRegion(countryId, regionId);
-  const slots = region?.buildSlots;
+  // Derived from the geometry of the region, so sites always sit on its provinces.
+  const slots = useMemo(() => getRegionBuildSlots(countryId, regionId), [countryId, regionId]);
 
   const [arrivals, setArrivals] = useState<Arrival[]>([]);
   const prevCompletedRef = useRef<string[]>([]);
@@ -34,7 +34,7 @@ export function ProjectSites() {
   // Detect projects that finished since the last render and play a one-shot
   // "delivery" flight + burst before they settle into a permanent site icon.
   useEffect(() => {
-    if (!slots) return;
+    if (Object.keys(slots).length === 0) return;
     const prev = prevCompletedRef.current;
     const fresh = completedProjectIds.filter(id => !prev.includes(id));
     prevCompletedRef.current = completedProjectIds;
@@ -52,7 +52,7 @@ export function ProjectSites() {
     return () => clearTimeout(timer);
   }, [completedProjectIds, slots]);
 
-  if (!slots) return null;
+  if (Object.keys(slots).length === 0) return null;
 
   return (
     <div className="absolute inset-0 pointer-events-none z-[8]">

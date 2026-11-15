@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, memo, type ReactNode } from 'react';
 import type { ProvincePath } from '../types';
 import { MapWildlife } from './MapWildlife';
 
@@ -11,9 +11,13 @@ interface CountryMapProps {
   interactive?: boolean;
   cleanliness?: number;
   showWildlife?: boolean; // ambient planes/boats — Turkey-only flourish, see MapWildlife
+  // Map overlays (crisis nodes, project sites). They are rendered *inside* the
+  // aspect-locked box that holds the SVG, so their percentage coordinates are
+  // measured against exactly the same rectangle the map is drawn in.
+  children?: ReactNode;
 }
 
-export const CountryMap = memo(function CountryMap({ provincePaths, viewBoxWidth, viewBoxHeight, onRegionSelect, selectedRegionId, interactive = true, cleanliness = 100, showWildlife = false }: CountryMapProps) {
+export const CountryMap = memo(function CountryMap({ provincePaths, viewBoxWidth, viewBoxHeight, onRegionSelect, selectedRegionId, interactive = true, cleanliness = 100, showWildlife = false, children }: CountryMapProps) {
   const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
 
   // Calculate Visual Filters
@@ -87,6 +91,8 @@ export const CountryMap = memo(function CountryMap({ provincePaths, viewBoxWidth
         </svg>
 
         {showWildlife && <MapWildlife />}
+
+        {children}
       </div>
     </div>
   );

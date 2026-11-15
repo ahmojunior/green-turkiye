@@ -1,28 +1,18 @@
-import React, { createContext, useReducer, useCallback, useRef, type PropsWithChildren } from 'react';
-import type { GameState, Country, Region, Project, TaxRate } from '../types';
+import React, { useReducer, useCallback, useRef, type PropsWithChildren } from 'react';
+import type { Country, Region, Project, TaxRate } from '../types';
+import { GameContext } from './game-context';
 import { gameReducer, INITIAL_STATE } from '../reducers/gameReducer';
 import { TUNING } from '../utils/gameLogic';
+import { createSeed } from '../utils/rng';
 import { useGameLoop } from '../hooks/useGameLoop';
-
-interface GameContextType {
-    gameState: GameState;
-    startGame: (country: Country, region: Region) => void;
-    resetGame: () => void;
-    handleChoice: (choiceIndex: number) => void;
-    handleNodeClick: (nodeId: string) => void;
-    setTaxRate: (rate: TaxRate) => void;
-    buyProject: (project: Project) => void;
-    setPaused: (paused: boolean) => void;
-    clearQuestToast: () => void;
-}
-
-export const GameContext = createContext<GameContextType | null>(null);
 
 export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [gameState, dispatch] = useReducer(gameReducer, INITIAL_STATE);
 
     const startGame = useCallback((country: Country, region: Region) => {
-        dispatch({ type: 'START_GAME', payload: { country, region, startBudget: TUNING.startBudget } });
+        // The seed is drawn here, outside the reducer, so the reducer stays pure
+        // and a run can be replayed by starting it with the same seed.
+        dispatch({ type: 'START_GAME', payload: { country, region, startBudget: TUNING.startBudget, seed: createSeed() } });
     }, []);
 
     const resetGame = useCallback(() => {
@@ -39,6 +29,10 @@ export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
     const handleChoice = useCallback((choiceIndex: number) => {
         dispatch({ type: 'HANDLE_CHOICE', payload: choiceIndex });
+    }, []);
+
+    const dismissOutcome = useCallback(() => {
+        dispatch({ type: 'DISMISS_OUTCOME' });
     }, []);
 
     const handleNodeClick = useCallback((nodeId: string) => {
@@ -76,6 +70,7 @@ export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
         startGame,
         resetGame,
         handleChoice,
+        dismissOutcome,
         handleNodeClick,
         setTaxRate,
         buyProject,
