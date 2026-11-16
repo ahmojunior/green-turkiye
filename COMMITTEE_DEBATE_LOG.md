@@ -1712,3 +1712,76 @@ F20 stays last.
 **(5) Biggest remaining clarity risk.** With numbers hidden and only cost tiers on the buttons, the sheet must show enough visible evidence for a hunch to be a reasoned guess. Otherwise phone players will read the chip row as a coin flip and the game will feel opaque rather than educational.
 
 *(Orchestrator note: R4 votes logged: LS, GL, UX. Pending: BP, SE, ES, EB.)*
+
+### R4 · Behavioral Psychologist (`BP`) — vote
+
+**BP ROUND 4** (read-only)
+
+**(1) RANK (ethical-motivation quality and committee value):** F2, F7, F1, F4, F6, F3, F13, F5, F14, F10, F11, F16, F17, F18, F15, F19, F9, F8, F12, F20.
+Rationale: F2 and F7 protect competence and causal honesty. F1 is the enabler. F4 makes virtue viable. F8, F9 and F12 are the most likely to add pressure or noise, so they rank low.
+
+**(2) FINAL GUARDRAIL AUDIT** (G1–G13 as in Round 1)
+- **F1:** clean. **F2:** clean.
+- **F3:** near-violation of G12 (skippable) if the hunch gates the choice. *Amendment:* keep a visible "Just do it" link, and the first crisis skips the hunch. The miss line (counterfactual) must be factual, not "wrong choice" (G11).
+- **F4:** near-violation of G9/G8. *Amendment:* the rebate arrives as an in-fiction letter or news item, no bonus toast or jackpot sfx, and the "?" ring shows no sign or amount.
+- **F5:** clean (shield icon, never a counter).
+- **F6:** near-violation of G6/G11. *Amendment:* "No promise" has equal prominence, "not kept" is factual and always followed by the repair route. Cards unlock content only, never stats.
+- **F7:** two near-violations. (a) *Net payoff:* fee 0.5×gain×(1+0.15·tier) plus repair 0.8×gain can total ~1.7×gain, which teaches "corruption always fails". *Amendment:* the dirty path must stay net-positive before repair (EB's +7 to +13 gap), repair buys the tier drop only, and the sim gate asserts it. (b) G6: an ending keyed to the ever-dirty log means repair cannot change anything visible. *Amendment:* add a repaired variant (see R7).
+- **F8:** near-violation of G2/G3. *Amendment:* the multiplier is the existing severity tier, never a second clock, with off-for-5-days kept. One line on the node card ("waiting makes this cost more") only for `compounding` events.
+- **F9:** near-violation of G2/G3. *Amendment:* the forecast is a calendar mark, not a ticking countdown, and a shock slows gains but never resets sustain.
+- **F10:** near-violation of G13/G3. *Amendment:* letters always stop the advance, it never advances past an open decision, and tap cancels (already specified).
+- **F11:** G7. *Amendment:* soot markers ship only after F7's `patron` flag is live, or they display false accusation. Kara is labelled fictional.
+- **F12:** near-violation of G1. *Amendment:* the 80 chime fires once per stat per run, not on every re-crossing (re-crossing chimes are a streak sound). The 30 cue is a single soft note, never a loop.
+- **F13:** near-violation of G1/G6. *Amendment:* store `lastEnding` only (no run counts or dates). A "wary" returning letter always carries an invitation to act.
+- **F14:** see R5; otherwise clean. **F15:** near-violation of G13. *Amendment:* a passive link only, no "try again?" prompt, sound or animation. **F16–F19:** clean (F17's tier labels support G7).
+
+**(3) R5 and R7**
+- **R5:** a neutral blank outline only for ideas this run actually met but did not resolve (an unanswered cloze), never a collection grid. No number, no "locked", no "find more", nothing on the main menu.
+- **R7:** the 8 endings stay honest only if `green-shadow` ("Kara waiting at the door") stops applying to a player who repaired. **Add one ending, `green-repaired`:** the region is green, the families were paid, and Kara's chimney still stands. Keep the others. Do not add endings just for the rare ones (bankrupt ~1%, coast-sold ~2%): make them reachable via the sim gate, or fold `bankrupt` into `clean-broke`. Nothing currently moralises: `uprising` ("Hear us") and `clean-broke` are factual, and `green-model` reads as a pride ending, not a purity test.
+
+**(4) Confirmations**
+- **Deterministic ratio fee on a named citizen (X2):** CONFIRM, with F7's net-positive-before-repair amendment. Wording is "the cost landed on [citizen]", not "you were caught".
+- **Promise flow (X6):** CONFIRM, with F6's equal-prominence and factual-wording amendments. *(Note: UX's blocker — no Promise on a first run — is compatible; BP-flow starts from run 2.)*
+- **Advance stops (X7):** CONFIRM, with F10's amendment. Cap 5 days per press and tap to cancel are good.
+
+**(5)** Yes, as amended: it builds curiosity, competence and care for named people with no streaks, loss counters, timers, or reward randomness, and the near-violations above are fixable by wording and sim gates, not by redesign.
+
+---
+
+### R4 · Environmental-Science Pedagogy Specialist (`ES`) — vote
+
+**ES ROUND 4: ratification vote** (read-only)
+
+**(1) Ranking, best to worst:** F4, F1, F18, F3, F2, F17, F5, F7, F16, F14, F9, F6, F8, F13, F11, F15, F10, F12, F19, F20.
+- F4 first because it fixes "cure is instant" and "green is expensive", the model's biggest false lessons. F1 and F18 are enablers: the sim gates and the honesty validator. F3 is fourth, with the amendment below.
+
+**(2) Blocking objections**
+- **F3 and F14 (blocking).** F3 would show a "shared mechanism sentence" on reveal for all 124 events. 109 of those have no source, and F18 hasn't shipped yet. That would spread unsourced causal claims at scale. *Amendment:* the mechanism line appears only for events whose card or skin carries a tier and a source. Other events reveal numbers plus a plain "game model, not a measured fact" line. The F14 cloze answer may come only from a sourced card.
+- Everything else is non-blocking.
+
+**(3) R3: stress-window table.** Rule: one slow-onset shock per run, with ≥4 days of notice. Floods and storms are not windows; they get a 1–2 day warning on the event itself.
+
+| Region group | Shock kind | Dated analogue | Source in repo? |
+|---|---|---|---|
+| TR Marmara | Warm, stratified bloom season | Mucilage, spring–summer 2021 | **Yes** (AA Action Plan, TÜİK) |
+| TR Aegean and Mediterranean | Heat plus wildfire season | Wildfires, Manavgat and Marmaris, Aug 2021 | No; add |
+| TR Central Anatolia | Drought | Tuz Gölü dry-out, summer 2021 (verify) | No; the Konya aquifer source covers only aquifer drawdown |
+| TR Black Sea | Prolonged wet spell, ≥3 days of rain warning | Bartın and Kastamonu floods, July 2021 | No; add |
+| TR Eastern | Drought and low flow | 2021 drought (verify) | No |
+| TR Southeastern | Heat plus dust season | Dust episodes (repo source for dust: `dust-transport`) | **Partial** (dust, not heat) |
+| DE Nord, Ost, Bayern | Drought | 2018 drought, April–October | No |
+| DE Ruhr, Rhein-Main, BW | Rhine low water | 2018 and 2022 (Kaub gauge) | No |
+| UK England | Heat and drought | 19 July 2022 heat; 2022 drought | No |
+| UK England North | Moorland fire season | Saddleworth Moor, June 2018 | No |
+| UK Scotland and Wales | Dry summer | Summer 2018 or 2022 | No |
+| UK Northern Ireland | Algal bloom season | Lough Neagh, 2023 | No |
+
+Only the Marmara row has a verified source in the repo today; the rest need a source before shipping (rule 6). Konya gets drought and heat, never a flood. *(Orchestrator note: the Black Sea row is a wet spell/flood, which contradicts ES's own "floods are not windows" rule; resolve by giving the Black Sea a slow-onset alternative (e.g. prolonged-rain landslide season) or exempting it with the 1–2 d event warning.)*
+
+**(4) R2: rebate `avoids` set**
+- **Honest avoided-cost co-benefit (rebate):** 1. `bursa-smog` (filters; avoided health costs). 2. `ne-flood-defense`. 3. `samsun-flood` (infrastructure). 4. `nord-storm-surge` (dikes). 5. `istanbul-mucilage` option B (avoided fishery and tourism loss). 6. `mersin-port` (respond quickly; spill cost grows with delay). 7. `ni-lough-neagh` (regulate runoff; avoided water-treatment and tourism cost). 8. `se-thames-quality` (sewer upgrade). 9. `konya-sinkhole` option 3 (drip, quota and crop change). 10. `bayern-urban-heat-munich` (parks; avoided heat-health cost).
+- **Honestly pay 0 (nature or heritage benefit, not the treasury):** 1. `antalya-caretta` 2. `hatay-belen-migration` (shut the turbines) 3. `nord-wadden-sea` (reject the marina) 4. `wales-cardiff-bay-barrage` (alternative habitat) 5. `scotland-rewilding`.
+
+**(5) Biggest remaining honesty risk.** Mechanism and "why" text shown for events with no verified source. Content that spreads faster than the validator enforcement, in F3, F14 and F16, would assert causes unsupported by evidence. A sequencing risk: **ship F18 before or with F3.**
+
+*(Orchestrator note: R4 votes logged: LS, GL, UX, BP, ES. Pending: SE, EB.)*
