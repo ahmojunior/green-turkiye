@@ -1069,3 +1069,61 @@ CI fails on any breach, and `sim.ts` prints a pass/fail table.
 
 **Next scheduled action: Round 3 — Cross-Examination & Synthesis.** Each seat receives the full log and a *targeted challenge list*: (a) resolve X1–X12 as assigned, (b) rank-order K1–K11 by impact/leverage and effort (with the one-sentence reason), (c) attack ≥2 *other* seats' proposals (strongest objection, then a concrete amendment), (d) name anything you now think should be **rejected/deferred**. Round 4 (if needed): convergence vote + dependency-ordered roadmap draft. Then Phase 4 deliverables (`FINAL_FEATURE_ROADMAP.md`).
 
+
+---
+
+## ROUND 3 — CROSS-EXAMINATION & SYNTHESIS
+
+*(Each seat was handed the Round 2 checkpoint (K1–K11, X1–X12) with assigned conflicts to resolve, attacks to make, and a ranking to give.)*
+
+### R3 · Game Loop & Retention Architect (`GL`)
+
+**GL ROUND 3: CROSS-EXAMINATION & SYNTHESIS** (read-only; read the Round 2 log in full)
+
+**(A) Resolutions**
+
+**X4 — one endgame spec ("Hold-14 with a forecast spell").**
+- **Win rule.** Keep 80/80, now held for 14 days (EB-P6, validated). Add a grace band: the counter pauses at 70–79 and resets only below 70. Gains above 85 count ×0.5, which also removes the 20-point overshoot.
+- **Forecast spell.** One 3-day spell per run, announced from day 1 on the map and HUD as "Day D: {kind}". D = 14 + (seed mod 7), so it falls in [14, 20] and overlaps the median winner's hold (win at day 28–31 means the hold starts around day 15–17). A hand-authored phase entry in a new `data/phases.ts`: `{kind, boostedTags, decayMult:1.5, spawnWeightMult:2, days:3}`.
+- **How it meets the 80/80 rule.** The spell changes only decay and spawn weights, never the threshold. The grace band means a spell costs a *pause*, not a reset, unless the player is truly unprepared. A prevention project matching `boostedTags` (K1) is the shield.
+- **Sim gates (EB list plus GL's).** Run all 11 EB assertions, with median winner length 20–35. Add three: a `forecaster` policy (buys the matching prevention project before D) must beat `noProject` by ≥ +8 points; `smart` must stay at 45–65%; the spell must change the day-of-win distribution by no more than 5 days versus no spell.
+
+**X10.** The forecast and the hazard weighting are the same mechanic, not rivals: the forecast announces *when and which tag*, and the spawn weight and decay multiplier are the mechanism. Nothing is hidden, nothing is random at play time, and the draw stays seeded.
+
+**X7 — merged tempo spec.**
+- The existing button stays as one day at a time. Next to it goes a second **"Until something happens"** button. A tap starts it and a tap cancels it. This replaces UX's hold-to-skip, which is hard to discover on touch.
+- Quiet days become a **Dawn Strip** (UX-P4) plus HUD delta pulses. A blocking `DaySummary` opens only if it has content.
+- **What stops fast-forward:** a new crisis spawns; any node reaches severity 2 or 3 (so a skip can never cross an eruption); a letter or news item; a project finishes; a `scheduled` effect lands; a stat crosses 80, 70 (grace band) or 30; any sustain milestone (every 5 days); the spell window opens or closes; budget falls under `criticalBudget`; the game ends. Cap 5 days per press.
+- The UI loop dispatches plain `TICK`s, so the log and replay are unchanged. Guardrail 13 holds because the player starts it and can always cancel.
+
+**(B) Attacks**
+1. **EB-P3 neglect interest.**
+   - *Objection:* it adds a third escalator on the same clock as the bleed and the day-6 eruption. That recreates "clear the board": the best play becomes opening every node the day it spawns, which is exactly what `lazy` 58→33 proves. Triage is a queue now, and deferring on purpose is no longer a choice.
+   - *Amendment:* apply it only to events authored with `compounds: true` (slow leaks, pests and fire risk, ~30%). Cap at ×1.4. Show the tier on the node. Exempt the first 5 days of a run. Keep `lazy` ≤ `smart` − 10 as a gate, not as the target.
+2. **BP-P2 repair nodes.**
+   - *Objection:* they add chores, and a node competes with crises for the cap of 3.
+   - *Amendment:* make it an action inside `LetterModal`: one button with a visible cost, no node, no cap use, no timer. One open repair per citizen. It meets guardrail 6 with no map clutter.
+3. **BP-P5 Casebook.**
+   - *Objection:* collecting 5+ codes from a class with no backend is real teacher friction, and the aggregator UI is M effort for an unproven use.
+   - *Amendment:* ship only the path code and seed card (~20 LOC) at GameOver. A teacher can paste codes into a spreadsheet. Build the aggregator only after the Faz 6 playtest shows a teacher asked for it.
+4. **GL's own weakest, GL-P6 "Second Look".** Invisible to the player and a no-op until ≥2 events per mechanism exist (15 are tagged today). Defer to after K9 gives coverage. Also drop GL's "Mandate" in favour of BP's Promise (X6), since they overlap.
+
+**(C) Meta-loop synthesis**
+- **Run #2:** the debrief ends with a rewind and a "road not taken" card, plus one mechanism card revealed and one still shown as "???". The player has a hypothesis to test (K3) and a concept gap (K4).
+- **Run #5:** the Promise (K5) is a self-chosen goal about a named citizen. A returning citizen opens with one line about the last ending in that region (K4). The region card on the dossier shows its epitaph. The "Ne oldu?" prediction loop still carries learning.
+- **Run #20:** an unlocked mechanism makes its stress-spell kind a choosable scenario at the region menu. Understanding grows the option set, so late runs are "which hard variant do I try". No points.
+- **Minimal combination:** K3 (rewind-one, seed card, path code); K4 (the meta store, a dossier line per region, a codex of "???" cards, and one stored `lastEnding` line for a citizen — no 54 letter fragments); K5 (a Promise at start with a kept/broken/partly line, old quests deleted *only after* the income rebase, unlocks as scenarios and cards). All local, skippable, no streaks, no stat reward.
+- **Cut:** Casebook UI, Mandate, strategy fingerprint, the "8/8 endings" counter (the dossier replaces it), challenge toggles beyond the 2 spell variants, and ambient audio.
+
+**(D) Ranking by retention impact per unit effort (top 6)**
+1. **K6**, the hidden-info fix. XS, protects the best loop.
+2. **K2**, the co-benefit dividend (EB-P1). S-M, makes virtue viable (clean 2→18), the biggest flow fix.
+3. **K7**, tempo. M, improves every minute of every run.
+4. **K1**, prevention projects. M, gives build-order mastery and the shield for the spell.
+5. **K3**, rewind and seed. M, supplies the run #2 reason.
+6. **K4 with K5**, the meta store plus Promise. M, supplies the run #5 and #20 reasons.
+(K11 sim gates unranked because mandatory first. K8 map evidence high-impact but M-H, so it follows.)
+
+**Defer or reject:** Defer K9 full skins (do ~3 cards only) and defer ES-P2 media; defer EB-P7 (third option on 25% of events); defer BP-P3 unlabelled temptations; reject toast-style quests; reject GL-P6 until K9 coverage exists; reject the Casebook aggregator for now.
+
+*(Orchestrator note: R3 reports logged: GL. Pending: LS, BP, UX, SE, ES, EB.)*
