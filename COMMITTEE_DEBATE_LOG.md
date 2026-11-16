@@ -1637,3 +1637,23 @@ Built from the converged clusters and R3 resolutions. Seats rank all 20 (best = 
 | F20 | **Deferred/playtest-gated family**: media stages 1–2, Casebook (separate route), EB-P7 systemic third option, Second Look, 54 letter fragments, ambient audio | Deferred | — |
 
 **Questions each seat must answer (≤3 lines each):** R3 stress-window anchor (absolute day vs hold-anchored vs seed-derived; per-region shock table); R4 water-filter reprice; R5 silhouette slots; R6 hunch stat; R7 ending taxonomy / reachability. **EB additionally** measures R1 (neglect variants) and R2 (authored-rebate proxy) on the fork and reports numbers.
+
+### R4 · Cognitive & Learning Scientist (`LS`) — vote
+
+**LEARNING SCIENTIST, ROUND 4 VOTE** (read-only; read the Round 3 checkpoint and the F1–F20 brief).
+
+**(1) Ranking, best to worst (learning lens and overall committee value combined):**
+F2, F3, F16, F4, F1, F14, F5, F18, F17, F7, F15, F13, F6, F9, F8, F11, F10, F19, F12, F20.
+Why F2, F3, F16, F4 lead: they are the chain that stops the game from teaching "pick the plus signs". F2 is XS and gates measurement. F3 raises reveal coverage from 12% to 100% by system. F16 supplies the real trade-offs that make the F3 hunch non-trivial. F4 corrects the false "cure is instant" lesson. F1 is sixth by learning value, but it is the enabling work. F20 stays last.
+
+**(2) Blocking objections:** none. One non-blocking sequencing amendment: **F3 and F16 must land in the same milestone.** F3 alone, on dominance-shaped events, makes the hunch trivially "▲", and the hit rate then measures nothing.
+
+**(3) Answers**
+- **R3, stress-window anchor:** anchor to the hold start (the first day both stats ≥ the threshold) with a small seeded offset. A fixed absolute day can fire before the player has anything to protect, which wastes the lesson. Keep ≥4 days of notice so prevention is a visible precaution, and give each region at least one historical analogue.
+- **R5, silhouette slots:** show slots only for mechanisms the player has met this run but not yet answered, with the name hidden. No total count, no "N of M", no order by progress. Keeps the curiosity gap without a completion meter.
+- **R6, hunch stat:** cleanliness by default. Use an authored `probe` only on trade-off events where cleanliness is not the point (e.g. blacksea-hes, where the stakes are happiness). Never budget. Cap `probe` at ~15 events.
+- **R7, ending taxonomy:** key endings to the ever-dirty log, plus a `repaired` flag. Add a new ending only if the sim reaches it in ≥~2% of runs. Fold rarer endings (bankrupt at 1%, coast-sold at 2%) into their nearest neighbour, or the debrief teaches a lesson most players never see. Every ending should map to one mechanism lesson.
+
+**(4) Does the F-list teach causal systems thinking?** Mostly yes: F2, F3, F4, F5, F16 and F14 together move the game from valence-guessing to inferring mechanisms and lagged consequences. **The single missing item is an assessed transfer probe:** one question in the F14 debrief that applies a mechanism the player met this run to a new surface in a different region. Without it, F17's skins expose transfer but nothing checks it.
+
+*(Orchestrator note: R4 votes logged: LS. Pending: GL, BP, UX, SE, ES, EB.)*
