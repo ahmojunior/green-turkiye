@@ -1183,3 +1183,146 @@ CI fails on any breach, and `sim.ts` prints a pass/fail table.
 **Acceptance test for the core:** in a 3–5 student playtest, after one run each player can state one mechanism in their own words (e.g. "export moves pollution") and say why a cure took days to show. If they can't, the reveal card is too long.
 
 *(Orchestrator note: R3 reports logged: GL, LS. Pending: BP, UX, SE, ES, EB.)*
+
+### R3 · Environmental-Science Pedagogy Specialist (`ES`)
+
+**ES ROUND 3 — Cross-examination and synthesis** (read-only; read Round 2 and the checkpoint, K1-K11 and X1-X12)
+
+**(A) Resolutions**
+
+**X3 (media vs residue).** ES **withdraws ES-P2 (three hidden media) as a milestone item.** LS-P3 residue plus ES-P1 lag is sufficient for displacement, with one amendment: residue must be typed (`residue: {to: 'air'|'water'|'land'|'sea'|'abroad', afterDays}`). Without that field a displaced pollutant is a generic −12 and the player can't answer "where did it go?"
+- Show the destination on the outcome card.
+- Apply the three transfer rules by hand to ~6 events: burning (land→air), runoff (land→water), treatment/outfall (water→sludge, sea or brine).
+- Revisit media stocks only if playtest shows players can't say where the pollution went.
+
+**X8 (minimum honest content set)** — three milestones, systems first.
+- **M1, systems only, 0 new events:** validator tiers and the honest-content rules (below); delays ≤14 days with `addresses`; typed `residue`; re-text of the 6 projects with `prevents`.
+- **M2, 4 mechanism cards** (symptom vs source, displacement, rebound, price signal). The seed is the 15 existing outcome events; their `why` sentences become the cards' text and aren't rewritten: `plastic-ban`, `ewaste-dump`, `marmara-urban-renewal`, `aegean-wind-siting`, `med-invasive-fish`, `hatay-belen-migration`, `hazelnut-aflatoxin`, `van-pearl-mullet`, `dust-transport`, `istanbul-mucilage`, `ergene-textile-dye`, `aegean-geothermal-reinjection`, `aegean-olive-vs-lignite`, `konya-sinkhole`, `harran-salinity`. Add 8 DE/UK skins (2 per card), e.g. `ni-lough-neagh`, `se-thames-quality`, `se-chalk-stream-abstraction`, and the English 5p bag charge as a skin of the bag-fee card.
+- **M3, the remaining 4 cards** (recovery lag, commons, irreversibility, siting) and 16 more skins. Upgrades ~24 of 72 DE/UK events, one third.
+- **Hard cap per milestone:** ≤40 new authored sentences ×3 languages and ≤8 verified sources.
+- **Reject or defer:** EB-P7's 25% third-option injection and BP-P4's 54 letter fragments. Use stake-tagging only (reuse the 5 templates, match the writer's stake to the medium).
+
+**X9 (installments vs rebate).** Different channels, so keep both and do not merge.
+- **Environmental recovery is gradual:** 2 or 3 installments. The source stops at once, but the state (water body, aquifer, grove) recovers slowly, and real recovery is often partial (hysteresis), so some installments should sum to less than the loss.
+- **A money rebate is honest only as avoided cost.** Not a universal reward for a clean choice.
+
+**(B) Truth audit of the numbers**
+- **EB-P1 co-benefit rebate (0.5 × cost at +6 days).** As a blanket rule it teaches "virtue always pays back". Real avoided costs exist (health, flood damage, fisheries, water treatment) and need Tier A: an agency or peer-reviewed cost-benefit source. Many clean choices have no payback: biodiversity and heritage, e.g. `aegean-olive-vs-lignite`, `antalya-caretta`, `gap-dam`. *Amendment:* rebate only on choices with `avoids: mechanism`, with a size and timing per card (0.3–0.7, at +10 days), and show who gains. Some clean choices must pay nothing.
+- **EB-P5 audit and "poverty ×2" payoff.** The "poverty" label is a causal claim that blames the poor; what the model has is a municipal fiscal squeeze. Reframe as "budget stress makes short-term deals tempting" (composite tier). A random audit teaches "corruption mostly fails". *Amendment (resolves X2 deterministically):* a **pattern audit** — the second dirty deal on the same mechanism within ~8 days triggers an inspection. Provable from the log, no roll; EB's fixed fine stays.
+- **EB-P3 neglect interest.** Defensible only for compounding problems. Real examples: a contaminated groundwater plume grows and treatment costs rise; invasive-species eradication cost climbs steeply with area, so early detection is cheapest (`med-invasive-fish`); wildfire suppression; salinisation (`harran-salinity`). Not universal: a fixed-cost retrofit (`marmara-earthquake-retrofit`) does not compound this way. *Amendment:* `compounding: true` per event, Tier B with an agency or review source, not a uniform ×1.6.
+- **EB-P6 diminishing returns above 85.** Defensible (the last few percent of removal is the most costly: tertiary nutrient removal, marginal abatement cost curves). Tier B, labelled as a rule in the cards ("the last 10% costs more"). The grace band is a game rule and needs no evidence.
+- **GL-P1 stress-year shocks.** Defensible per region only with a table of historical analogues, each with date and source; no climate-attribution claims. **Konya flood: reject** (Konya gets drought — the Tuz Gölü drying in 2021 — or heat). Black Sea flood: yes (Bartın and Kastamonu, July 2021). Southeast flood: yes (Şanlıurfa, March 2023). Germany: Ahr floods (July 2021). UK: heatwave (July 2022, over 40°C). *Amendment:* forecast only slow-onset shocks (drought, heat); floods get a 1–2 day warning instead, teaching early warning versus preparedness.
+- **UX-P2 soot markers.** Soot drawn for every problem conflates media (draws a water problem as air). *Amendment:* tie each mark type to the event's `tags.pollution` (haze for air, foam or discolouration for water, brown patch for land), placed only on that event's `location.provinces`. Marks tied to Kara Holding must be labelled fictional.
+
+**(C) Attacks**
+1. **EB-P1 (strongest objection):** "virtue pays" is a causal lie where there is no avoided cost. Amend as above.
+2. **GL-P1:** a flood forecast "from day 1" implies floods are predictable weeks ahead. Amend: slow-onset forecasts only, short-notice warnings for fast events.
+3. **ES's own weakest, ES-P2 (three media):** highest effort (~250 LOC plus content) for a lesson that typed residue delivers.
+
+**(D) Ranking K1-K11 by truth impact per effort**
+1. **K2** lag symmetry, `addresses`, typed residue and a sourced `avoids` rebate.
+2. **K6** hidden-info leak fix. XS; protects the only working pedagogy.
+3. **K10** fix `isDirtyDeal`. A causal-honesty bug, S effort.
+4. **K1** prevention projects. Teach prevention vs cure. DE/UK tags are a dependency.
+5. **K9** cards and skins, capped as in X8.
+6. **K11** sim assertions. An enabler, so first in practice.
+
+**Defer:** K8 map marks (until medium-matched), K7 tempo, K3 rewind (to M3), K4 codex (after the cards exist), K5 quest removal (only after the income rebase).
+**Reject:** the "poverty ×2" label, uniform neglect interest, a blanket rebate, the Konya flood, the 25% third-option injection, the 54 letter fragments.
+
+**Rules of honest content (for the validator and the author — every event, skin and letter)**
+1. Every event and skin declares a tier (real / composite / hypothetical) that is shown on the card. `real` needs ≥1 verified primary source (agency, peer-reviewed or court). A news-only source is `partly-verified`, and the text says "reported".
+2. Game numbers are never shown as measurements. Any real figure carries its own source and year. No invented figures.
+3. Every consequence the `why` text names must show in the numbers or the lag. No contradiction between text and numbers (e.g. "took years" with an instant +25). Remedial effects are paid in installments, except for fast media (air, price).
+4. Every choice has a `kind` (symptom / source / displace / ignore / systemic) and says what it does not fix.
+5. No option is both cheapest and cleanest without a sourced co-benefit, and each green cost states who pays and who gains.
+6. No single-event climate attribution. A shock needs a regional analogue with date and source.
+7. Blame is structural unless the choice is flagged illegal. A letter's writer matches the medium and the stake (no fish letter to a nurse).
+8. TR/EN/DE parity: the same figures, units, hedges and source labels in all three languages, and the validator fails otherwise.
+
+---
+
+### R3 · UX/UI & Game-Feel Director (`UX`)
+
+**UX/Game-Feel Director, Round 3.** Read the log through the Round 2 checkpoint and the R2 proposals. Nothing edited.
+
+**(A) Resolutions**
+
+**X1 — one chip slot, post-commit, with a ghost marker.**
+- UX concedes the timing to LS. A pre-commit chip cannot be a real gate, because the choice is already applied in the reducer. UX keeps the ghost marker, since that is where the stake is felt.
+- Rule: one prediction per event, never two. Chip type depends on the data: if the choice has an authored `mechanism` enum, show LS-P1 mechanism chips; if not, show direction chips (▲▬▼ on the largest-|effect| stat). Hidden numbers (C1) can then roll out to all 124 events without waiting on authoring.
+- `PREDICT` is dispatched after `HANDLE_CHOICE`, in the order the UI already works today. SE's mastery update works either way.
+- *(Orchestrator note: LS's R3 proposes a different hybrid — direction hunch pre-commit-of-reveal in `HANDLE_CHOICE{hunch}` with mechanism revealed. UX concedes "post-commit" but keeps mechanism-or-direction chips; LS keeps one tap with direction hunch + mechanism reveal. Both agree on: one prediction per event, hidden numbers until reveal, ghost marker/hit→collapse/miss→expand+counterfactual. Residual difference is purely whether the single chip row asks direction (LS) or mechanism-else-direction (UX), and whether it is a separate `PREDICT` action or a field on `HANDLE_CHOICE`. To be settled in the synthesis.)*
+
+**Phone-landscape sequence (3 taps, same as today's outcome events):**
+
+| Step | Visible | Tap |
+|---|---|---|
+| 1. Choose | Map on the left with the node outlined. Right sheet: title, a 2-line clamped description, and 2–3 buttons showing text and a cost tier. No effect numbers. | tap 1 |
+| 2. Hunch | The choice recapped in one line. 3–4 chips of up to 3 words at 44px height, plus "Not sure". The HUD and the sheet's stat strip stay frozen at pre-choice values (K6). | tap 2 |
+| 3. Reveal | The chip collapses to a ✓ or ✗ plus one shared mechanism line (a hit stops there). A miss adds one counterfactual line. The HUD bars count up from the ghost marker, the map animates at the node, and sources sit behind "Sources ▸". | tap 3, Continue |
+
+Reading load is at most 2 lines on a hit. The first-ever crisis skips step 2.
+
+**X11 — Mikey table.** *Rule:* Mikey speaks only about the player's interface or process. He speaks once per hint id, ever. He never speaks about outcomes, because the cards, letters and news already do. Budget: at most 6 bubbles in a first run, at most 1 per 3 game days after day 5, and none for a veteran. A hint is cancelled if the player has already done the thing.
+
+| Moment | Mikey |
+|---|---|
+| First node, End Day / Advance, tax, first delayed letter, first repair marker, forecast chip | Speaks, one line, once |
+| First time a node reaches severity 2 | Speaks, and the line can say "waiting costs more" |
+| During a crisis modal, hunch chips, or reveal | Silent. The card speaks |
+| Eruption, game-over body, fines, audits, Kara tier changes | Silent. The news TV is the irony channel |
+| Rewind, seed and Casebook screens | Silent. These are class and teacher contexts |
+| Debrief | Existing headline only. Sad on a bad ending, never cheerful over harm |
+| Repeat of any hint, or a veteran's later run | Silent |
+
+New features add no new Mikey lines, apart from the first-time ones above.
+
+**X7 — Advance replaces End Day, and the Dawn Strip is the same thing.**
+- One button, "Advance". It ticks days visibly at ~350 ms per day, so the ticking is the ceremony: the day counter flips and the HUD deltas pulse.
+- It stops at any notable event, per GL-P4, and always stops at severity 3, the day before an eruption. Tapping again cancels.
+- On stopping, the Dawn Strip is a non-modal strip showing the day plus 3 delta chips. A letter or news item is shown as a mail icon on the map. The full modal opens only for a first-ever item or a new Kara tier.
+- Hold-to-skip dropped (not discoverable on touch; Advance covers the case). Reduced motion: no tick animation, final strip shown immediately.
+- *(Note: GL's X7 proposal keeps a one-day "End Day" next to "Until something happens". UX says a single "Advance" button. Synthesis: keep ONE button whose first tap advances a single day if something is pending, otherwise runs until notable — to be settled.)*
+
+**(B) Attacks**
+1. **SE-P2 rewind.**
+   - *Objection:* it sits on the GameOver screen, where the player has just lost, and a list of 5 event titles is another reading screen. There is no map, so "where was I" is lost, and landing mid-day is disorienting.
+   - *Amendment:* show a timeline of at most 5 pins (event icon plus day) on a mini map, offered only after a loss. On landing, play a 1.5 s sepia-and-count-back visual and show a persistent "↶ original path" peek chip. Cap rewinds at 2; put the seed link under a collapsed "Share".
+2. **BP-P2 amends nodes / BP-P5 Casebook.**
+   - *Objection (amends):* a node that never erupts looks like every other alert circle but behaves differently, and competes for one of the 3 node slots. *Amendment:* render it as a handshake or mail glyph in blue, no severity digit, no pulse, not counting towards the cap. (GL independently proposed moving it into `LetterModal`.)
+   - *Objection (Casebook):* pasting N codes on a phone is miserable, and a teacher dashboard should not live in a kids' game menu. *Amendment:* a separate static route (`#/casebook`), desktop-first, linked only from the footer, zero first-run presence.
+3. **EB-P3 neglect-interest tiers on nodes.**
+   - *Objection:* adds a second severity encoding ($→$$$) on top of size, colour and digit; and it is a loss-framed price shown on the map, pushing "clear the board" panic over thinking.
+   - *Amendment:* the map carries no `$` glyph. The tier shows only on the choice buttons (they already carry cost tiers), rising with node age. One existing `nodeGrew` hint covers the explanation.
+4. **UX's weakest: the ambient audio bed in UX-P5.** A looping procedural bed costs battery, plays through weak phone speakers, needs an autoplay unlock, and clashes in a classroom. *Amendment:* drop it. Keep threshold chimes, sustain tick and haptics. Province tint stays but ships after the UX-P2 markers, since the global filter partly overlaps it.
+
+**(C) Screen budget**
+
+Everything the clusters would add: side sheet, hunch chip row, Dawn Strip, Advance running state, rewind picker, counterfactual compare card, seed/share card, Casebook, Dossier cards, Codex, debrief "One Idea" card, Promise/Mandate pick, amends node and modal, stress-year forecast banner, warm-up recall question, meta settings panel, scenario picker, shield icons, map marks.
+
+**Minimum set, with everything else folded in or cut:**
+- **Re-skins of existing surfaces (net zero new screens):** side sheet, chip row, Dawn Strip (replaces `DaySummary`), map marks, shield icons, and the amends marker.
+- **Debrief:** keep the existing 3-card cap, with up to 3 optional blocks competing for those slots.
+- **MainMenu:** the Dossier becomes a one-line epitaph on each region card, and scenarios live there. A gear icon holds meta settings.
+- **One real new screen:** the Casebook, off-path.
+
+**First run shows:** the map, one node, one Mikey line, the choice sheet, a reveal with an effect count-up (no chip on the first crisis), and Advance. Tax and Projects stay locked until the first solve, as today.
+
+**Unlocked later:** from crisis 2 → hunch chips; after the first project → the stress forecast chip; after the first loss → rewind; run 2 onward → Promise (merged with Mandate) and Dossier epitaphs; after the first debrief card → the Codex; behind a "Share" fold → seed.
+
+**Cut:** warm-up recall before a run, and any in-game Casebook.
+
+**(D) Rank by feel and clarity per effort**
+1. **K6, the C11 leak fix.** XS-S; protects every later prediction feature.
+2. **K8-lite.** Node resolve and erupt end-states, HUD delta pulses, the 80 marker, haptics. XS-S; the C14 fixes ride with it.
+3. **K7.** Advance plus the Dawn Strip. L, but the biggest tempo gain.
+4. **K10.** The `patron` flag. L code. Makes feedback fair — a trust fix.
+5. **K2.** The co-benefit rebate with a visible "pending" marker. S-M; addresses 564 `clean-broke` endings.
+6. **K1.** Prevention with shield icons on the map. M.
+
+**Defer or reject:**
+- **Reject:** the ambient audio bed, the `$` glyph on nodes, an in-game Casebook.
+- **Defer:** K3 rewind and seed (until the K6 log work is done); K4 returning-citizen letters (content-heavy); K9 chip enums beyond the first 15–40 events; the stress-year forecast (until Advance is playtested); GL-P6 re-encounters (until ≥2 events per mechanism). K11 is infrastructure that gates the rebalance, so goes first, but has no UI.
+
+*(Orchestrator note: R3 reports logged: GL, LS, ES, UX. Pending: BP, SE, EB.)*
