@@ -617,3 +617,183 @@ These are the 15 events with an `outcome` card. Most of the teaching is in the `
 **Order GL would ship:** C13 preconditions (compact log, `CONTENT_VERSION`, CI test), then P4 and P2, then P1, then P3, then P5 and P6.
 
 *(Orchestrator note: R2 reports logged: GL. Pending: LS, BP, UX, SE, ES, EB.)*
+
+### R2 · Learning Scientist (`LS`)
+
+**LEARNING SCIENTIST, ROUND 2 (divergent ideation).** Re-read the log from Round 1 on, including both errata, C1-C14, the 13 guardrails and D1-D8. No files changed.
+
+**Positions on the two open disagreements**
+- **D1 (stock model depth):** LS withdraws "build 2-3 stocks". **Build no stock model now.** The teaching goal needs only displacement, meaning a problem moved is a problem that returns. Proposes a data-driven **residue** (LS-P3) behind the existing `cleanliness` scalar. SE's shim concern is met, and EB's "wire tags first" is met. Revisit real stocks only if the residue playtests well.
+- **D2 (prediction timing):** keep prediction post-commit. A hard pre-commit gate adds paralysis and a reading wall. Instead (a) shrink the options to short **mechanism chips** and (b) add stakes through adaptive scaffolding and cross-run recall, not through a gate. Pure recognition-matching is the real defect, and chips plus recall fix it.
+
+**Prerequisite (C11):** remove the floaters and `sfx.choiceGood/Bad` (EventModal.tsx `handleChoiceClick`) on hidden-effect events, or they leak the answer. The prediction must also enter the reducer as a `PREDICT` action. It is currently component state (EventModal.tsx line 77), so it is invisible to `actionLog`. LS-P1 and LS-P2 depend on this.
+
+**LS-P1. Mechanism Chips and an Adaptive "Why"** [Upgrade: EventModal.tsx, events.ts, types]
+- **Problem:** C1, C2 and D2. Only 12% of events reveal; paragraph options are a phone reading wall; 88% show raw numbers.
+- **Mechanic:** Each choice gets one `mechanism` enum from about 8 values, e.g. `source-fix | displace | mask | delay | price-signal | subsidy | restore | enforce`. The reveal card has three lines: a shared mechanism sentence written once per chip (not per event), one optional event-specific line, then the numbers. Prediction is a tap on a chip row (4 chips, 44px+), not a paragraph pick. Right guess: the card collapses to the one-liner. Wrong guess: it expands and adds "the other option would have been X" (one counterfactual line).
+- **Educational rationale:** retrieval practice, generation effect and hypercorrection (confident-wrong errors get corrected most). The collapse and expand is expertise-reversal-aware scaffolding. Chips give a transferable vocabulary, so the player transfers across surface contexts.
+- **Engagement:** competence ("I read it right") and curiosity. The same chips recur, so the player starts to see patterns.
+- **Guardrails:** hidden info stays hidden once C11 is fixed; causal honesty holds because the chip is authored content, not inference; skippable via a "Not sure" chip; no reward.
+- **Effort:** M. ~8 chip definitions ×3 languages ≈ 24 strings, plus roughly 1 enum per choice across 124 events (~250 enums, no new prose). Optional lines can be added gradually.
+- **Confidence:** medium-high. **Test:** after 3 crises, ask players "what does 'displace' mean?" in their own words and see whether they use it unprompted.
+
+**LS-P2. Interleaved Return and Warm-up Recall** [New: spawnNode in gameReducer.ts, a small meta store]
+- **Problem:** C4, C8 and the LS audit's "missing: spaced retrieval". A run sees ~12 events, and a repeat in the same region is identical, so the player memorises the answer button.
+- **Mechanic:** The reducer keeps `weakMechanisms: string[]`, fed by wrong chip predictions. `spawnNode` biases the draw toward an unseen event with the same mechanism but a different surface (e.g. e-waste export then fisheries bycatch export). Uses `tags.mechanisms`, which no code reads today. Before a run, optional "Mikey asks": one 1-tap question on a mechanism from last run (localStorage list). Skip is the same size as an answer.
+- **Educational rationale:** interleaving, spacing, transfer to a new surface and the testing effect.
+- **Engagement:** curiosity ("have I seen this before?") and mastery.
+- **Guardrails:** no streaks; no loss framing; deterministic (bias uses seeded RNG and logged predictions); works without storage because the in-run part needs none; skippable.
+- **Effort:** M-H. A system, so authoring is near zero, but needs ~30 events tagged with a mechanism (ES's C12 work) and tests for replay-determinism.
+- **Confidence:** medium. **Test:** run the same player twice; check whether a mechanism wrong in run 1 is answered correctly on a new surface in run 2.
+
+**LS-P3. Displacement Residue** [New: delayed in events.ts, MapNodes]
+- **Problem:** C3, C4 and D1. Export and burning look free (cleanliness 0 and +40 budget), and all delays sit on bad options.
+- **Mechanic:** Choices with `mechanism: 'displace'` get `residue: {medium, inDays: 5..12, effects, message}`, reusing the `delayed` mechanism. It lands inside a normal run, which fixes the 78-87% never-land problem. A small map marker, "something returns", shows pending residue in its medium. The letter comes from the nearest citizen and names where the problem went, with the cause provable from the log (the decision and the days).
+- **Educational rationale:** conservation of matter and a stock-and-flow intuition, without a stock model. The delay is a real feedback loop.
+- **Engagement:** anticipation, plus relatedness through the letters.
+- **Guardrails:** causal honesty (only authored residues on events that have sources); no guilt without agency; failure not moralised.
+- **Effort:** M. ~15 events ×3 languages; the sim needs a re-run.
+- **Confidence:** medium-high. **Test:** ask "where did the e-waste go?" two days after the letter; target answer "somewhere else".
+
+**LS-P4. Rewind One Decision, with Contrast** [Upgrade: GameOver.tsx plus the actionLog replay]
+- **Problem:** C8, C9 and D5. A lost run teaches little, and nothing lets a player test a hypothesis.
+- **Mechanic:** On GameOver, an optional "Try one decision differently". The list shows up to 5 pivotal decisions (largest stat swing), each as the event title only. Replay `actionLog[0..i]`, then the player picks another option. Afterwards a side-by-side card shows the two paths: first stat to go critical, and day of the end. Everything is local and about the player's own paths.
+- **Educational rationale:** counterfactual reasoning, productive failure, errorful generation.
+- **Engagement:** autonomy and competence, since improvement is visible.
+- **Guardrails:** compares decision paths, never players; the restart button stays first (session end never delayed); learning shows within 10 s because the header line stays; no timers.
+- **Effort:** M. Replay machinery exists; needs a "stop at index i" helper and a CONTENT_VERSION check (C13).
+- **Confidence:** medium. **Test:** after a rewind, ask the player to explain why the other option mattered.
+
+**LS-P5. Debrief "One Idea" and a Local Codex** [Upgrade: GameOver.tsx, new meta store, replaces quests per C5]
+- **Problem:** C5 and C9. The debrief shows counts, and quests pay stats.
+- **Mechanic:** GameOver shows one concept card, chosen from the run's mechanisms (the one mispredicted, else the most consequential). Shown as a 2-option cloze first, then the answer. Seen cards go into a local codex. Unseen slots show only the mechanism name ("???"). Unlocked entries carry no stats.
+- **Educational rationale:** retrieval at the point of consolidation, and spacing across runs.
+- **Engagement:** a curiosity gap and epistemic mastery, with no points.
+- **Guardrails:** extrinsic rewards never usable stats (replaces the stat-paying quests); skippable; all state in a try/catch store; no completion counter shown as pressure.
+- **Effort:** M. ~8-20 cards ×3 languages.
+- **Confidence:** medium. **Test:** a week later, ask which cards the player remembers without the game open.
+
+**Order LS would ship:** C11 fix and PREDICT, then P1, then P3, then P5, then P2 and P4.
+
+---
+
+### R2 · Behavioral Psychologist (`BP`)
+
+**BP ROUND 2: six proposals.** Read-only design; no files touched. Guardrails cited as G1–G13 in the order of the BP Round 1 list.
+
+**BP-P1. Provable "patron" flag replaces `isDirtyDeal`** [Upgrade: `data/story.ts`, `gameReducer.ts` HANDLE_CHOICE, `validate:events`]
+- **Problem:** C10, D4. Tourist "Welcome Everyone" counts as corruption and grows Kara Holding.
+- **Mechanic:** Delete the inference (`budget>0 && clean<0`). Add an authored field `choice.patron?: 'kara' | 'unnamed'` plus `choice.kind?: 'bribe'|'loophole'|'tradeoff'`. A script proposes flags for the ~25 candidate choices, and the author reviews them once. The validator fails any `patron` choice that lacks an `outcome.why`. `Decision.dirty` becomes `decision.patron`. Letter kind `dirty`, Kara tiers and the debrief line fire only on `patron`. Plain trade-offs get a neutral new letter, `cost`: "the money came and so did the smell", with no accusation. Debrief wording changes to "N decisions where a named interest benefited".
+- **SDT:** Competence. The feedback is true, so the player can trust it.
+- **Education:** It separates a trade-off from capture, the real media/policy literacy point.
+- **Guardrails:** G7 (satisfied by construction). G11 (wording stays factual).
+- **Effort:** L code, M content review (~25 choices; no new strings except 3×3 for the `cost` letter).
+- **Confidence:** high. **Playtest:** the same 5 players tell us whether "Welcome Everyone" now feels fair.
+
+**BP-P2. Repair arc: "Make amends" nodes** [Upgrade: `holdingTier` logic; New: `repair` events]
+- **Problem:** C10, G6. Tiers only rise, and "we have not forgotten" gives no way forward.
+- **Mechanic:** Each `patron` decision stores `{day, eventId, citizenId, repaired:false}` in `state.debts`. The existing dirty letter, 3 days later, now spawns one optional node, "Make amends", that never erupts and has no timer. 2–3 options: disclose and pay restitution (budget −60 to −80), commission an independent test (budget −40, reveals the mechanism), or ignore it (no cost, letter stays on file). Paying drops `holdingTier` by 1 (floor 0) and marks the debt repaired. The cost always exceeds the original gain. Past damage is NOT refunded: the debrief shows "repaired 1 of 3; the stream damage stayed", so "buy back" is not taught (C3).
+- **SDT:** Autonomy and competence (accountability works, imperfectly).
+- **Education:** Restitution is not erasure — the central environmental-justice idea.
+- **Guardrails:** G6 (this is the guardrail's fix). Brushes G2 (a debt counter): never display "debts", only citizens' letters; debts are a log, not a HUD meter.
+- **Effort:** M code, M text (~6 shared repair events ×3).
+- **Confidence:** medium-high. **Playtest:** do players repair voluntarily, or ignore it as noise?
+
+**BP-P3. Unlabelled temptation, reveal after (D4 position)** [Upgrade: `data/events.ts` content, `EventModal` outcome card]
+- **Mechanic:** Drop "(Bribe)" and "(Rüşvet)" from button text. Word the option as the tempter would ("Accept the investment pledge"). The outcome card then adds a tag line: "This was a bribe. Under TCK/UK Bribery Act/StGB it is X" (sourced, tier-labelled per C12). Make temptation pay properly, as EB wants (2–3× early gain when budget is low), so the dilemma is real.
+- **Position on honesty:** Do not teach "corruption always fails". Teach "someone else pays." Detection is not simulated randomly. Undetected is the default, and the cost lands on a named citizen through a delayed letter. Add 2–3 legal-but-harmful `loophole` options, so the villain is not only a bribe (ES, D4). The 70/124 events with one dominant answer (C2) get one tempting option each over time.
+- **SDT:** Autonomy. Real temptation makes the choice meaningful.
+- **Guardrails:** G4 not touched (risk is on the cost side and fixed per event, no random reward magnitude). Brushes G9, since the label is revealed only after the choice — intentional.
+- **Effort:** M-H (~10 events ×3 languages for the first pass).
+- **Confidence:** medium. **Playtest:** do students say "I did not realise it was a bribe" afterwards, and is that a learning moment or a feeling of being tricked?
+
+**BP-P4. Citizen stakes and persistent pen-pals (relatedness)** [Upgrade: `CHARACTERS`, `addLetter`, `LETTERS`; New: localStorage `meta.citizens`]
+- **Problem:** letters are written in turn order (`letters.length % cast.length`), so a fisherman writes about tourists in the wrong region.
+- **Data:** `Character.stakes: PollutionTag[]` (fisher: water/marine; farmer: soil/landuse; teacher or nurse: air; shopkeeper: economy/happiness). `addLetter(kind, eventTags)` picks the citizen whose stakes intersect the decision's `tags.pollution` (existing data; needs no new model for C4). Letter bodies become `stake×kind` fragments (~6 stakes × 3 kinds × 3 languages) instead of 5 global texts.
+- **Persistence:** at GameOver (one try/catch, per C13) write `meta.citizens[id] = {runs, lastEnding, lastHarm?: tag}`. In a later run in the same region, the citizen's first letter refers to the last one: "Last time the strait ran black. I stayed. I am glad you are back." Framing is always memory, never a score or a loss ("you lost Rıza's trust" is forbidden).
+- **SDT:** Relatedness, by caring about specific people. Intrinsic because nothing is awarded for it.
+- **Guardrails:** G12 (works with no storage; a new player just gets the base letter). G6 (a "wary" letter always includes an invitation to act). G1/G2 (no streak or visit counter).
+- **Effort:** M-H, mostly authoring (~54 letter fragments, a one-time cost).
+- **Confidence:** high on persistence value. **Playtest:** do players recall a citizen by name next day?
+
+**BP-P5. Class "Casebook": decision-path comparison without player comparison (D5 position)** [New]
+- **Mechanic:** At GameOver, a copy-paste code encodes `{regionId, contentVersion, seed, per-decision choice indices}` (a compact `actionLog`, C13). It carries no name, score or timestamp. A teacher pastes N codes into a local "Casebook" screen (no backend) that shows only per-decision splits: "Dock dredging: 14 chose the survey, 6 chose to pay fines, 5 chose silence", plus one question prompt. The set of endings is shown unsorted ("7 different endings in this room"). Minimum 5 codes before anything renders (so nobody is identifiable); codes are never listed individually or ranked. A student can also paste a classmate's seed to replay the same crisis sequence, and the author of that seed is not shown.
+- **SDT:** Relatedness through shared inquiry ("why did we split?"), not rivalry.
+- **Education:** Reasonable people choose differently with the same facts — the key lesson of policy.
+- **Guardrails:** G5 satisfied (paths, never players). Brushes G5 at small n: mitigated by the k≥5 floor and no sorting by outcome.
+- **Effort:** M (codec plus aggregator UI; few strings). **Confidence:** medium. **Playtest:** one real classroom; does the debate start without the teacher prompting?
+
+**BP-P6. Self-chosen "Promise" instead of stat-reward quests (C5)** [Upgrade: `data/quests.ts` and `QuestPanel`, region start]
+- **Mechanic:** At START_GAME the player picks one of 3 promises drawn from the region's citizens' stakes (e.g. "Keep the strait fishable for Rıza"). No stat reward. The Promise tracks tag-matched decisions only (`water`/`marine` events harmed or helped). The debrief ends with a "kept / broken / partly" line built only from those logged decisions, plus the mechanism card for the failure (G10). The old threshold quests are removed.
+- **SDT:** Autonomy (the player writes their own goal) and meaning (it is about a person).
+- **Education:** Forces the player to track one pollution pathway, a light form of C4, and reuses BP-P4 stakes.
+- **Guardrails:** G8 (no usable reward), G7 (only provable decisions count), G11 (a "broken" Promise is a reported fact, never moralised, paired with the repair route from BP-P2).
+- **Effort:** M (~3 promises per stake ×3 languages, shared across regions).
+- **Confidence:** medium-high. **Playtest:** do players choose a Promise in under 10 s, and mention it at the end unprompted?
+
+**Build order BP:** P1, then P2 and P4, then P6, P3 and P5 last (each depends on the previous flags). P1 is the cheapest and a precondition for honest feedback on all of them.
+
+---
+
+### R2 · UX/UI & Game-Feel Director (`UX`)
+
+**UX/Game-Feel Director, Round 2 proposals.** Re-read Round 1 (all 7 audits, ERRATA, C1-C14, 13 guardrails, D1-D8). Nothing edited.
+
+**UX-P1. Hunch Chips (pre-commit prediction)** [Upgrade: `EventModal.tsx`]
+- **Problem:** D2, C1. Prediction options are paragraph-length `outcome.what` strings, a reading wall on a phone. They are also post-hoc, so LS calls it recognition-matching with no stakes.
+- **Spec:** Tap a choice and it slides up as a "selected" card. A one-row prompt follows: "What happens to [stat icon]?" with three chips, ▲ / ▬ / ▼. The stat asked about is the one with the largest |effect| in the data, so no new authoring is needed. Tapping a chip commits both the choice and the hunch. Cost tier stays visible, since money is public. Reveal: the stat bar animates from the "hunch ghost" marker to the real value (400ms count-up). A hit gets the existing emerald check, a miss gets amber. Neither is red, and neither is a loss. A small "Skip, just do it" link keeps it optional. Reduced motion: no count-up, an instant swap. For the 15 existing outcome events, the "Ne oldu?" card stays as the explainer. The old paragraph options go away. **Stopgap if the chip row ships late:** clamp the paragraph options to 2 lines with tap-to-expand.
+- **Learning:** A pre-commit hypothesis with a visible gap between guess and result, the cleanest cause-and-effect test. Hit rate is logged locally to a `meta` store (C13), shown once at the debrief, never as a streak.
+- **Engagement:** Curiosity and competence. The question is cheap to answer and the answer matters.
+- **Guardrails:** Hidden info stays hidden until after the commit (see C11 fixes). No streaks. Skippable. Compares the player only to their own history.
+- **Effort:** M. ~6 strings ×3 languages.
+- **Confidence:** medium-high. **Playtest:** do 3 phone players tap a chip in under 3 s, and can they say afterwards why they were wrong?
+- *(Note: UX-P1 is a direct counter-proposal to LS-P1 on D2 — direction-of-effect chips (▲▬▼ on one stat, pre-commit) vs mechanism chips (post-commit). To be cross-examined in Round 3.)*
+
+**UX-P2. Province Consequence Layer** [New Feature: `MapMarks.tsx`, extends `CountryMap` and `ProjectSites`]
+- **Problem:** C7, and the roadmap's "game shows, text doesn't tell".
+- **Spec:** *Markers:* Kara Holding tiers 1-5 add soot smokestack silhouettes on the player's province, and co-op tiers add green tufts or turbines. Both fade in over 600 ms. Marks are only placed after a choice has been revealed. *Node end-states:* a solved node scales down with a green ring and a short rising tone; an erupted node gets a red ring, a 250 ms screen shake and a low thump. *Delayed consequences:* a neutral grey dashed ring with a "?" appears on the map; no countdown number and no sign, so it leaks nothing. *Projects under construction:* a scaffold marker with a progress arc. *Province tint:* the player's own province tints from green to brown by cleanliness; the global country filter drops to about half strength. *Wildlife:* `MapWildlife` thins out the boats at low cleanliness and adds birds at high cleanliness. *Reduced motion:* everything keeps its static end-state; only transitions are dropped.
+- **Learning:** The map becomes the evidence. After "I took the deal", the province looks different, making accountability visible without a blame sentence.
+- **Engagement:** Ownership and a sense of place.
+- **Guardrails:** Only provable markers are drawn, derived from tiers and the decision log. No guilt without agency, because there is a co-op repair visual. Works offline.
+- **Effort:** M-H. Mostly SVG and CSS. ~4 strings for ARIA labels.
+- **Confidence:** high on nodes and soot, medium on wildlife. **Playtest:** after two minutes, ask a player what their province "says" about them.
+
+**UX-P3. Side-by-side Landscape Sheet** [Upgrade: `EventModal.tsx`, `App.tsx`]
+- **Problem:** C7, and D6's cost of covering the map.
+- **Spec:** In `mobile-landscape`, the crisis opens as a right-hand sheet of about 46% width. The map stays visible on the left, with the active node pulsing and its province outlined. The outcome animation plays at the node's own location, not at the click point. Portrait stays a centred modal. Reduced motion: the sheet appears instantly.
+- **Learning:** Place, severity and the other open nodes stay visible while deciding.
+- **Engagement:** Spatial reasoning, and less dead time covering the map.
+- **Effort:** M. Layout only, no new strings.
+- **Confidence:** high. **Playtest:** can a player name the neighbouring open crisis while choosing?
+
+**UX-P4. Dawn Strip** [Upgrade: `DaySummary.tsx` into a non-modal strip] (D6 position)
+- **Position:** Tempo wins over ceremony. Add feel in parallel, not in series.
+- **Spec:** End Day no longer opens a blocking overlay on quiet days. The HUD stat bars pulse and show a floating delta chip for 1.2 s, and a thin bottom strip shows "Day 12, Happiness 62 (−2)". The full `DaySummary` opens only when something notable happens: a letter arrived, a project finished, an eruption, or a threshold was crossed. News TV becomes an optional Mikey ticker icon, tap to open. Letters stay as map icons. *Fast-forward:* hold End Day to skip quiet days; it stops at any notable event. Reduced motion: a static delta line.
+- **Learning:** Cause and effect land at the moment of the daily decay and tax, on the HUD, no longer buried in a modal.
+- **Guardrails:** No real-time pressure. Session end is never delayed. Fast-forward stops before anything notable.
+- **Effort:** M. ~2 strings.
+- **Confidence:** medium. **Playtest:** count taps per day (target < 2.5 on quiet days) and check whether players still notice letters.
+- *(Note: overlaps GL-P4 "Advance" — to be merged in Round 3.)*
+
+**UX-P5. Haptic and Audio Language** [New Feature: `utils/feel.ts`, extends `sfx.ts`]
+- **Spec:** `navigator.vibrate`, feature-detected and try/catch-wrapped: 10 ms on tap, `[20,30,20]` on a bad reveal, `[10,20,10,20,40]` on project complete, 80 ms on eruption. Reveal sounds play after the reveal, not on the click. Sustain tick: a rising-pitch tick per sustain day (makes the win fantasy audible); a break in the run is a neutral sound, never a fail sound. Threshold chimes: one at 80 for each stat, a soft drone under 30. Ambient bed: procedural filtered noise plus occasional chirps above 70 cleanliness, fading to a hum under 30. Separate haptics toggle; `prefers-reduced-motion` turns the heavy patterns off. Every sound has a visual twin.
+- **Guardrails:** No variable-ratio rewards. No loss-framed counters. Fully mutable.
+- **Effort:** M. ~2 strings.
+- **Confidence:** medium-high. **Playtest:** mute the screen, play with haptics only, check whether players can tell good from bad.
+
+**UX — C11 hidden-info leak: fixes, ranked by effort**
+1. **XS:** In `handleChoiceClick`, when `hideEffects` is true, skip `showFloatingText` and play `sfx.click`, not `choiceGood` or `choiceBad`. ~5 lines.
+2. **S:** The modal's own stat strip (`EventModal.tsx` L208-218) shows live values, and the reducer applies the choice immediately, so totals change while the player is still asked to predict. Freeze that strip to a pre-choice snapshot (a ref) until the reveal.
+3. **S-M:** The HUD bars and map filter behind the blur also animate on choice. Pass `displayState`, a frozen snapshot, until `predicted` is set.
+4. **S:** Move the floaters to the reveal card's `effectRow`, anchored at the HUD stat icons.
+
+**UX — C14 mobile traps: fixes, ranked by effort**
+1. **XS:** Remove `max-sm:invisible` on the volume button (`App.tsx` L119). The SFX mute is persisted, so a muted phone player has no way back.
+2. **XS:** Add an 80 tick mark to the happiness and cleanliness bars, and a glow when both are ≥ 80.
+3. **XS:** Text floor of 11px; replace `text-[9px]` and `text-[10px]` in `GameHUD` and `EventModal`.
+4. **S:** Touch targets ≥ 44px. Pad nodes with an invisible `before:-inset-3`, give control buttons `min-h-11 min-w-11`, widen the Quest chevron to 44px.
+5. **S:** Show totals with the delta in `DaySummary`, e.g. "62 (−2)".
+6. **S:** Add `aria-live` to toasts and status messages.
+7. **M:** Move End Day, the Mikey toggle and the sound toggle into one right-edge thumb rail.
+
+*(Orchestrator note: R2 reports logged: GL, LS, BP, UX. Pending: SE, ES, EB.)*
