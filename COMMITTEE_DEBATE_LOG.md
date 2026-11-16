@@ -797,3 +797,162 @@ These are the 15 events with an `outcome` card. Most of the teaching is in the `
 7. **M:** Move End Day, the Mikey toggle and the sound toggle into one right-edge thumb rail.
 
 *(Orchestrator note: R2 reports logged: GL, LS, BP, UX. Pending: SE, ES, EB.)*
+
+### R2 · Environmental-Science Pedagogy Specialist (`ES`)
+
+**ES ROUND 2 — 5 proposals, from the content-truth lens.** (Part A still describes the original design; ES relies on the ERRATA, C1-C14, D1-D8 and the 13 guardrails as logged.)
+
+**ES-P1. Lag symmetry and mechanism-linked cancellation** [Upgrade: `types/index.ts` DelayedEffect; `events.ts` ~10 delayed events; reducer `ScheduledEffect`]
+- **Problem (C3, D7):** harm lags and cure is instant; 78-87% of delays (14-25 days) never land in a ~31-day run; delays can't be cancelled by a later fix.
+- **Pattern:** Every delayed entry gets `kind: 'harm' | 'recovery'` and an optional `mechanism`. Choices get `addresses?: string[]`. A pending harm with `mechanism: M` is halved if any logged decision with `addresses` containing M lands before its due day (provable from `decisions`). Good options are paid in installments (~30% now, the rest later), same total, so the sim stays mean-preserving. All delays capped at ≤14 days.
+- **Worked example, `istanbul-mucilage`:**
+  - A: Skim. Effects: budget −150, happiness +20, cleanliness +10. Delayed: `{inDays: 12, kind: 'harm', mechanism: 'nutrient-loading', cleanliness: −15, "mucilage is back: the load never fell"}`.
+  - B: Advanced treatment. Effects: budget −200, happiness −5, cleanliness +8, `addresses: ['nutrient-loading']`. Delayed: `{inDays: 8, kind: 'recovery', cleanliness: +8, "nitrogen at the outfalls is down by a fifth"}` and `{inDays: 14, kind: 'recovery', cleanliness: +9}`.
+  - C: Limit basin load. Same shape.
+  - Source: the existing Marmara Action Plan (AA) source stays.
+- **Concept and misconception:** lag in both directions; "nature or a fix heals instantly".
+- **Engagement:** "I'll see the sea come back in the next 8 days" gives a reason to keep playing and creates predictions.
+- **Guardrails:** hidden info stays hidden (pending ledger shows only "something is arriving"). Honest by construction.
+- **Effort: M.** Message text exists; a few recovery messages ×3 languages; no new sources. **Confidence: high.** Playtest: do ≥70% of players say a cure takes time, after one run?
+
+**ES-P2. Three hidden media with medium-derived lag and 3 transfer rules** [New Feature + shim: `GameState.media`, `Effects.media?`; `cleanliness` stays derived]
+- **D1 position:** Three media only, **air / water / land** (water includes groundwater and marine; land includes soil, waste and habitat). `cleanliness = mean(media)`, so HUD, win check, quests and the sim default are unchanged. Events that don't specify media split their `cleanliness` equally across the media in `tags.pollution`; the 72 untagged DE/UK events fall back to a plain cleanliness shift until tagged. Media stay hidden during play; revealed on the outcome card, in the debrief "where did it go?" panel and in the codex (respects the 4-bar rejection and "hidden info stays hidden").
+- **Lag derived from the medium, not hand-authored:** air effects apply in ≤2 days, water ~7, land and groundwater ramp over ~14. Anchors: 1956 Clean Air Act fast response for air vs the Konya aquifer for the slow case. A system, not content (D8).
+- **Three transfer rules that matter most:**
+  1. **Burning moves land to air** (and leaves ash on land). Anchors: e-waste open burning (Basel), stubble burning in Çukurova.
+  2. **Runoff moves land to water** (nutrients, slurry, mine drainage), with a lag. Anchors: Lough Neagh, Marmara.
+  3. **Treatment or outfall moves pollution from water to land or to the sea** (sludge, brine) and never destroys it. Anchors: Ergene outfall, Rhine after Sandoz 1986.
+- **Worked example, `ewaste-dump`, new option "Licensed incinerator":** effects `{budget: −60, media: {land: +15, air: −8}}` → derived cleanliness change ≈ +2 per medium. Outcome card: "The pile shrank by most of its volume. Part of it left through the stack and the ash." Existing Basel and PRB sources stay.
+- **Concept and misconception:** displacement versus removal. **Engagement:** a post-hoc "where did it go?" reveal, with the debrief map showing the three media.
+- **Guardrails:** hidden info, causal honesty. Wire this only after a sim assertion that mean-preserving defaults leave `sim-report.md` unchanged.
+- **Effort: H** (SE ≈ 250 LOC plus content). Do it last. **Confidence: medium.**
+
+**ES-P3. Mechanism card + regional skin pipeline (D8)** [New Feature: `src/data/mechanisms.ts`, `src/data/skins.ts`; validator in `scripts/validate-events.mjs`; upgrades the 72 untagged DE/UK events]
+- **Problem (C12, D8):** 72 DE/UK events are untagged binaries; authoring is ×3 languages. Cards are written once and skins are small, so most language work is only nouns plus one anchor fact.
+- **Exact schema:**
+```
+MechanismCard {
+ id, concept,
+ claim: LocalizedText,          // one true sentence, ≤25 words
+ misconception: LocalizedText,
+ options: [{ role: 'symptom'|'source'|'displace'|'ignore'|'systemic',
+   shape: { budget: -2..2, happiness: -2..2, media: {…}, lag?: {days, ratio} },
+   whyTemplate: LocalizedText }],   // with {place},{actor},{pollutant}
+ slots: string[] }
+Skin { id, cardId, regionId, provinces, basin?,
+ slots: Record<string, LocalizedText>,
+ anchor: { text: LocalizedText, source: SourceRef,
+           tier: 'real'|'composite'|'hypothetical' },
+ overrides?: Partial<numbers> }
+```
+- **Validator:** `tier: 'real'` requires a `verified` source. `hypothetical` is flagged on the card. A composite or hypothetical case must state so in the UI.
+- **First 8 cards**, ordered by teaching value and DE/UK back-fill:
+  1. Symptom vs source (Marmara, Lough Neagh, Thames overflows).
+  2. Recovery lags (Emscher, Tyne, Rhine, Clean Air Act).
+  3. Price signal (Türkiye 2019 bag fee, England 2015 5p charge, Ireland 2002).
+  4. Commons and quotas (Black Sea anchovy, North Sea quota, tourism carrying capacity).
+  5. Displacement (Ergene, e-waste, incineration ash).
+  6. Rebound (Konya drip, UK chalk streams, data-centre cooling).
+  7. Irreversibility and sequence (Yırca, Hambach forest, the New Forest).
+  8. Siting and low-carbon-not-free (Belen, German bat curtailment) — also fixes the 5 wind contradictions in DE/UK.
+- **Effort: M-H.** Schema is code; each card ~150 words ×3; each skin ~40 words ×3 plus one verified source. **Confidence: high.** Playtest: can a student recognise the same concept in a new region's skin?
+
+**ES-P4. Educational projects** [Upgrade: `data/projects.ts`; `Project` type gets `category`, `regionIds?`, `addresses?`, `limit?`]
+- **Problem (C6):** the 6 projects are identical in every region, no domain content, and buying them lowers win rate.
+- **Pattern:** projects in 3 categories (**prevent / adapt / restore**), each with `regionIds` and `addresses: [mechanism]`. A built project changes later choices instead of paying a flat buff: it discounts or cancels harm for its mechanism, or unlocks a cheaper "source" option. Each project also states what it does not do ("recycling does not reduce waste generation").
+- **Worked example:** `water-filter` becomes "Nutrient Removal Upgrade" with `addresses: ['nutrient-loading']`. Once built, `istanbul-mucilage` option B costs −120 instead of −200, and a pending nutrient harm is halved. Region-specific: Konya `metering-network` (prevent), Rize flash-flood `early-warning` (adapt), Harran `drainage-network` (restore), Ruhr `Emscher-style restoration` (restore, 14 days), UK `natural flood management` (restore). `smart-grid`: its +40 budget/day carries a note, "efficiency saved is often spent" (the rebound); cut the yield and add `limit` so the player must pair it with a cap.
+- **Concept:** prevention beats end-of-pipe; projects interact with mechanisms. **Engagement:** projects become interventions with visible consequences. **Guardrails:** no stat-for-stalling reward.
+- **Effort: M** (~10 projects ×3 languages, no sources needed for generic ones). **Confidence: medium.** Playtest: do players pick prevention before the crisis arrives?
+
+**ES-P5. Field-notes codex replaces quests (C5, C9)** [New Feature + Upgrade: `data/quests.ts`; `src/meta/`]
+- **Pattern:** an entry unlocks only when the decision log shows the player experienced the mechanism (the symptom path and its consequence, or the source path). Carries the real case, the source, the card's `claim` and a country transfer pair: same mechanism, other country, with its tier badge. **No stats reward.**
+- **Concept:** transfer (the bag charge appears in Türkiye, England and Ireland). **Engagement:** a collection of concepts, curiosity and mastery. **Guardrails:** no streaks or loss counters; skippable; offline; `localStorage` in try/catch.
+- **Effort: M**, bounded by ES-P3 content (SE puts the meta store at ~120 LOC). **Confidence: medium.**
+
+**Sequencing ES:** P1 first (cheap, fixes C3). Then P3 and P4. Then P5. P2 last, behind the cleanliness shim and after a sim assertion.
+
+---
+
+### R2 · Principal Game Systems Engineer (`SE`)
+
+**SE ROUND 2: enabling architecture** (read-only; no repo edits). Every proposal depends on one invariant: **with all new data absent or neutral, a run must stay bit-identical to today's** (including the old `sim-report`). This is what makes each stage cheap to verify.
+
+**SE-P1. Media model as a derived-cleanliness shim, in three stages** [New: `src/utils/media.ts`; Upgrade: `types/index.ts`, `gameReducer.ts`, `projects.ts`]
+- Addresses C4, D1, C3, C6. Does not require ES and LS to wait for the ROADMAP's playtest on pollution stocks.
+- Types:
+```ts
+export type Medium = 'air'|'water'|'soil';
+export type Media = Record<Medium, number>;                  // 0..100, higher = cleaner
+export interface Effects { budget?; happiness?; cleanliness?; media?: Partial<Media> } // additive
+export interface Project { /*…*/ prevents?: PollutionTag[]; medium?: Medium }
+// media.ts
+TAG_MEDIUM: Record<PollutionTag, Medium[]>   // air→[air]; water|marine|groundwater→[water]; soil|waste|landuse→[soil]; rest→[]
+mediaDelta(e: Effects, tags?: PollutionTag[]): Media
+aggregate(m: Media): number                  // plain mean
+effectiveEffects(s: GameState, ev: GameEvent, c: EventChoice): Effects  // THE ONE function; reducer and EventModal both call it
+```
+- Backward compatibility: (1) `GameState.cleanliness` stays a stored scalar, so HUD, quests, win check and `markCritical` are untouched; after every state change `cleanliness = aggregate(media)`. (2) A choice with no `media` field gets `cleanliness` spread over the media its event tags map to, scaled so the mean moves by exactly `c`; an untagged event spreads evenly over all three. (3) Decay, `passive.cleanliness` and quest rewards are spread evenly. The only drift comes from the per-medium clamp, and the sim measures it.
+- **Stage 0 (EB's cheap prevention, no media, 1 PR):** `Project.prevents` lets `spawnNode` weight events by 1 − 0.35 per matching completed project. The cumulative-weight pick uses the same single `nextRandom` call; with equal weights it selects `floor(v*n)`, the same index as before (the invariance test). `effectiveEffects` applies the 25% discount to a prevented tag's clean option, and the UI shows the same number. ~90 LOC, risk M (projects lose money today, so rebase them under the SE-P5 gates).
+- **Stage 1:** three media, with `media` hand-authored on only the 15 `outcome` events. Per-region modifier `mediaDecay?: Partial<Media>`. ~160 LOC, no new lose conditions.
+- **Stage 2 (transfer):** explicit negative entries, e.g. `media:{air:+12, soil:-9}`, plus a threshold rule: a medium below 25 bleeds happiness (the health cost), still by data. ~80 LOC. Validator: if `mechanisms` includes `displacement`, the choice must carry at least one negative `media` entry; every `media` delta must sum within ±2 × |cleanliness| of the scalar (if both are authored).
+- Risks: win-rate drift, and the player not understanding three bars. Mitigate by gating on SE-P5 and showing media only as map overlays, per the ROADMAP's rejection of "4 visible bars". Effort: 0 = M, 1 = M, 2 = H. Order: after SE-P5.
+
+**SE-P2. Compact log, `CONTENT_VERSION`, rewind and seed share (D5)** [Upgrade: `gameReducer.ts`, `GameContext.tsx`; New: `src/data/version.ts`]
+- Addresses C8, C13, D5. Action shapes:
+```ts
+START_GAME: { countryId; regionId; startBudget; seed; contentVersion }   // was: whole Country
+BUY_PROJECT: { projectId }                                                 // was: whole Project
+REWIND_TO:  { index: number; abandoned: Decision[] }                       // index = log position of an OPEN_EVENT
+```
+- The reducer resolves ids through `getRegion` and `PROJECTS`. On a version mismatch it returns the **same state** (no log entry), and the UI says "this seed is from another edition".
+- `REWIND_TO` is handled in the wrapper. It rebuilds `actionLog.slice(0,index)` from `INITIAL_STATE`, appends the marker, and records `abandoned` in a new `GameState.branches`. The marker lives inside the log, so replay stays exact. The UI computes `abandoned` from the pre-rewind `decisions`, so counterfactual comparison is a pure diff of decisions. The seeded RNG is only drawn in TICK and START, so the same crisis reappears. UI offers a max of ~2 rewinds per run, unpunished (guardrails).
+- `scripts/content.lock.json` stores `{version, hash(event ids, choice counts)}`; the validator fails if the hash changed without a version bump.
+- Seed card: URL hash `#v=3&c=tr&r=marmara&s=<base36>`, seed-only link → same map and crises, no scores. Class comparison (BP): copy-paste **path code** `eventId:choiceIndex` per decision, no name, no score; a static teacher view tallies choices per event.
+- ~130 LOC; risk M. Test: `assert.deepEqual(JSON.parse(JSON.stringify(s.actionLog)).reduce(gameReducer, INITIAL_STATE), s)`; also test that rewind + replay equals the log, and that a mismatched `contentVersion` is a no-op.
+
+**SE-P3. Meta store and dossier, with the pure-reducer rule** [New: `src/meta/store.ts`, `src/meta/summarize.ts`]
+- Addresses C8, C9, and the storage/skippability guardrails.
+```ts
+interface MetaV1 { v:1; settings:{lang; mute; mikeyMute};
+  hints:string[]; endings:string[];
+  codex: Record<string /*mechanism*/, {seen:number; miss:number; box:0|1|2|3; lastRun:number}>;
+  runs: RunSummary[] /*cap 30*/ }
+RunSummary { contentVersion; countryId; regionId; seed; endingId; days; mechanisms:string[]; misses:string[] }
+```
+- Rule: **nothing in `src/reducers` or `src/utils/gameLogic` imports `src/meta`** (an ESLint `no-restricted-imports`). Meta enters the reducer only inside `START_GAME.payload.startMastery: Record<string, 0..3>`, which is logged and JSON-safe. It exits through `summarize(state): RunSummary`, a pure function called by a UI effect on `isGameOver`.
+- A single module wraps all access in try/catch, migrates the four existing keys, and provides JSON export, import and reset (no backend). Skippable; must not carry streaks.
+- ~150 LOC; risk L; effort M. Tests: migration, corrupt-JSON fallback, `summarize` determinism.
+
+**SE-P4. Deterministic adaptive event selection (spaced re-surfacing)** [Upgrade: `spawnNode`, `Decision`; New: PREDICT action]
+- Addresses C1, D2, C9. Prediction must be added to the model:
+```ts
+{ type:'PREDICT'; payload:{ guess: number[] } }     // dispatched BEFORE HANDLE_CHOICE (pre-commit, per LS)
+Decision += { mechanisms: string[]; predicted?: {correct:number; of:number} }
+GameState.mastery: Record<string,{seen;miss;box:0|1|2|3;lastDay}>   // seeded from startMastery
+```
+- The reducer compares the guess with the truth derived from event data and updates the mastery box: a miss resets the box to 0, a hit raises it by 1. Leitner gaps are in **game days** (4, 8, 16), never real time. `spawnNode` weight is `1 + 3·due(m)`, 0.5 for box 3, integer arithmetic only. Uses the same two draws as today and never repeats the exact event; only the bag (cycle) logic keeps repeats away. The weights are never shown.
+- Constraint: **at least 2 events per mechanism** or it is a no-op. The validator reports mechanism coverage and fails below 2 for any mechanism that has an outcome card. This is the real bottleneck — content, not code.
+- ~110 LOC; risk M; effort M. Tests: equal-weight invariance (empty mastery gives the baseline spawn sequence); a miss raises the revisit rate in sim with a `learner` policy.
+- *(Note: SE-P4 assumes LS's pre-commit PREDICT; but LS-P1 R2 now argues for post-commit chips; UX-P1 argues pre-commit direction chips. The `PREDICT` action's timing is a Round 3 decision.)*
+
+**SE-P5. Sim assertion protocol (D7)** [Upgrade: `scripts/sim.ts`, `play.ts`; New: `scripts/sim-baseline.json`, `npm run sim:check`]
+- Fixed paired seeds, n=400, with Wilson intervals in the report. Gates:
+  1. `npm test` (replay, JSON round-trip, rewind) always passes.
+  2. Invariance gate: a change declared "no behaviour change" (stages 0 and 1, `media` shim, SE-P2) must stay within baseline ±5 pts win per policy, ±2 median days, and endings share ±5 pp.
+  3. Rebalance targets in `scripts/targets.json`, enforced after an explicit `--rebalance`: `clean` 15–25%, `smart` 55–65%, `prevent` ≥ `noProject` + 10, and no policy more than 10 pts above `smart`.
+  4. Structural gates: no event never reaches the player, every ending reachable, delayed-effect landing rate ≥ 60% (counted from consumed `scheduled`), and a quests-off ablation (zero `ALL_QUESTS` rewards inside the sim process) leaves `smart` ≥ 40%.
+  5. Validator: the dominated-choice warning count may not rise, and 3-option share must not fall.
+- New `play.ts` policies: `noProject` (baseline/control), `prevent` (buys the matching prevention project first), `patient` (prefers options with positive delayed effects), `displacer` (maximises aggregate cleanliness while ignoring media; must lose by ≥10 pts to `mediaAware` after stage 2), `mediaAware`, `learner` (predicts at 50% accuracy, exercising PREDICT and mastery), `rewinder` (rewinds once after its first bad outcome).
+- ~120 LOC; risk L; effort M. **Order: first, because it gates every balance change.**
+
+**SE build order**
+1. CI: add `npm test`, `validate:events` and `sim:check` to `deploy.yml`; strengthen the causal test (tied to the right event). Fix the C11 leak (floaters and sfx before prediction) — trivial.
+2. SE-P5 (sim harness, baseline).
+3. SE-P2 (compact log, version, rewind, seed card).
+4. Stage 0 (prevention, `effectiveEffects`), with quest rewards turned into non-stat unlocks and the EB project rebalance, all under SE-P5 gates (C5, C6, D7).
+5. SE-P3 (meta store, dossier/codex), including the existing endings, hints and settings keys.
+6. SE-P4 (PREDICT and mastery, then adaptive selection). Content dependency: extend outcome cards to the remaining events (C1) and add ≥2 events per mechanism.
+7. Media stages 1 and 2, after a playtest, per the ROADMAP.
+UI-only work (C7, C14, map overlays, haptics) can run in parallel with 3–6, because none of it touches the reducer. Content work (mechanism cards, DE/UK back-fill) is the true critical path for D8.
+
+*(Orchestrator note: R2 reports logged: GL, LS, BP, UX, ES, SE. Pending: EB.)*
