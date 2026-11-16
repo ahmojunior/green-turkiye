@@ -1785,3 +1785,51 @@ Only the Marmara row has a verified source in the repo today; the rest need a so
 **(5) Biggest remaining honesty risk.** Mechanism and "why" text shown for events with no verified source. Content that spreads faster than the validator enforcement, in F3, F14 and F16, would assert causes unsupported by evidence. A sequencing risk: **ship F18 before or with F3.**
 
 *(Orchestrator note: R4 votes logged: LS, GL, UX, BP, ES. Pending: SE, EB.)*
+
+### R4 · Principal Game Systems Engineer (`SE`) — vote
+
+**SE ROUND 4: ratification vote** (read-only; checked `story.ts` `EndingFacts`/`ENDINGS`/`getEnding`)
+
+**(1) Rank (leverage per effort, then committee value):** F1, F2, F5, F4, F3, F7, F18, F6, F10, F15, F14, F13, F9, F19, F8, F11, F17, F16, F12, F20.
+- F1 gates every other item. F2 is ~30 lines and removes the answer leak. F5 (reprice) and F4 (lag symmetry) fix the broken economy and the "cure is instant" lie. F3 is the biggest pedagogical lever but costs medium effort. F7 and F18 are cheap honesty fixes. F17, F16 and F12 are content or polish that can slip. F20 stays last.
+
+**(2) Blocking objections**
+- **F3 only.** "Hidden numbers for all 124 events" is a feasibility and honesty blocker. 109 events have no outcome text, and hiding their numbers without a reveal teaches nothing. *Amendment:* hide an event's numbers only when **every one of its choices has a mechanism enum**, so the shared reveal line has something to say. A validator rule enforces this; other events keep their numbers until upgraded. *(Converges with GL, UX, ES on gating F3 per event.)*
+- F6 is not a blocker, but the quest-reward zeroing must land in the **same release** as the F4 and F5 economy changes, or the win rate collapses (71%→12.5%).
+- Everything else: none.
+
+**(3) Milestones**
+
+| M | Items | LOC / LTU cap | Gates before ship |
+|---|---|---|---|
+| **M0** | F1, F2, F18, F19 (all system, no behaviour change) | ≤500 / ≤8 | SE-G1, EB-11, SE-G2 at **zero diff** |
+| **M1** | F4, F5, F7, F8 (after EB's R1 measurement), F9a (hold 10 plus grace band), then F6 last in the same release | ≤850 / ≤45 | EB-1 to EB-11, SE-G3, SE-G4, `lazy ≤ smart−5`, and the ending-reachability gate (below) |
+| **M2** | F13, then F14, F3, F15, F17 (4 cards, 8 skins), F16 (10 events) | ≤800 / ≤90 | SE-G1 with round-trip and rewind tests; state-minus-`pred` bit-identical; hidden-number completeness; EB-1 to EB-9 |
+| **M3** | F9b (stress), F10, F11, F12, F17 (4 more cards, 16 skins), F16 (rest) | ≤950 / ≤100 | EB-1 to EB-11, `prevent − noProject ≥ +10` in the stress window, empty-phase bit-identical, "Advance ≡ n × TICK" log test |
+| **M4** | F20, playtest-gated | per EB gates | SE-G2 per stage |
+
+Dependency order differs from rank: F13 (meta store) must precede F14 (codex needs it); F18 and F19 ship in M0 even though F18 ranks 7th; F6 depends on F4 and F5; F9b depends on F5 (shield) and on `runSeed` from F1; F11 markers depend on F4 residue; F15 depends on F3, because the hunch rides in `HANDLE_CHOICE`.
+
+**(4) R3 and R7**
+
+**R3, stress window.** Anchor to hold progress, derived from state only:
+- A window is active when `sustainDays ∈ [s0, s0+2]`, where `s0 = 5 + hash32(runSeed ^ 0x5eed) % 3`. The window starts at least 4 days after the forecast. The forecast shows when `sustainDays ≥ 1`.
+- `phase = REGION_STRESS[regionId]` is a data table with one regional analogue per region. It feeds `spawnWeight` (×100 integers) and a decay multiplier. If the table entry is absent, every multiplier is 1, so the run is **bit-identical** (floor(v·n) equals the cumulative pick).
+- The window uses only `sustainDays` and `runSeed`, no stream draw. Replay-safe, and the grace-band pause stretches it naturally. Hold 10 fits: the window ends by sustainDays 9.
+- *(Orchestrator note: SE anchors to hold progress; GL rejects hold-anchoring as gameable (a player could delay the hold to dodge it) and prefers `D = 18 + seed mod 7`; EB measured absolute 20–24. SE's rule is not gameable in the way GL fears only because `sustainDays` increments only while both stats are held — but a player could still deliberately hold at 79 to pause. Resolution pending EB's R3 measurement; fallback = GL's seed-derived absolute band with SE's bit-identical-when-neutral table.)*
+
+**R7, endings.**
+- Add `everDirty: number` to `EndingFacts`, computed as `decisions.filter(d => d.patron).length`. A repair cannot launder it.
+- Rewrite: `green-model`: victory and `everDirty === 0`; `green-shadow`: victory and `everDirty >= 2`; `coast-sold`: `cleanliness <= 0` and `everDirty >= 4`.
+- The ending is a pure view computed at render, never stored, so replay is unaffected. `holdingTier` stays only for the Kara visuals.
+- Reachability risk: `patron` flags will be fewer than the 57 inferred dirty choices, so `coast-sold` (already 2%) may drop to 0. Gate: every ending is reachable by ≥1 policy, and each of the six main endings is ≥2%. If `coast-sold` or `bankrupt` fails, merge them into `toxic` and `clean-broke` variants.
+- *(BP's `green-repaired` ending (R4) adds a `repaired` flag: `green-shadow` only when everDirty ≥2 and not repaired; otherwise `green-repaired`. Compatible with SE's pure-view rule if `repaired` is derived from `decisions`/log.)*
+
+**(5) Top 5 risks of the combined plan**
+1. **M1 lever stacking.** Five economy changes interact. *Mitigation:* land them one PR each in a fixed order, with a paired-seed delta against the previous PR. Zero quest rewards last, in the same release.
+2. **Solo-author content overrun** (F3 enums, F16, F17). *Mitigation:* enforce the LTU budget in `validate:events`; write prose per mechanism, not per event; cut F16 first.
+3. **Determinism drift** from the new state (`runSeed`, `pred`, `branches`, phase), `REWIND_TO` and Advance. *Mitigation:* JSON round-trip test, a bit-identical test with the new fields stripped, and a `CONTENT_VERSION` bump check on every content PR.
+4. **Ending and win-rate collapse** from fewer patron flags, hold 10 and the grace band. *Mitigation:* the reachability gate, `bribe` and `desperate` policies at n ≥ 500, and a pre-agreed ending-merge fallback.
+5. **Unexplained hidden numbers and a hunch that looks like a quiz** (F3, F14). *Mitigation:* the enum-completeness gate, "first crisis skips the hunch", hit-rate as a sentence only, and a playtest check that first-run drop-off does not rise.
+
+*(Orchestrator note: R4 votes logged: LS, GL, UX, BP, ES, SE. Pending: EB.)*
