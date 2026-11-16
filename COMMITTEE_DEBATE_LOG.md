@@ -378,3 +378,64 @@ Files inspected: `COMMITTEE_DEBATE_LOG.md`, `src/data/story.ts`, `src/components
 > **ORCHESTRATOR ERRATUM (verified):** Part A.3 stated that `MapWildlife.tsx` "reacts to cleanliness". `grep cleanliness src/components/MapWildlife.tsx` returns nothing; UX's finding is correct — wildlife is decorative and does not read game state. Treat this as a *missing* feedback channel, not an existing one.
 
 *(Orchestrator note: 5 of 7 Round 1 reports logged (GL, LS, UX, SE, BP). Pending: ES, EB.)*
+
+### R1 · Environmental-Science Pedagogy Specialist (`ES`)
+
+**ES AUDIT, ROUND 1** (read-only; read types, projects, quests, story, and all 124 events via a parsed dump)
+
+**1. What teaches correct science (keep, and use as the quality bar)**
+These are the 15 events with an `outcome` card. Most of the teaching is in the `why` text, not the numbers.
+- `konya-sinkhole` teaches the rebound effect and cites Grafton 2018. Drip subsidy alone backfires, and only a metered cap breaks the rebound.
+- `istanbul-mucilage` teaches symptom versus cause. Skimming gives +10 now and -15 delayed.
+- `ergene-textile-dye` and `ewaste-dump` teach displacement (outfall to sea, export abroad), plus downstream responsibility and EPR.
+- `harran-salinity` teaches slow accumulation that is invisible in the early years.
+- `hazelnut-aflatoxin` is the best misconception-buster. Organic farming is deliberately the wrong mechanism, because aflatoxin is a moisture problem.
+- `aegean-wind-siting`, `hatay-belen-migration`, `dust-transport`, `aegean-geothermal-reinjection`, `van-pearl-mullet`, `med-invasive-fish` and `plastic-ban` teach siting, temporal concentration, exposure versus source, and price signals. `aegean-wind-siting` and `med-invasive-fish` also teach that cancelling is not "nothing" and that nature does not self-balance.
+- `aegean-olive-vs-lignite` teaches irreversibility and sequence. Holding the permit is the best option.
+
+**2. Where the model teaches something wrong or misleading**
+1. **Harm lags, cure is instant.** All 10 `delayed` entries sit on bad or placebo options (the dirty-deal and quick-fix choices). Every clean option pays on the click. `istanbul-mucilage` says treatment "took years" yet gives +25 the same day. `konya-sinkhole` option 3 says the "drawdown stopped" for +20 instantly. `ruhr-river-cleanup` (the Emscher took decades) and `se-thames-quality` also pay out on the click. This is "nature heals instantly" and "buy back damage", built into the data.
+2. **Time heals.** Quests `survivor` (day 20) and `long_haul` (day 40) pay +10 to +15 cleanliness just for waiting. `crisis_manager` and `crisis_veteran` count any choice as "resolved", so a bribe counts. Daily decay (-2) is a constant that is unrelated to any source.
+3. **Green means expensive.** The cleanest option costs budget in 110 of 124 events (89%). The dirtiest option out-earns the cleanest in 101 (81%). The exceptions are mostly wind and hydro (`scotland-highland-wind`, `wales-hydro-valley`, `nord-offshore-wind`). There is no avoided-cost accounting for health, floods or fisheries. `plastic-ban`'s `why` says the cost of free bags "returns later", yet "Leave Unregulated" shows +10 budget.
+4. **Wind is a free lunch in DE and UK, but not in Türkiye.** `scotland-highland-wind`, `ost-wind-nimby`, `wales-offshore-wind-fishing` and `ni-antrim-wind-land-dispute` give +15 to +20 cleanliness and money. Only happiness suffers. `ni-antrim` rewards "ignore the dispute". This contradicts `aegean-wind-siting` and Belen, where siting and wildlife costs are real.
+5. **Dubious afforestation.** `ankara-green-belt` makes a planted forest in native steppe the best option at +20/+20, unsourced. `wales-afforestation` has the same shape.
+6. **The `cleanliness` stat hides displacement.** `tags.pollution` and `basin` are read by no mechanic. Burning versus landfilling cannot show up as a trade-off in the numbers.
+7. **Timescale is incoherent.** In `marmara-urban-renewal`, asbestos effects "years later" land in 22 days. Mucilage "next summer" lands in 25 days. A median winning run is about 28 days, and `clean-broke` runs die around day 12 and never see a lag.
+8. **Projects are spreadsheet buffs.**
+   - `recycle-plant` is a permanent +2 per day, with no waste hierarchy.
+   - `smart-grid` is +40 budget per day from efficiency, which is the opposite of the rebound lesson.
+   - `water-filter` gives +20 and +3 per day in Konya, which has no sea.
+   - There are no prevention, adaptation or restoration projects.
+9. **Letters are medium-agnostic.** "The fish are gone" and "children by the stream" go to Elif the Ankara nurse and to Konya farmers alike, so every problem becomes a water problem.
+10. **Blame framing.** Only 3 choices carry `bribe` (`factory-waste`, `kara-holding-discharge`, `kara-holding-coast`). Bribe is the sole villain mechanism, so legal-but-harmful systemic causes (`tourist-season`, `thrace-sunflower`) get taught as the player's choice rather than as incentive structure. The `kara-holding-discharge` line "our permits are in order" is the one good systemic exception.
+11. **Content form is split by country.** All 72 DE and UK events are untagged, unsourced, two-choice binaries with zero outcome cards. The Türkiye content is far richer than the German and UK content.
+
+**3. Concepts to teach (priority order), and what the current model can express**
+1. Lag between action and result, for harm and for repair. Partly expressible. Delays are fixed, only on bad options, and can't be cancelled by a later fix.
+2. Stocks and flows. Structurally cleanliness is a bathtub (decay and projects), but it is illegible and the flows have no names.
+3. Symptom versus root cause. Expressible via delayed and `outcome`; the model works but covers only 15 events.
+4. Displacement between media and places. Can't be expressed numerically. Only text carries it.
+5. Rebound effect and efficiency without a cap. Expressible in one event only.
+6. Commons and carrying capacity (`tourist-season`, `nord-fishing-quota`, `blacksea-anchovy-overfishing`). They exist but are never named as commons.
+7. Thresholds and tipping points. The only threshold is game over, and the 6-day eruption is a timer, not a regime shift.
+8. Co-benefits and avoided costs. The key fix for the "green = poor" lie. Can't be expressed now.
+9. Irreversibility and precaution. One event (`aegean-olive-vs-lignite`) covers it.
+10. Just transition, with human costs (`ruhr-coal-closure`, `ne-steel-town`). Only the happiness bar carries it.
+11. Climate as a stock (CO₂). Entirely absent.
+
+**4. Scaling honestly (solo author, TR/EN/DE)**
+- **Write mechanisms once.** About 20 mechanism cards (150 words, 3 languages) with region-specific "skins" (place, sector, source) will beat 124 bespoke events.
+- **Tier the events and show the tier in the UI.** Mark each as "real case", "composite" or "hypothetical". Never present game units as measurements.
+- **Replace news sources.** Several `partly-verified` sources are news outlets (CNN Türk, Diken, Hürriyet). Prefer TÜİK, DSİ, EEA, UBA, Defra and the Environment Agency, which are open-licence sources, and add a validator rule that every numeric claim carries one.
+- **Run translation as LLM draft plus a native check.** Review only the `why` text, since German and English reviewers are scarce.
+- **Do the German and UK back-fill by upgrading the existing 72 events.** Cheaper than adding new events.
+- **Take teacher PRs** through the validator.
+
+**5. Regional concept gaps**
+- **Türkiye:** climate and GHG (net-zero 2053 and the ETS, which I believe is in the new Climate Law — verify before use); coal and nuclear (Afşin-Elbistan, Akkuyu); Zero Waste and deposit return; heating-driven urban air in Ankara and Erzurum; sea-level rise and salinisation of the Çukurova delta; transboundary Tigris-Euphrates water; Aegean wildfires (only one generic event exists).
+- **Germany:** nitrate in groundwater and the EU court case; Pfand (Einwegpfand), a documented success; bark-beetle spruce monocultures; Rhine low water, 2018 and 2022; the Energiewende, including the nuclear exit and gas dependence; the 9-Euro and Deutschland tickets; Rhine recovery after Sandoz in 1986, the best example of lag in repair.
+- **UK:** the Great Smog of 1952 and the Clean Air Act, the classic lag and policy case; the 5p bag charge (pair with `plastic-ban` for same-mechanism, different-country transfer); sewage overflows and water-company privatisation; coal phase-out in 2024; beavers and natural flood management; biodiversity net gain.
+
+**Bottom line:** the 15 outcome events teach real systems thinking. The remaining 109 events, the quest rewards, the instant-cure numerics and the single bar teach "green costs, damage can be bought back, waiting heals". Fix the asymmetry in lags and the co-benefit accounting first.
+
+*(Orchestrator note: 6 of 7 Round 1 reports logged. Pending: EB.)*
