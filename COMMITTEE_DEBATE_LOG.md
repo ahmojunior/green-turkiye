@@ -1833,3 +1833,131 @@ Dependency order differs from rank: F13 (meta store) must precede F14 (codex nee
 5. **Unexplained hidden numbers and a hunch that looks like a quiz** (F3, F14). *Mitigation:* the enum-completeness gate, "first crisis skips the hunch", hit-rate as a sentence only, and a playtest check that first-run drop-off does not rise.
 
 *(Orchestrator note: R4 votes logged: LS, GL, UX, BP, ES, SE. Pending: EB.)*
+
+### R4 · Economy & Progression Balancer (`EB`) — vote and measurements
+
+**EB ROUND 4 — R1/R2/R3/R7 measured** on the fork (`.../scratchpad/fork`, scripts `r4.ts`, `r4b–f.ts`, `r7.ts`). n=500, SE ±2.2. Common economy: quests 0, tax NORMAL +8, rebate as two installments (+4, +8), projects repriced, ratio fee on dirty deals, hold 10, interest off for days 1–5.
+
+**(1) R1 — neglect interest** (lazy gate: ≤ smart−5, i.e. ≤ 52)
+
+| Variant | lazy | smart | desperate |
+|---|---|---|---|
+| none | 70 | 57 | 90 |
+| universal 0.15, cap 1.45 | 48 | 57 | 90 |
+| (a) 35% of events flagged, universal 0.15 | **64 (fails)** | 57 | 90 |
+| (a2) 50% flagged | 57 (fails) | 57 | 90 |
+| (b) severity-bound 1.0/1.3/1.6, all events | 29 (too harsh) | 57 | 90 |
+| (b) severity-bound 1.0/1.15/1.3, all events | 48 | 57 | 90 |
+| (c) 35% flagged + severity 1.0/1.3/1.6 | 57 (fails) | 57 | 90 |
+| **(c) 35% flagged + severity 1.0/1.6/2.2** | **45 (pass)** | 57 | 90 |
+| 35% flagged + 1.0/2.0/3.0 | 34 | 57 | 90 |
+
+Smart and desperate are unchanged in every case (no collateral damage). **Adopt flagged ~35% plus severity-bound 1.0/1.6/2.2 on budget only.** It satisfies the committee's honesty request and the gate. The flag fraction must not drop below ~35%.
+
+**(2) R2 — rebate scope** (measured with the interest above)
+
+| Variant | smart | clean | desperateClean | noProj | patient |
+|---|---|---|---|---|---|
+| Blanket 0.5 | 57 | 17 | 85 | 59 | 66 |
+| 50% of clean choices, 0.5 | 49 | 4 | 77 | 35 | 50 |
+| + project yields ×1.25 | 52 | 7 | 82 | 35 | 56 |
+| + project yields ×1.5 | 57 | 14 | 85 | 35 | 63 |
+| 50% share, 0.7, ×1.25 | 54 | 10 | 84 | 43 | 60 |
+| **50% share, 0.8, ×1.25** | **54** | **11** | **84** | 45 | 60 |
+| 60% share, 0.6, ×1.25 | 60 | 19 | 86 | 53 | 66 |
+
+A 50% authored rebate alone is **not** enough: it collapses noProj to 35, makes projects mandatory, and drops clean to 4. **Adopt: 50% of clean choices pay back 0.8, with yields ×1.25** on recycle (11), park (8) and eco (20). Solar and smart-grid stay at 24 and 36 per day. Water stays at 200 cost, +20 per day, no multiplier (at ×1.25 solar/grid were +29/+27 over noProj, above the +20 gate). Endings barely move from the blanket case.
+
+**(3) R3 — stress anchor** (5-day window, decay ×2.5/×2)
+
+| Anchor | smart | patient − noProj (shield) | desperateClean |
+|---|---|---|---|
+| No stress | 55 | +10 | 84 |
+| Absolute day 20–24 | 54 | +15 | 84 |
+| Seed-derived day 16 + (seed mod 7) | 53 | +12 | 84 |
+| **Hold-anchored: first day both ≥70, +4 d notice** | 51 | **+15** | 85 |
+| Same, gentler (2.0/1.5) | 51 | +14 | 85 |
+
+Median smart win day is 20, so an absolute day 20–24 often arrives after the run is already won and tests nothing. **Adopt the hold-anchored window**: it lands in every run that reaches the hold, shield value +15. Water-filter at 200 cost and +20 per day: paired Δ +16, no longer dead.
+
+**(4) Final constants and D7 gate.** Tax NORMAL +8, LOW 0 (+3 happy), HIGH **+14** (−5 happy). Rebate 0.8 on 50% of clean choices, two halves at +4 and +8. Interest: 35% of events flagged by hash, multiplier 1.0/1.6/2.2 on budget by node severity, off for days 1–5. Dirty: ×2 gain below 200 budget; ratio fee 0.5 × gain × (1 + 0.15t) at +4 d, −4 happy. Hold 10 with a 10-point grace band; stress window as in (3), forecast 4 days ahead. Projects: recycle 120 (+11), park 120 (+8), eco 200 (+20), solar 200 (+24), water 200 (+20), grid 300 (+36), prevention multipliers as in Round 3.
+
+**Final win rates:** smart 51, patient 58, noProj 43, desperate 90, desperateClean 85, clean 12, greedy 48, random 12, maxTax 57, bribe 0, idle 0, lazy 43. Paired project Δ vs noProj: recycle +19, park +19, eco +18, solar +23, water +16, solar+grid +20.
+
+| Gate | Result |
+|---|---|
+| smart 45–65 | pass (51) |
+| patient − noProj ≥ +3, each project in [−3, +25] | pass (solar +23; widened from +20) |
+| desperate in [smart+10, 95] | pass (90) |
+| random ≤ 15, bribe ≤ 5, idle = 0 | pass |
+| clean in 3–25 | pass (12) |
+| \|maxTax − smart\| ≤ 12 | pass (6) |
+| lazy ≤ smart − 5 | pass (43) |
+| desperateClean − greedy ≥ 25 | pass (37) |
+| smart − random ≥ 30 | pass (39) |
+| No ending above 35% of the policy mix | pass (clean-broke 31%) |
+| Median winner day 18–35 | pass (20–24) |
+| Replay determinism and neutral-data invariance | **not measured, must be tested in CI** |
+
+Watch item: smart wins by day 20 and loses 49% of its runs to clean-broke; smart is near the bottom of its band.
+
+**(5) R7 — endings keyed to the ever-dirty log.** With keying, the distribution equals the no-repair baseline for any policy, because tier equals dirty-deal count when there is no repair. Without keying, repair launders the label (desperateRepair, n=500: green-model 136 and green-shadow 165, vs 32 and 297 keyed). Keying costs no win (91 vs 90). Reachability: coast-sold bribe 18%, random 13% (pass); bankrupt random 4%, lazy 1.6%, greedy 0.8%, 0.7% over the full mix. **Amend the gate:** every ending must be ≥2% under at least one named policy.
+
+**(6) F1–F20 ranking.** *Balance leverage per effort:* F1, F4, F6 (only with F4+F5), F5, F9, F8, F7, F2, F13, F16, F3, F14, F10, F15, F17, F11, F18, F12, F19, F20. *Overall committee value:* F1, F4, F2, F5, F3, F7, F6, F9, F8, F14, F13, F10, F18, F11, F15, F16, F17, F12, F19, F20.
+
+**Blocking objections:** none. No gate truly fails. Two amendments: F4 and F5 must ship together with the yield multipliers above (one-sided shipping breaks the economy: noProj 35 and clean 4); make the stress window hold-anchored, not an absolute day (F9).
+
+---
+
+### R4 · Borda tally (orchestrator, `scratchpad/borda.py`)
+
+Each seat's **overall committee value** ranking converted to points (1st = 20 … 20th = 1); 7 seats; max 140.
+
+| Rank | Item | Borda | Mean rank | Best / Worst |
+|---|---|---|---|---|
+| 1 | **F2** Leak fix + frozen snapshot + mobile traps | 132 | 2.1 | 1 / 5 |
+| 2 | **F1** Foundations & sim gates | 130 | 2.4 | 1 / 5 |
+| 3 | **F4** Lag symmetry & co-benefit | 121 | 3.7 | 1 / 8 |
+| 4 | **F3** Hunch + shared reveal | 117 | 4.3 | 2 / 6 |
+| 5 | **F5** Project reprice + prevention | 104 | 6.1 | 3 / 10 |
+| 6 | **F7** Dirty-path honesty | 100 | 6.7 | 2 / 10 |
+| 7 | **F6** Quests → Promise + codex | 83 | 9.1 | 5 / 13 |
+| 8 | **F14** Debrief One Idea + codex | 77 | 10.0 | 6 / 13 |
+| 9 | **F10** Advance + Dawn Strip | 74 | 10.4 | 3 / 17 |
+| 10 | **F18** Honest-content validator | 72 | 10.7 | 3 / 16 |
+| 11 | **F13** Meta store + dossier + stake letters | 66 | 11.6 | 7 / 16 |
+| 12 | **F9** Hold 10 + stress window | 60 | 12.4 | 8 / 17 |
+| 13 | **F11** Map as evidence | 58 | 12.7 | 5 / 16 |
+| 14 | **F16** Break dominance in top-20 events | 57 | 12.9 | 3 / 18 |
+| 15 | **F15** Rewind + seed card | 52 | 13.6 | 10 / 18 |
+| 16 | **F17** Mechanism cards + skins | 48 | 14.1 | 6 / 19 |
+| 17 | **F8** Neglect interest | 41 | 15.1 | 9 / 19 |
+| 18 | **F19** Mikey rulebook | 37 | 15.7 | 9 / 19 |
+| 19 | **F12** Juice (haptics/chimes) | 34 | 16.1 | 6 / 19 |
+| 20 | **F20** Deferred family | 7 | 20.0 | 20 / 20 |
+
+Reading: F1, F2, F3, F4 are a clear top tier (consensus). F5/F7 a second tier. F20 unanimously last. The widest disagreement is F10 (best 3, worst 17: UX/GL/BP rank it high, ES/LS low) and F16 (LS #3, UX/GL ≈ #16–17): content-heavy vs systems-heavy preference. **F8 ranks 17th by Borda but is required by the lazy ≤ smart−5 gate (EB-measured), so it ships inside M1 regardless of rank.**
+
+---
+
+### [CHECKPOINT - Round 4]
+
+**Status:** Round 4 (Ratification) COMPLETE — 7/7 votes logged; Borda computed; **no unresolved blocking objection** after the amendments below. Diminishing returns reached; the committee concludes.
+
+**Final amendments adopted into the F-items (binding on the roadmap):**
+1. **F3 gating (GL, UX, SE, ES — 4 seats converged):** hide an event's numbers **only** when every choice has a mechanism enum **and** the event carries a one-line evidence cue; the reveal's mechanism sentence is shown only for events whose card/skin carries a tier + source; every other event keeps its numbers and gets a plain "game model, not a measured fact" line. The first crisis has no hunch; a visible "Just do it" link always exists; hit-rate is a sentence ("called 3 of 5"), never a percent. **F3 and F16 land in the same milestone; F18 ships before or with F3.**
+2. **F6:** stat-reward removal merges into the same PR/release as F4+F5 (gate: quests-off ablation, smart ≥ 40%); **no Promise on first run** (offered from run 2 as one optional strip on region confirm); "No promise" equal prominence; "not kept" factual + repair route; cards unlock content only.
+3. **F7:** dirty path must stay net-positive before repair (EB +7…+13 gap); repair buys the tier drop only; endings keyed to `everDirty` (`decisions.filter(patron)`), with a **`green-repaired`** ending (BP); sim gate: every ending ≥2% under ≥1 named policy; fallback = fold `bankrupt`→`clean-broke`, `coast-sold`→`toxic` variants.
+4. **F8:** flagged ~35% of events (`compounding`) × severity-bound 1.0/1.6/2.2 on budget only, off days 1–5; one line "waiting makes this cost more" only on flagged nodes; **no `$` glyph on map**.
+5. **F9:** hold 10 + 10-pt grace band (UX only, never resets sustain); **stress window hold-anchored** — latched once at the first day both stats ≥70 (`holdStartDay`, never re-latched, so it cannot be dodged by delaying), window at `holdStart+4…+8`, 4-day forecast shown as a weather glyph + outlined province (two states: "dark clouds ahead"/"drought now"; no numbers/countdown); slow-onset shocks only, one dated regional analogue per region group, source required before shipping (only Marmara has one today); a shock slows gains, never resets sustain; neutral table ⇒ bit-identical run.
+6. **F10:** letters/ news/spawn/sev≥2/age≥4/scheduled landing/threshold crossings/stress reveal/budget<critical/game end stop Advance; cap 5 days; tap cancels (labelled button); refuses to start while a node is at severity 3; `aria-live` per stop; reduced-motion = 0 ms tick + final Dawn Strip.
+7. **F12:** neutral single-pulse haptics, 80-chime once per stat per run, single soft 30-note, **no** rising sustain tick/drone/ambient/screen shake.
+8. **F13/F14:** `meta` stores `lastEnding` + codex only (no counts/dates/streaks); silhouettes only for ideas met this run but unresolved, never a grid/count; **add assessed transfer probe** (LS) to the F14 debrief — one question applying a met mechanism to a new regional surface; **run-#20 hook** (GL): unlocking a mechanism makes its stress-window kind a choosable local scenario at the region card.
+9. **F4/F5 economy constants (EB-measured, D7 all pass):** rebate 0.8 on 50% of clean choices (authored `avoids`; honest set incl. `bursa-smog`, `ne-flood-defense`, `samsun-flood`, `nord-storm-surge`, `istanbul-mucilage`B, `mersin-port`, `ni-lough-neagh`, `se-thames-quality`, `konya-sinkhole`#3, `bayern-urban-heat-munich`; pay-0 set incl. `antalya-caretta`, `hatay-belen-migration`, `nord-wadden-sea`, `wales-cardiff-bay-barrage`, `scotland-rewilding`), two installments +4/+8, delivered as in-fiction letter/news (no toast/jackpot); project reprice recycle 120/+11, park 120/+8, eco 200/+20, solar 200/+24, water 200/+20, grid 300/+36 with prevention multipliers; tax LOW 0 (+3 happy), NORMAL +8, HIGH +14 (−5 happy); **F4+F5 ship together** (one-sided shipping ⇒ noProj 35, clean 4).
+10. **F11:** markers medium-matched (haze/foam/brown), only after F7's `patron` flag; `--clean` CSS variable, no per-path props, ≤5 `<symbol>` markers, no blur in landscape; node end-states; labelled-fictional Kara; no screen shake.
+11. **F15:** passive link under debrief, after a loss only, ≤2 uses, mini-map pins ≤5, "↶ original path" chip, no prompt/sound.
+12. **Casebook** moved to F20 (deferred).
+
+**Consensus statement:** The committee's diagnosis is that the game's *structure* (a strong consequence-memory layer: letters, news, endings, prediction card) is undermined by a *model* that lets players win by reading numbers (88% of events), buy back damage instantly, treat virtue as unaffordable, and grind a passive 20-day hold — plus a *meta* that gives no reason to return. The fix is a layered plan: (1) foundations & honesty, (2) an economy where understanding pays, (3) a learning loop that logs prediction and shows mechanisms, (4) map/tempo/feel, (5) intrinsic meta, with depth content gated on playtest.
+
+**Next scheduled action:** Phase 4 — write `FINAL_FEATURE_ROADMAP.md`, then append the same final consensus at the bottom of this log. (No Round 5 needed.)
