@@ -1326,3 +1326,68 @@ Everything the clusters would add: side sheet, hunch chip row, Dawn Strip, Advan
 - **Defer:** K3 rewind and seed (until the K6 log work is done); K4 returning-citizen letters (content-heavy); K9 chip enums beyond the first 15–40 events; the stress-year forecast (until Advance is playtested); GL-P6 re-encounters (until ≥2 events per mechanism). K11 is infrastructure that gates the rebalance, so goes first, but has no UI.
 
 *(Orchestrator note: R3 reports logged: GL, LS, ES, UX. Pending: BP, SE, EB.)*
+
+### R3 · Behavioral Psychologist (`BP`)
+
+**BP ROUND 3: cross-examination & synthesis** (read-only; G1–G13 are BP's 13 guardrails in Round 1 order)
+
+**(A) RESOLUTIONS**
+
+**X2 — audit vs no random detection. BP concedes randomness, with two amendments.**
+- G4 is about reward magnitude, and a fixed fine drawn from a seeded stream is not a variable-ratio hook.
+- What matters is the lesson. EB's numbers do not teach "corruption always fails": with ×2 payout, desperate 97 vs desperateClean 84 (+13). With audit .25+.15×tier and fine 120, 87 vs 80 (+7), and green-shadow doubles. That is "it can pay, and someone else still pays".
+- A deterministic alternative (inspection on a fixed cadence once `patron` decisions since the last inspection reach 2) is more legible but cannot hit EB's calibrated numbers without a new sim round, so BP does not recommend it. *(Note: ES-R3 independently proposes a deterministic "pattern audit" — second dirty deal on same mechanism within ~8 days. Remains to be sim-tested by EB in R3.)*
+- **Amendment A1:** the harm channel (named citizen's delayed letter) and the audit channel (fine) are independent. Harm lands whether or not the audit hits.
+- **Amendment A2:** draw with `nextRandom`, resolve at the reveal card, no suspense animation or roll sound (guards G4's spirit).
+- **Amendment A3:** the reveal card states the odds ("deals like this are checked roughly 1 time in 3; this time: not checked / checked") and why the offer was larger ("the treasury was low"). Odds shown after the choice, never before, so the unlabelled temptation survives.
+- **Hard floor:** random policy must stay ≤ ~13%. EB saw 11→24 under a weak audit; a miscalibrated audit is the failure mode.
+
+**X5 — neglect interest. Conditional PASS.**
+- Failing points: a second hidden clock on top of severity escalation (1→3 every 2 days, eruption at 6) double-counts pressure and deepens "clear the board" over "think" (G3, G2 spirit).
+- **Amendment:** do not add a separate `age` clock. Bind the multiplier to the *existing visible severity* (sev 1/2/3 → ×1.0/1.3/1.6). The node already shows its severity, so the player can see the price rising. Show the $→$$→$$$ tier on the node card. Apply to budget only. No application during the first-solve tutorial. Sim gate: smart within ±3, lazy must still drop. *(Note: UX-R3 says no `$` glyph on the map — tier on choice buttons only; ES/LS/GL want `compounding: true` per event. Three variants of the same lever; synthesis needed.)*
+
+**X6 — ONE quest replacement, the Promise. Exact flow:**
+1. **Start.** After region pick, "Who do you promise?" shows 3 cards. Each card is a citizen plus their stake from the region (e.g. "Rıza: keep the strait fishable", stakes water/marine). A "No promise" button is visible. `START_GAME` payload gets `promise?: {characterId, tag}`, so the log replays.
+2. **During the run.** No toast, no meter, no reward. That citizen's province gets a small ring on the map (K8). Letters prefer that citizen (ties to X12).
+3. **Debrief, a single line built from the decision log:** "Promise to Rıza (water): kept / partly kept / not kept / never tested." Rule: count decisions whose event tags intersect the stake. Kept = 0 harmed. Partly = harmed ≤ helped. Not kept = harmed > helped. Never tested = none matched, said plainly. Followed by the relevant mechanism card (K9) and, if not kept, the repair route (K10).
+4. **Meta store (K4).** At GameOver write `meta.citizens[id].lastEnding` and `meta.codex` (mechanisms from decided events). Next run, the citizen's first letter is a `returning` kind. Codex cards unlock choosable scenarios (GL "run #20"). EB's Dossier unlocks fold into the codex as debrief-only cards, capped at 4, no toasts.
+5. **Precondition:** EB-P4 income rebase ships first (quests at 0 drop smart 71→12.5% otherwise). Old quests are then deleted.
+
+**X12 — cheapest honest stake matching.**
+- Add a role→stakes map (~10 roles: fisher→water/marine, farmer→soil/landuse, teacher or nurse→air/hazard, shopkeeper→economy). Each of the 38 characters derives its stakes from its role, so no per-character authoring.
+- `addLetter(kind, eventId)` picks the first character whose stakes intersect the decision's `tags.pollution`, falling back to the current rotation. Keep the 5 templates.
+- Fix the one false line: `cleanBad`'s "Balık kalmadı / The fish are gone" gets 3 variants (water, land, other) = 9 strings. Defer the 54 fragments.
+- Persistence needs a single new `returning` template ×3. **Total: one map plus 12 strings.**
+
+**(B) GUARDRAIL AUDIT (strict)**
+- **K1 prevention:** pass. Show a shield icon, not a counter.
+- **K2 rebate / EB-P1:** G9 near-violation (pending markers) and G8 (it pays budget). *Amendment:* a fixed-magnitude in-fiction letter ("the clinic saved money"), no bonus toast, no jackpot sfx, and the "?" marker carries no sign and no amount.
+- **K3 rewind / SE-P2:** G13 near-violation ("one more run" prompt). *Amendment:* a passive link below the debrief, one use per run, no auto-prompt, no sound. Seed card and path code only after that.
+- **K3 Casebook:** G5 identifiability. A 12-decision path is near-unique, so k≥5 on rows protects nothing. *Amendment:* per-decision marginals only (never rows), paste via one bulk textarea, no timestamps, and tell the teacher plainly that anonymity is from classmates, not from the person who collected the codes.
+- **K4 meta:** G1 near-violation if `runs`, dates or visit counts are stored. Store `lastEnding` and the codex only. No empty "?" slots with nagging copy. *(Note: LS and GL want "???" slots as curiosity gaps; BP says no nagging copy — keep as a neutral silhouette, no counter.)*
+- **K5 Promise:** G11 (moralising "not kept") and G6. *Amendment:* factual wording, always paired with a repair route.
+- **K6 hit-rate (UX-P1):** shown as a percent it becomes a score (ROADMAP bans points). *Amendment:* a sentence ("you called 3 of 5"), no percent, no trend arrow.
+- **K7 Advance:** letters must stop the advance (relatedness).
+- **K8 / UX-P2 soot markers:** G7 violation if shipped before K10, since tiers are currently wrong (tourist counts as corruption). Dependency: K10 first. The 250 ms screen shake on eruption is aversive (G11): drop it and keep the thud.
+- **EB-P5 ×2 below budget 200:** perverse incentive to stay poor (spend down to unlock). See (C).
+- **EB-P6 grace band:** pass, an improvement (removes the loss-framed reset). Make the "last 5 points count half" rule visible.
+- **GL-P1 forecast:** G2/G3 if drawn as a ticking countdown or if the shock resets sustain. *Amendment:* a calendar mark from day 1, and the shock slows gains (EB's grace band) rather than resetting.
+- **UX-P5:** the rising-pitch tick per sustain day is a streak (G1) with an audible reset (G2): reject, or use constant pitch. The drone under 30 is a sustained anxiety cue: remove. The bad-reveal haptic `[20,30,20]` is punishment: use one neutral pulse for every reveal, with valence shown visually.
+
+**(C) ATTACKS**
+1. **EB-P5's "×2 only when budget < 200."** Objection: it rewards poverty. A player can spend down to unlock the bigger bribe, and "poverty drives pollution" becomes a gameable rule. *Amendment:* a flat ×1.6 early-game multiplier tied to day ≤ 10 or to an open node's visible deficit, not to the player's own balance.
+2. **UX-P1 hunch chips.** Objection: for dominance-shaped 2-option events (C2) the largest-|effect| stat is the obvious one, so hit rate approaches 90% and trains tapping, not inference. *Amendment:* probe the *non-obvious, trade-off* stat via an authored `probe` field, first on the 15 outcome events, and skip the chip when the answer is dominated.
+3. **BP's weakest: BP-P5 Casebook.** Needs a teacher workflow, bulk paste, aggregation and a k floor, for unproven classroom use. Defer behind the seed card. Also soften BP-P3: describe the act plainly ("accept the cash envelope") and withhold only the legal label.
+
+**(D) RANK by intrinsic-motivation quality per unit effort**
+1. **K6** leak fix plus logged prediction. XS-S. Protects competence.
+2. **K2** lag symmetry / rebate. S-M. Makes virtue viable (clean 2→18), which is real autonomy.
+3. **K10** patron flag plus repair. L-M. Buys honest feedback.
+4. **K1** prevention projects. M. Planning agency, sim-validated (smart 34→41).
+5. **K5 + K4** Promise and local meta. M. Meaning and relatedness.
+6. **K7** tempo. Low effort, flow.
+(K11 is an enabler, done first. K8 follows K10.)
+
+**REJECT or DEFER:** reject the UX-P5 sustain-tick, the drone and the aversive haptics. Defer the Casebook and rewind. Defer the EB-P7 third option (H authoring). Defer GL-P6 Second Look, ES-P2 media and the GL-P1 shock (keep only EB-P6 grace).
+
+*(Orchestrator note: R3 reports logged: GL, LS, ES, UX, BP. Pending: SE, EB.)*
