@@ -306,3 +306,75 @@ Basis: read the log, gameReducer.ts, gameLogic.ts, quests.ts, projects.ts, story
 **Opinionated sequencing:** first, compact the `actionLog` payloads, add a content version, and put `npm test` in CI. These are ~100 LOC total and unlock (e) and (g). Then (f) and (b) (cheap, learning-heavy). Treat (a) as the largest, riskiest change and do it behind the derived-`cleanliness` shim.
 
 *(Orchestrator note: 4 of 7 Round 1 reports logged (GL, LS, UX, SE). Pending: BP, ES, EB.)*
+
+### R1 · Behavioral Psychologist — Ethical Engagement (`BP`)
+
+**BP Round 1 – SDT audit (read-only, grounded in code)**
+
+**1. SDT scorecard**
+
+**Autonomy: 5/10.**
+- For: the player chooses which node to open and in what order, the tax rate, and projects. Mikey hints are one-time, non-modal and tap-to-close (`MikeyHints.tsx`). Quests are optional.
+- Against, goal: there is one imposed goal (80/80 for 20 days) and no self-chosen goal or personal framing.
+- Against, scaffolding: tax and projects stay locked, and spawn is capped at one node, until the first solve (`spawnNode` cap).
+- Against, illusory choice: `scripts/sim-report.md` shows maxTax is as good as smart play, and "always clean" wins 0%, so "pure virtue" is not a real option. That is the main autonomy problem (choices that don't matter are not autonomy).
+- Against, pressure: eruption at 6 days (`nodeEruptionDays`) is simulation pressure, not a real-time timer, so it passes the filter. It still nudges "clear the board" over "think".
+
+**Competence: 6/10, with high ceiling and uneven delivery.**
+- Best asset: predict-then-reveal in `EventModal.tsx`. The feedback is neutral ("Tahminin yanlış" with an amber X, no score or penalty). It adds a why-card and sources, and it is the only place where competence means understanding.
+- Weakness 1: only 12% of events have this loop. The other 88% teach arithmetic competence (read numbers, min-max).
+- Weakness 2, a leak found: `handleChoiceClick` shows floating +/- numbers and plays `sfx.choiceGood/Bad` computed from the hidden effects (lines 136-166). That spoils the hidden-effects design right before the prediction.
+- Weakness 3: `DaySummary` shows stat deltas with no cause. Honest, but gives no mastery signal.
+- Weakness 4: there is no cross-run sense of "I now understand X". `clean-broke` is the most common ending (564 runs), so the typical virtuous player feels bad at being good.
+
+**Relatedness: 3/10.**
+- Named citizens, letters and Mikey are good seeds.
+- Characters are only names and professions. All five letter templates are identical for every citizen (`LETTERS` in `story.ts`). `cast[letters.length % cast.length]` picks the writer by turn order, not by who the decision affected. So the fisherman Rıza can write about a tourist event, and "Balık kalmadı" (the fish are gone) is sent in a wheat region.
+- The relationship does not persist across runs, and there is no social layer at all.
+
+**2. Existing mechanics**
+
+Healthy:
+- Prediction loop plus sources.
+- Letters as delayed, consequence-bearing narrative (accomplice framing).
+- "Endings found N/8" is a benign curiosity or collection hook: no streak, no loss, rules-based.
+- Restart at top, autofocused, so run friction is low.
+- `firstCritical` diagnosis is stat-based, not blame-based.
+- The news TV irony (Mikey cheerfully reading Kara Holding news) is good media-literacy material.
+
+Quietly problematic:
+1. **`isDirtyDeal` is too broad.** It treats `budget>0 && cleanliness<0` as a dirty deal, so "Welcome Everyone" in the tourist event (+80 budget, -10 clean) counts as corruption. It grows Kara Holding and triggers the letter "you looked the other way for that company. We have not forgotten." plus the debrief line "You sided with the money N times." That is a causal and moral misattribution, and it breaks the author's own rule against unprovable causal claims. It shames students for ordinary trade-offs.
+2. **Guilt without repair.** `holdingTier` only ever increases (`Math.min(5, tier+1)`, never decreased). The co-op heals only +0.3/tier/day. So a player who made a dirty choice on day 2 has a permanently worse run and is told "we have not forgotten". That is learned helplessness, not remorse that teaches. For a classroom, guilt must come with an action.
+3. **Is "bribe = path to losing" honest?** Partly. Strength: the delayed bribes (+90 now, -10 clean at day 4, +150 now, concrete at day 5) are genuinely tempting and teach delayed cost. Weakness 1: the choice is labelled "(Bribe)" in its own text and is always net-negative, a signposted strawman that tests obedience, not judgment. Weakness 2: real corruption often pays for a long time and fails by detection risk, not guaranteed ecological collapse. The sim's "bribe policy: 0% win" teaches "corruption always fails", which is a moral claim, not an inference. Better: unlabelled temptations with a visible short-term gain, and a reveal.
+4. **Quests invert motivation.** Rewards are stat boosts for already hitting thresholds (`survivor` pays +15 clean, +10 happy just for reaching day 20), `budget_master` rewards money, and `happy_people` pays budget. That is extrinsic and inflates stats. It also muddies "did my decision work?".
+5. Auto-focused "Play Again" above the debrief invites skipping reflection. Not manipulative, but the opposite of "diagnosis first".
+
+**3. What's missing (no backend, no telemetry, classroom)**
+- **Persistent local relationships.** A citizen who recurs across runs, remembers the last ending (localStorage "your previous visit"), and writes in their own voice about their own stake (fish, tea, the school).
+- **Repair arcs**, so guilt becomes agency: an apology and restitution choice, and a tier that can go down.
+- **Meaning.** "Your run mirrors a real place": the region, a source, and "what happened in real life". The `mechanisms` tags (15 events) have no codex.
+- **Relatedness without servers.** A classroom comparison of *different decisions* (not scores), such as a printable or copy-paste seed or "my ending code" that a teacher can discuss. Cooperative framing: "your class's endings" shown as a discussion-prompt card, with no ranking.
+- **A way to choose own goal**, e.g. a player-picked "mission" at start (protect fish, school roof) that the debrief reports on.
+
+**4. Ethical guardrails (enforce on all proposals)**
+1. No streaks, daily rewards, login-count anything, or "come back tomorrow" mechanics.
+2. No loss-framed counters ("don't lose X"). Progress is only ever displayed as accumulation.
+3. No real-time timers or scarcity. The sim clock only moves when the player ends the day.
+4. No variable-ratio loot, gacha, mystery boxes, or random reward amounts. Random content is fine; randomised *reward magnitude* is not.
+5. No social comparison of people: no leaderboards, shame lists, or "you did worse than N%". Compare *decision paths*, never players.
+6. No guilt without agency. Every negative moral signal (letter, headline, debrief) must be paired with a possible repair action or next-run lever.
+7. Causal honesty. Every claim about the player's decision must be provable from the decision log. Fix `isDirtyDeal` before anything depends on it. Label things "corrupt" only when they are.
+8. Extrinsic rewards must never be stats the player can use to win. Prefer content reveals (a story, a codex entry, a citizen update) over currency.
+9. Hidden information must stay hidden: audit sfx, floaters and colours for leaks.
+10. A losing run must show the player something learned within 10 seconds. No dead-end screens, no "try again" without a cause diagnosis.
+11. Failure is never moralised ("bad choice"). Use "here is the mechanism".
+12. Everything must work with no storage and no network (storage may throw), and be skippable and mutable.
+13. Session end is always offered, never delayed. No interstitial nudges to continue, no "one more day?" prompts.
+
+Files inspected: `COMMITTEE_DEBATE_LOG.md`, `src/data/story.ts`, `src/components/{GameOver,DaySummary,MikeyHints,EventModal}.tsx`, `src/data/quests.ts`, `src/reducers/gameReducer.ts`, `src/data/events.ts` (bribe choices at lines ~22, 2542 and 2568), `src/i18n/translations.ts`.
+
+---
+
+> **ORCHESTRATOR ERRATUM (verified):** Part A.3 stated that `MapWildlife.tsx` "reacts to cleanliness". `grep cleanliness src/components/MapWildlife.tsx` returns nothing; UX's finding is correct — wildlife is decorative and does not read game state. Treat this as a *missing* feedback channel, not an existing one.
+
+*(Orchestrator note: 5 of 7 Round 1 reports logged (GL, LS, UX, SE, BP). Pending: ES, EB.)*
