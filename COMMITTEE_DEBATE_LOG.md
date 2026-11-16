@@ -439,3 +439,106 @@ These are the 15 events with an `outcome` card. Most of the teaching is in the `
 **Bottom line:** the 15 outcome events teach real systems thinking. The remaining 109 events, the quest rewards, the instant-cure numerics and the single bar teach "green costs, damage can be bought back, waiting heals". Fix the asymmetry in lags and the co-benefit accounting first.
 
 *(Orchestrator note: 6 of 7 Round 1 reports logged. Pending: EB.)*
+
+### R1 · Economy & Progression Balancer (`EB`)
+
+**EB (Economy & Progression) – Round 1 audit.** All numbers below come from the real reducer, run headless on 400–600 seeded runs per cell, loading src via a Node type-strip hook, with no repo edits. (Scripts live in the session scratchpad: lib.ts, proj.ts, quest.ts, tri.ts, sweep.ts, pkg.ts.)
+
+**0. Correction to Part A.5.** "maxTax is dominant" is noise. smart 55% and maxTax 56% differ by less than the standard error (about ±3.5 points at n=200). The sim's own `smart` policy is the maxTax policy with NORMAL tax.
+- With no projects, smart wins 71% at NORMAL, 65% at LOW and 47% at HIGH. HIGH tax only helps (53% vs 49%) when the policy also buys projects, because it pays for them.
+- The real finding is that **buying projects loses**. See section 3.
+
+**1. Why clean loses 0%: the math.**
+- Events arrive at 0.82 per day. Budget is the only stat that kills a competent player: 124 of 124 smart losses are bankruptcy.
+- The cleanest option averages -64 budget, +14.3 clean and +1.7 happy per event. The other option averages +10.5 budget, -4.4 clean and -0.6 happy.
+- `clean` therefore spends about -43 budget per day (+11 clean, 0 happy). NORMAL tax gives +8, so net is about -35 per day. 500 / 35 is about 14 days, which matches the median of 12.
+- `clean` also dies of low happiness (104 of 400 runs). Happiness sits at about 40 and decays 1 per day, and events give it nothing. Reaching 80 requires LOW tax or parks.
+- Implied prices are fixed everywhere: about 4 budget per clean point (events) and about 5 budget per happy point (tax slider, 10 budget for 2 happy). Daily decay of 2 clean and 1 happy costs about 13 budget per day to cancel, against +8 tax income. So the economy runs a deficit by design.
+- **Quest rewards are what holds the economy up.** The budget payouts total 150+200+150+200+200 = +900 (+700 by about day 20). Zeroing quest rewards drops smart from 71% to **12.5%**.
+- Win stats overshoot: smart winners end at a median of 98 happy and 99 clean against a threshold of 80, so about 20 points per stat are wasted.
+
+**2. Is there a real trilemma? No, it is one-dimensional.**
+- 107 of 124 events have only 2 choices (17 have 3). Almost every event is "pay budget for clean" versus "take the money".
+- Only 7 of about 250 options are non-negative on all three stats. 3 events contain a strictly dominated option. In 17 events the cleanest option is also the richest, so there is no tradeoff at all.
+- Happiness is barely an axis in events; it is handled by the tax slider.
+- At a constant 4 budget per clean point, the cleanest option is also the best-value option in 69 of 124 events (56%). Only 19 events are close calls, and the median margin is 55 budget.
+- Across a 108-state grid of budget, happy and clean, the smart pick never changes in 60 of 124 events. 70 events have a single answer in at least 90% of states. The choice is arithmetic on visible numbers.
+- Delayed consequences, the long-term-thinking mechanic, are nearly absent. They appear in 0.2–0.5% of actual choices. **78–87% never land**, because the delays are 14–25 days and the median game is 31 days.
+- No mechanic rewards prevention. No option reduces future crises, and `tags.pollution` is never read.
+
+**3. Project economy.** Stat points valued at the implied prices above.
+
+| Project | Cost | Payback after build |
+|---|---|---|
+| Recycle plant | 250 | about 31 days |
+| Park | 200 | about 40 days |
+| Eco park | 550 | about 39 days |
+| Solar | 500 | about 33 days |
+| Wastewater | 560 | about 47 days (the strongest "educational" project is the worst buy) |
+| Smart grid | 700 | about 18 days, but with the required solar it is 1200 for +55 per day and breaks even around day 40+ |
+
+- The median run lasts 31 days. Buying any single project on day 1 changes smart's win rate by -7 (park), -13 (recycle), -28 (solar), -30 (eco park and solar+grid) and -35 (wastewater), against a 71% baseline.
+- Eco park is dominated by park plus recycle, which costs 450 for comparable value. The wastewater plant is never worth buying.
+- Even at half cost with tax ×2.5, only solar beats buying nothing (57% vs 47%). The projects do not teach anything either.
+
+**4. Quests distort play.**
+- Rewards are budget, the one lethal stat, and they pay out to players who are already stable.
+- `happy_people` (+150 budget) fires at 80 happiness, right when the player is nearly winning.
+- `crisis_manager` and `crisis_veteran` (+200 each) count any resolution, bribes included.
+- `survivor` (day 20) and `long_haul` (day 40, +200 budget) pay for stalling.
+- `budget_master` (1000 budget) completes in only 4% of runs, so it is dead content.
+- Five of eight quests complete in 100% of smart runs and carry no information.
+
+**5. Levers, with numbers.**
+1. **Remove stat and budget rewards from quests.** Make them teach or unlock instead: codex entries, a project variant, a region scenario. Rebase income so quests are not load-bearing. Tax ×2.5–3 (NORMAL +20–24 per day) gives smart about 47–55% with quests at $0.
+2. **Make prevention exist.** Wire `tags.pollution` into projects. Each completed project cuts spawn weight of matching-tag events by 30–40% and the clean-option cost by 25%. Rebase projects to a payback of 12–15 days after build (solar 500 to 300 at +25 per day, smart grid 700 to 400, wastewater 560 to 350 over 8 days). Give the first 1–2 projects an in-run "pays off by day 10" feel.
+3. **Interest on neglect.** An ignored crisis's clean-option cost rises 25% per 2 days, shown in the UI. Cure becomes visibly more expensive than prevention. Erupt hits are already -12 happy and -15 clean.
+4. **Systemic-fix options.** Add a third option to about 25% of events: pay 150–250 now, positive on all three stats after 5–8 days. Shorten every delay to 8 days or less so it lands (today's 78–87% never land). This is the co-benefit teacher.
+5. **Make the dirty path tempting early.** Dirty or bribe options should pay 2–3× the clean price when budget is below 200, with the delayed penalty landing within 8 days. The temptation is currently weak, with only 3 bribe options.
+6. **Make tax a real decision.** HIGH tax should escalate unrest after 3 consecutive days. Add diminishing returns above 80, so overshoot becomes a resilience buffer instead of waste.
+7. **Add a second price axis.** Make the price of clean vary per event (2–8 budget per point) so the choice is not the same arithmetic every time. Raise the share of 3-option events from 14% to at least 40%.
+
+**Target after rebalance:** pure clean 15–25%, smart 55–65%, early prevention worth +10–15 points over none, and no single-tax policy dominant.
+
+---
+
+> **ORCHESTRATOR ERRATUM #2 (A.5):** Part A.5 labelled `maxTax` the "dominant strategy" on the strength of `sim.ts`'s own "dominant" line. EB's re-measurement shows 55% vs 56% is within noise (±3.5 pts at n=200). **Do not build proposals on "maxTax is dominant."** What the data *does* support: (i) pure-clean = 0% because the economy runs a structural deficit; (ii) buying projects *lowers* win rate; (iii) quests carry the economy.
+
+---
+
+### [CHECKPOINT - Round 1]
+
+**Status:** Round 1 (Audit & Diagnosis) COMPLETE — 7/7 seats reported and logged (GL, LS, BP, UX, SE, ES, EB).
+
+**Completed phases:** Phase 1 Discovery; Phase 2 roster assembled; Round 1 audits.
+
+**Points of consensus after Round 1** (≥3 seats independently converged; numbered `C#` for later reference):
+- **C1 — Hidden numbers + prediction covers only 12% of events.** The other 88% invite arithmetic min-maxing (LS leak 1, UX §5, EB §2: for 70/124 events the "right" option is the same in ≥90% of states, ES). *Extending the reveal-and-explain loop to all events is the single biggest pedagogical lever.* (LS, UX, EB, BP, ES)
+- **C2 — The choices are not real trade-offs.** 107/124 events are 2-option; cleanest option is best-value in 56%; green is "expensive" in 89% of events (ES) and clean-cheaper-wins in dominance-shaped events (LS). (EB, ES, LS, GL)
+- **C3 — "Harm lags, cure is instant" is built into the data, and delays rarely land.** All 10 delayed entries sit on bad options; 78–87% of delays never land because they're 14–25 days vs a ~31-day median run. This teaches "nature heals instantly; you can buy damage back." (ES, EB, LS)
+- **C4 — The single `cleanliness` scalar cannot express displacement, stocks, media, or commons; `tags.pollution`/`mechanisms` are read by no code.** (LS, ES, SE, EB) *Contested on how far to go — see D1.*
+- **C5 — Quests are a harmful extrinsic loop that also props up the economy** (pay stats/budget for stalling; zeroing them drops smart win rate 71%→12.5%). Replace with knowledge/content rewards. (BP, ES, EB, GL, UX)
+- **C6 — Projects are spreadsheet buffs with no domain content, no prevention role, no regional fit; buying them *lowers* win rate.** (EB, ES, GL)
+- **C7 — The map does not show consequences; modal covers the map.** Province-level soot/green markers, node resolve/erupt animations, pending-consequence markers, side-by-side modal in landscape, HUD delta pulses, haptics, threshold sounds. (UX; supported by GL "game shows, text doesn't tell")
+- **C8 — No meta-loop / no cross-run continuity.** Persistent local "dossier/codex", replay-from-a-decision (counterfactual), seed card, strategy fingerprint, self-chosen challenge modifiers. (GL, LS, BP, SE)
+- **C9 — The debrief reviews logistics, not concepts.** Needs mechanism recap/retrieval and shows too little visual evidence. (LS, UX, BP)
+- **C10 — Causal-honesty bug:** `isDirtyDeal` is too broad (e.g. tourist-season "Welcome Everyone" counts as corruption); guilt with no repair path (`holdingTier` never decreases). (BP, ES)
+- **C11 — Hidden-information leak:** `handleChoiceClick` floaters + `sfx.choiceGood/Bad` reveal the hidden effects right before prediction. (BP, UX)
+- **C12 — Content honesty/scale:** DE/UK events (72) are untagged, unsourced binaries; write ~20 mechanism cards + regional "skins"; tier events (real/composite/hypothetical); prefer primary sources. (ES, SE)
+- **C13 — Engineering preconditions** for most of the above: compact `actionLog` payloads, `CONTENT_VERSION`, wire `npm test` into CI, a single try/catch `meta` store outside the reducer. (SE)
+- **C14 — Mobile traps:** invisible volume button on phones (`max-sm:invisible`), sub-44px targets, 9–10px text, no 80% marker on bars, DaySummary lacks totals. (UX)
+
+**Guardrails adopted (BP's list of 13, binding on all later proposals):** no streaks/daily rewards/login counts; no loss-framed counters; no real-time timers; no variable-ratio reward magnitude; compare decision paths never players; no guilt without agency; causal honesty (provable from the decision log); extrinsic rewards never usable stats; hidden info stays hidden; a lost run shows a learning within 10 s; failure not moralised; everything works with no storage/network and is skippable/mutable; session end never delayed.
+
+**Open disagreements to resolve in later rounds:**
+- **D1 — How deep to go on the stock model.** LS/ES: at least a minimal 2–3 medium model (air/water/soil-lite) or the stated teaching goal is unreachable. SE: High-risk, 250 LOC + sim drift, must stay behind a derived-`cleanliness` shim. ROADMAP defers it pending playtest. EB: prefer wiring `tags.pollution` into prevention/projects first (cheaper).
+- **D2 — Prediction timing.** LS: prediction after the choice is applied is recognition-matching with no stakes; wants pre-commit prediction / free recall / cross-run calibration. UX: paragraph-length options are a reading wall on phones. 
+- **D3 — Endgame shape.** GL: 20-day automated hold is a wait; wants a shifting endgame. EB: win-stats overshoot ~20 pts; wants diminishing returns above 80. Neither reconciled with ROADMAP's "sustain" win.
+- **D4 — Dirty-path design.** BP: "(Bribe)"-labelled options are a signposted strawman; wants unlabelled temptations + reveal. EB: wants dirty options to pay 2–3× early when budget is low. ES: bribe as sole villain hides systemic/legal harm. How to reconcile with causal honesty and not teaching "corruption always fails"?
+- **D5 — Replay/seed/share.** GL/LS/SE favour rewind-one-decision and seed cards; BP wants class-level *decision-path* comparison via copy-paste codes. Needs a scoped design that satisfies the "no player comparison" guardrail.
+- **D6 — Tempo vs. ceremony.** UX wants day-tick ceremony/banners/more sound; GL sees stop-start rhythm and dead-click days as the problem. How to add feel without adding friction?
+- **D7 — Balance method.** EB's rebalance (income ×2.5–3 with quests at 0; prevention projects; neglect interest; 3rd "systemic-fix" option in 25% of events; shorter delays) vs. ROADMAP "Faz 3: balance by sim, not by guess." Need a sim-assertion protocol before shipping.
+- **D8 — Authoring budget.** Everything above multiplies ×3 languages for a solo student author. Which items are *systems* (cheap to scale) vs *content* (expensive)?
+
+**Next scheduled action:** **Round 2 — Divergent Ideation.** Each of the 7 seats receives the full log and proposes concrete improvements to existing features AND new mechanics (target 4–6 proposals per seat, each with: problem addressed (cite `C#`/`D#`), mechanic, educational rationale, engagement rationale, ethics check against the 13 guardrails, files touched, effort L/M/H). Then Round 3: cross-examination.
+
