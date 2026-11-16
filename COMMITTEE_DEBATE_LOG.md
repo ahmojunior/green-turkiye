@@ -542,3 +542,78 @@ These are the 15 events with an `outcome` card. Most of the teaching is in the `
 
 **Next scheduled action:** **Round 2 — Divergent Ideation.** Each of the 7 seats receives the full log and proposes concrete improvements to existing features AND new mechanics (target 4–6 proposals per seat, each with: problem addressed (cite `C#`/`D#`), mechanic, educational rationale, engagement rationale, ethics check against the 13 guardrails, files touched, effort L/M/H). Then Round 3: cross-examination.
 
+
+---
+
+## ROUND 2 — DIVERGENT IDEATION
+
+*(Proposals are tagged `<seat>-P#` for cross-reference in Round 3. Seats were resumed with their Round 1 context and the full log.)*
+
+### R2 · Game Loop & Retention Architect (`GL`)
+
+**GL ROUND 2: DIVERGENT IDEATION** (read-only). Correction accepted: maxTax is noise, and GL no longer treats it as a dominance problem; builds on EB's real issues (structural deficit, projects that lower win rate, quests propping up the economy, Erratum #2).
+
+**GL-P1. The Stress Year: a forecasted endgame** [Upgrade to Existing Feature: `TUNING.sustainGoalDays` and `gameReducer.ts` TICK; new `data/phases.ts`]
+1. **Problem:** D3, C3, C6, and the idle 20-day hold.
+2. **Mechanic:** Shorten the hold from 20 to 10 days (EB: winners overshoot by about 20 points, so wasted time is already confirmed). Add one deterministic shock the player can see coming. Shape: `phases: {fromDay, kind:'drought'|'heatwave'|'flood'|'price-shock', decayMult, boostedTags: PollutionTag[], forecastDay}`. Derived from `startDay + seed`, never from wall-clock time, visible on the HUD and map as a forecast ("day 16: drought") from day 1. During the shock, the hold counter keeps running but decay and spawns tilt toward `boostedTags`. Everything the player prevented earlier (GL-P2) is a shield. Overshoot above 80 becomes a "resilience buffer" shown as a bar segment, with diminishing returns, per EB.
+3. **Position on D3:** a short hold plus one forecasted stress test. Not a shifting ruleset, and not a longer hold.
+4. **SDT:** competence (a preparation payoff) and autonomy (the player chooses how to prepare).
+5. **Educational:** resilience, tipping points and prevention versus cure (ES concepts 2, 7 and 8). The test is deterministic, so the lesson is attributable.
+6. **Guardrails:** the forecast is information, not scarcity or a timer. No loss framing. The game advances only when the player acts.
+7. **Effort M-H.** ~120 LOC plus 4 shock cards ×3 languages. Needs a sim re-run.
+8. **Confidence** medium-high. **Playtest:** do players change what they buy once they see "drought in 6 days"?
+
+**GL-P2. Prevention Projects with regional fit** [Upgrade to Existing Feature: `projects.ts`, `spawnNode`]
+1. **Problem:** C6 and C2. Projects are spreadsheet buffs, and nothing is prevented.
+2. **Mechanic:** Add `prevents: PollutionTag[]` and optional `regionIds` to `Project`. Each completed project lowers the draw weight of matching-tag events by 30-40% (EB lever 2) and shows a shield icon on the map. Re-pace costs so the first project pays back in about 12-15 days (EB). Hide the wastewater plant in Konya (it has no sea), and offer a drought-resilience project there instead.
+3. **SDT:** autonomy and mastery through build order and a visible plan.
+4. **Educational:** prevention versus cure, with domain content in each project card.
+5. **Guardrails:** the draw stays seeded (state-derived weights only), so replay is intact (SE risk 1).
+6. **Effort M.** ~60 LOC. A project's card text is the only new copy, ×3 languages.
+7. **Confidence** high. **Playtest:** does buying early now raise the win rate of a skilled player instead of lowering it (the sim, not guesswork)?
+
+**GL-P3. Rewind, seed card and decision-path code** [New Feature; builds on SE preconditions in C13]
+1. **Problem:** D5 and C8. No way to test a hypothesis, and no classroom hook.
+2. **Mechanic:** The debrief offers "Rewind to day N", one rewind per run, then the player re-chooses. Uses the planned `REWIND_TO` action that truncates the log rather than branching it. The debrief also shows the road not taken for that decision, using the choice's own `outcome` text. Offered rewind points are chosen provably: the decision that booked a `delayed[]` effect, or the largest first-day swing. Seed card is `GT1-{contentVersion}-{country}-{region}-{seed}`, copy-paste only: "Same region, same crises". The decision-path code is the choice list with no scores, shown as "your path", for a teacher to compare paths.
+3. **Positions on D5:** YES to rewind-one, seed card and decision-path code. NO to a daily seed. NO to leaderboards. Any share is a path, not a ranking.
+4. **SDT:** competence and autonomy.
+5. **Educational:** counterfactuals (LS) and testing an idea against the same crises.
+6. **Guardrails:** 5 (paths compared, never players), 7 (provable from the log), 13 (rewind offered, never forced).
+7. **Effort M.** ~100 LOC after the log is compact and `CONTENT_VERSION` exists. Little new copy.
+8. **Confidence** medium. **Playtest:** do ≥50% of players who lose start a rewind, and do they pick a different option?
+
+**GL-P4. Tempo-first day flow** [Upgrade to Existing Feature: `App.tsx`, `DaySummary.tsx`]
+1. **Problem:** D6, and the 4+ taps and 2 overlays per day (UX).
+2. **Mechanic:** "End Day" becomes a single "Advance" that keeps ticking until something *new* happens (a spawn, an escalation to severity 2 or 3, a letter, a project completion, a threshold crossing, or the stress forecast), then stops. UI loop over the existing `TICK`, so log and replay are unchanged. `DaySummary` collapses to a one-line ticker unless there was a letter or news item; the modal appears only when content exists. Ceremony is spent on phase changes only: a "Day N" banner at forecast and shock days, and HUD delta pulses and haptics (UX, zero friction).
+3. **Position on D6:** tempo is the default and ceremony must be earned. Juice that costs no taps is welcome.
+4. **SDT:** autonomy and flow, with fewer interruptions.
+5. **Educational:** attention goes to decisions, not clicking through empty days.
+6. **Guardrails:** advancing is the player's own act (3 and 13). Never auto-advance at any other moment; the player can cancel it.
+7. **Effort L.** ~60 LOC, little copy.
+8. **Confidence** high. **Playtest:** does median time per decision fall, and does a player still notice an eruption?
+
+**GL-P5. Region Dossier and Mandates (the run #5 and #20 answer)** [New Feature; needs the SE `meta` store]
+1. **Problem:** C8, C9 and the empty run #5 and #20.
+2. **Mechanic:**
+   - **Dossier.** Local per-region record: `meta.regions[id] = {endings[], lastEnding, mechanismsSeen[]}`, stored outside the reducer, with try/catch. The map screen shows each region as a card with its ending epitaph.
+   - **Memory.** Next run, one citizen's first letter refers to the last ending in that region ("last time the fish did not come back"), using the existing letter templates plus one new `returning` kind.
+   - **Mandate.** At the start the player picks 1 of 3 offered personal goals (e.g. "no dirty deals", "protect the fishery", "never use HIGH tax"). The debrief reports on it from `decisions`, with no stat reward (guardrail 8).
+   - **Run #20.** After a mechanism is seen once, the matching stress-year variant unlocks as a *choosable scenario* at the region menu. Late runs become "which hard variant do I try"; understanding grows the option set, with no points anywhere.
+3. **SDT:** relatedness (citizens remember), competence (a knowledge ladder), autonomy (a self-chosen goal).
+4. **Educational:** mechanisms seen become visible knowledge (codex hooks, C8/C9); the mandate prompts reflection.
+5. **Guardrails:** progress is accumulation only, no streaks (1, 2). A mandate that went badly pairs with a repair lever next run (6). Works with no storage (12).
+6. **Effort M-H.** ~150 LOC plus mandate text and one letter kind ×3 languages.
+7. **Confidence** medium. **Playtest:** does a player who has seen "last time, Hasan amca..." choose the same region again within 30 seconds?
+
+**GL-P6. Second Look: a re-encounter for missed ideas** [Upgrade to Existing Feature: `spawnNode`, and `Decision` gets `predictedRight`]
+1. **Problem:** C1, D2. A concept is met once, with no second chance.
+2. **Mechanic:** Record the prediction result and the `mechanisms` seen. Draw weights favour an event that carries a mechanism the player got wrong, then a *different skin* of the same idea. Weights from state only (SE option c).
+3. **SDT:** competence.
+4. **Educational:** spaced retrieval and transfer.
+5. **Guardrails:** content is random but reward size is not (4). No wall-clock spacing, game days only.
+6. **Effort M.** A no-op until more events carry `mechanisms` (~20 mechanism cards, ES).
+7. **Confidence** medium-low. **Playtest:** does a repeat of a missed mechanism get predicted correctly more often?
+
+**Order GL would ship:** C13 preconditions (compact log, `CONTENT_VERSION`, CI test), then P4 and P2, then P1, then P3, then P5 and P6.
+
+*(Orchestrator note: R2 reports logged: GL. Pending: LS, BP, UX, SE, ES, EB.)*
