@@ -1657,3 +1657,58 @@ Why F2, F3, F16, F4 lead: they are the chain that stops the game from teaching "
 **(4) Does the F-list teach causal systems thinking?** Mostly yes: F2, F3, F4, F5, F16 and F14 together move the game from valence-guessing to inferring mechanisms and lagged consequences. **The single missing item is an assessed transfer probe:** one question in the F14 debrief that applies a mechanism the player met this run to a new surface in a different region. Without it, F17's skins expose transfer but nothing checks it.
 
 *(Orchestrator note: R4 votes logged: LS. Pending: GL, BP, UX, SE, ES, EB.)*
+
+### R4 · Game Loop & Retention Architect (`GL`) — vote
+
+**GL ROUND 4: RATIFICATION VOTE** (read-only)
+
+**(1) Rankings, best to worst**
+- *By GL's lens (retention and flow):* F2, F10, F4, F5, F9, F15, F13, F3, F1, F6, F7, F12, F14, F11, F16, F8, F19, F17, F18, F20.
+- *By overall committee value:* F1, F2, F4, F5, F10, F3, F6, F7, F13, F15, F9, F11, F14, F12, F19, F18, F16, F17, F8, F20.
+F20 stays last.
+
+**(2) Blocking objections**
+- **F6 (ordering).** Zeroing quest rewards before the economy is rebuilt drops `smart` from 71% to 12.5%. *Amendment:* F6's stat-reward removal merges into the same PR as F4 and F5, gated by the `sim:check` assertions and by the quests-off ablation, with `smart` ≥ 40%.
+- **F3 (hidden numbers on all 124 events).** On the dominance-shaped binaries the player gets a blind guess and no mechanism to learn — frustration, not curiosity. *Amendment:* hide numbers only where the event has a mechanism enum or an authored `probe` stat. Everywhere else keep numbers visible and still run the hunch and reveal. Extend hiding as F16 and F17 give each event a real trade-off.
+- Nothing else is a blocker. On F9, hold length is a `TUNING` value with a gate (median winner 20–35 days), starting at 12 until `sim:check` confirms EB's measurement.
+
+**(3) Residual answers**
+- **R3, stress window anchor.** Seed-derived day inside an absolute band: D = 18 + (seed mod 7), i.e. days 18–24 (EB measured shield value +2→+7 in that band). Forecast revealed ≥6 days ahead, never earlier. **Hold-anchored is rejected** — it makes the timing gameable (a player could delay the hold to dodge it). Each region has one slow-onset analogue in a per-region shock table.
+- **R4, water-filter reprice.** ~380 cost, 9 days, +3 per day; paired Δwin must land in EB's [−3, +20] band; stays regionally gated (no sea plant in Konya). It is the strongest "educational" project, so it must not be the worst buy.
+- **R5, silhouette slots.** Neutral silhouettes only, in the debrief only, never as a grid or count; at most one slot per debrief (the mechanism this run touched but the player has not seen yet); no number and no "n of m" anywhere.
+
+**What makes "Advance" safe.** It stops on: any new spawn; any node stepping to severity 2 or 3, or reaching age 4 (so a skip can never cross the day-6 eruption); a letter or news item, or a project completion; a `scheduled` effect landing; a stat crossing 80, 70 or 30, and sustain milestones every 5 days; the stress window's forecast reveal, opening or closing; budget under `criticalBudget`; game end. Also: cap at 5 days per press, a tap cancels, and it refuses to start while any node is at severity 3.
+
+**(4) After F1–F19.** Run #2 is the debrief's rewind plus "one idea" card (a hypothesis to test); run #5 is the Promise plus a citizen who remembers the last ending; run #20 should be choosing which stress-window variant to attempt. **Missing:** that run #20 hook — the window kinds as a player-selectable scenario menu (unlocked by having met the matching mechanism) is not in F1–F19. Fold it into F13 or F9 as a small menu item, local and skippable.
+
+---
+
+### R4 · UX/UI & Game-Feel Director (`UX`) — vote
+
+**UX/Game-Feel Director, Round 4 vote**
+
+**(1) Ranking, best to worst** (feel/clarity and overall committee value): F2, F3, F10, F1 (gates everything, no feel of its own), F11, F12, F7, F4, F19, F5, F14, F6, F9, F18, F16, F13, F8, F15, F17, F20.
+
+**(2) Blocking objections**
+- **F6 (Promise at start):** adds a card-pick screen before the first decision, breaking the "first decision in 60 s without reading" goal. *Amendment:* **no Promise on a first run.** Offer it from run 2, once `meta` shows a finished ending, as one optional strip on the region confirm step.
+- **F10 (Advance):** ticking days are motion-only, so it fails screen-reader and reduced-motion players. *Amendment:* an `aria-live` line per stop ("Day 12: a new crisis"), a 0 ms tick with the final Dawn Strip under reduced motion, and the cancel control must be a labelled button, not only a tap.
+- **F3 (hidden numbers on all 124 events):** a hunch with no visible evidence is a coin flip. *Amendment:* gate roll-out per event. An event gets hidden numbers only when it carries a one-line evidence cue (its existing description is enough). Events without one keep showing numbers until authored. Does not break X1. *(Converges with GL's F3 amendment.)*
+
+**(3) R5, R6, R3 from the UI side**
+- **R5:** neutral silhouettes, no count, no "N/total"; dark grey slot with a "?" and no progress language.
+- **R6:** default cleanliness, `probe` stat where authored. **Copy:** "Your hunch: what happens to cleanliness?" **Chips:** Rises / Same / Falls / Not sure.
+- **R3 (stress forecast without a countdown):** a weather glyph (cloud, sun or wave) beside the day label in the HUD, and the affected province outlined on the map. Two states only: "dark clouds ahead" and "drought now". No numbers, no ticking. The Dawn Strip stops once when the forecast first shows.
+
+**(4) First-run experience (first 60 seconds, F1–F19 shipped)**
+1. **Region start:** tap Play and a region. The map loads with one amber pulsing node. Mikey says one line: "Tap the glowing alert." Tax, Projects, Promise, Dossier and codex are all absent.
+2. **Open the crisis:** tap the node. A side sheet opens in landscape, map still visible on the left, node outlined. Title, one or two lines of description, and 2–3 choice buttons with a cost tier and no effect numbers.
+3. **Choose:** tap a choice. No hunch on the first crisis. HUD and sheet stats stay frozen; the choice sound is neutral (K6 fix).
+4. **Reveal:** HUD bars count up. The node resolves with a green ring, a soft chime and a short haptic. The card shows one shared mechanism line and a Continue button.
+5. **Advance:** Tax and Projects fade in, and Advance pulses with the existing hint glow. The single Mikey line is the only text so far.
+6. **Tick:** tap Advance; days tick at ~350 ms each, HUD deltas pulse. It stops when a new node pops in with a soft crisis tone.
+7. **Second crisis:** tap the new node and pick a choice. One chip row asks "Your hunch: what happens to cleanliness?" — Rises, Same, Falls, Not sure. Tapping a chip commits the choice and the hunch together. The reveal shows ✓ or ✗ and the mechanism line.
+8. **At ~60 seconds:** two decisions made, both consequences seen on the map and HUD. No menu, codex or Promise shown.
+
+**(5) Biggest remaining clarity risk.** With numbers hidden and only cost tiers on the buttons, the sheet must show enough visible evidence for a hunch to be a reasoned guess. Otherwise phone players will read the chip row as a coin flip and the game will feel opaque rather than educational.
+
+*(Orchestrator note: R4 votes logged: LS, GL, UX. Pending: BP, SE, ES, EB.)*
