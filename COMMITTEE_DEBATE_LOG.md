@@ -1391,3 +1391,79 @@ Everything the clusters would add: side sheet, hunch chip row, Dawn Strip, Advan
 **REJECT or DEFER:** reject the UX-P5 sustain-tick, the drone and the aversive haptics. Defer the Casebook and rewind. Defer the EB-P7 third option (H authoring). Defer GL-P6 Second Look, ES-P2 media and the GL-P1 shock (keep only EB-P6 grace).
 
 *(Orchestrator note: R3 reports logged: GL, LS, ES, UX, BP. Pending: SE, EB.)*
+
+### R3 · Principal Game Systems Engineer (`SE`)
+
+**SE ROUND 3: Cross-examination and synthesis.** Code read only; nothing edited. Sim claims (49% vs 55%, the 78–87% unlanded delays, audit numbers) are **not verifiable by SE**, because `node_modules` is absent and install is not permitted. Everything marked CONFIRMED/WRONG below was checked in source (events data loaded with `node --experimental-strip-types`).
+
+**(A) Resolutions**
+
+**X8 — SYSTEM vs CONTENT.** Unit: 1 LTU = one `LocalizedText` ({tr,en,de}). Rules: prose is written per mechanism, never per event (shared chip sentences, default recovery message from the mechanism card, skins that fill slots); enums are authoring labour, not translation, cost 0 LTU; `validate:events` diffs the LTU count against `scripts/content.lock.json` and fails over the milestone cap in `scripts/budget.json`.
+
+| Class | Proposals |
+|---|---|
+| SYSTEM (scales free) | SE-P1 stage 0, SE-P2, SE-P3, SE-P5, SE-P4 weights, GL-P2 code, GL-P3 / LS-P4 / SE-P2 rewind, GL-P4 with UX-P4, EB-P2, EB-P3, EB-P4 code, EB-P6, UX-P3, UX-P5 code, UX-P2 code, ES-P2 code, ES-P3 schema, BP-P1 code, BP-P5 codec, GL-P5 dossier code, C11 and C14 fixes |
+| CONTENT-HEAVY (×3 prose) | ES-P3 cards and skins, ES-P4 catalogue, BP-P3 (events), BP-P4 (54 fragments), BP-P2 repair events, EB-P7, LS-P3 residue, GL-P1 shock cards, GL-P5 mandate text, DE/UK back-fill (72 events), outcomes for the other 109 events |
+| CONTENT-LITE (no translation) | LS-P1 enums, BP-P1 flag review of 57 choices, mechanism-enum collapse |
+
+**X9 / X10 / X1 — one data shape.**
+```ts
+interface Consequence {                 // DelayedEffect becomes an alias; old data is valid
+  inDays: number; effects: Effects; message?: LocalizedText; // default = mechanism card sentence
+  kind?: 'harm'|'recovery'|'residue';    // default: harm if sum(effects)<0 else recovery
+  mechanism?: string; medium?: Medium }  // mechanism = cancellation key (ES-P1); medium = residue marker (LS-P3)
+EventChoice += { delayed?: Consequence[]; addresses?: string[]; mechanism?: MechEnum; patron?: 'kara'|'unnamed' }
+Decision += { mechanisms?: string[]; hunch?: {stat:StatKey; guess:-1|0|1; ok:boolean};
+              chip?: {guess:string; ok:boolean}; repairs?: number /*causeDay*/ }  // debts = derived, never stored
+```
+- **X9:** same data, two producers. The reducer's pure `rebateFor(choice)` generates the EB-P1 default (`{inDays:6, kind:'recovery', effects:{budget:+0.5·|cost|}}`). An authored recovery list (ES-P1 installments) overrides the default, so no double dip. Validator rules: every `inDays` ≤ 12, and recovery-sum ≥ 0.9 × cost for installment events.
+- **X1:** both prediction formats coexist, because they sit in different `Decision` fields. The minimum is the **direction hunch**, which needs zero authoring (the stat is the largest |effect| in the existing data). It travels atomically as `HANDLE_CHOICE.payload = {index, hunch?}`, so no half-committed state and `REWIND_TO` stays simple. The mechanism chip is a separate post-commit action `PREDICT_CHIP {chip}`, valid only while `pendingOutcome` is set, shipping only for events that carry a mechanism enum. Not a precommit gate, so it answers LS's paralysis concern.
+- **X10:** forecast and weights are the same mechanism. `phase = {kind, boostedTags, fromDay}` is derived by a keyed roll (see C1), so the main stream is untouched. It feeds one function, `spawnWeight(state, ev) = prevention × mastery × phase`, in integers ×100. With all multipliers at 1 it is bit-identical to today, because `floor(v·n)` equals the cumulative pick. EB-P6's ×2 hazard is the phase's `boostedTags`, and GL-P1's visible forecast is the same object displayed.
+- **Invariant gate:** the "neutral data ⇒ bit-identical" test must strip new fields (`pred`, `phase`, `mastery`) and compare the rest.
+
+**(B) Verification of other seats' claims**
+
+| Claim | Verdict |
+|---|---|
+| EB: only 52 of 124 events carry `tags.pollution` | **CONFIRMED** (52). All 72 untagged are DE/UK, 6 per region × 12 regions. |
+| UX: wildlife ignores cleanliness | **CONFIRMED.** `MapWildlife.tsx:52` takes no props; its header says "no gameplay meaning". Part A.3's "wildlife reacts to cleanliness" is **WRONG**. Only `CountryMap`'s global filter (prop `cleanliness`) reacts. |
+| LS/UX: floaters and sfx leak before the prediction | **CONFIRMED.** `EventModal.tsx:137,146,156` fire `showFloatingText` regardless of `hideEffects`; `:164-165` play `sfx.choiceGood/Bad`. The live stat strip at `:208-218` also changes. |
+| LS: prediction is component state, post-commit | **CONFIRMED.** `useState` at `:77`; `asking` at `:83` requires `outcome`, so the guess comes after `onChoice`. No `PREDICT` in `GameAction`. |
+| BP: `isDirtyDeal` too broad, "~25 candidate choices" | Direction **CONFIRMED** (`story.ts:14-15`). The number is **WRONG**: **57 non-bribe choices** across 60 events are flagged (60 of 265 choices; only 3 are `bribe`). `tourist-season#0` is among them. A larger review job, and 60 events can raise `holdingTier`. |
+| ES: all 10 delayed entries are harm | **CONFIRMED.** 10 entries, all negative, 0 recoveries. 8 of 10 are 14–25 days; the two Kara ones are 4–5. |
+| ES: `wales-afforestation` has `ankara-green-belt`'s +20/+20 shape | **PARTLY WRONG.** `ankara-green-belt`'s clean option is +20 happy, +20 clean at −120. `wales-afforestation`'s is −40 budget, −15 happy, +20 clean. |
+| ES/EB: cleanest option costs budget in 110/124; cleanest = richest in 17; 107 two-choice | **CONFIRMED** (110, 17, 107/17/0). Part A's "2–4 choices" is **WRONG**; max is 3. |
+| UX: volume button has `max-sm:invisible` | **CONFIRMED** (`App.tsx:119`, the SFX button; the Mikey button above it is fine). |
+| `tags` and `mechanisms` are read by no code | **CONFIRMED.** Only `types/index.ts` and `validate-events.mjs` mention them. |
+
+**Finding that matters for D8 and SE's own P4:** 15 events carry `mechanisms`, with **22 distinct free-text strings**. Only `pollution-displacement` is used twice. DE/UK have 0.
+
+**(C) Attacks**
+1. **EB-P5 probabilistic audit.**
+   - *Objection:* a roll from the main `rngSeed` stream shifts every later spawn depending on the branch taken. That destroys the rewind guarantee "same crises, other choice" and confounds the branches in the debrief's two-path comparison.
+   - *Amendment:* make the audit a **keyed roll**, a stateless hash `hash32(runSeed, eventId, day) < p`. Add `runSeed` to state (set at START) and `keyedRoll()` to `rng.ts`. Order-independent and replay-safe; the same decision gives the same result in any branch. EB's numbers hold in expectation. The debrief can state the odds and the roll, resolving BP's honesty point from the provability side.
+2. **GL-P1 stress year.**
+   - *Objection:* a fixed calendar `forecastDay` may fall outside the hold. A player who stabilises early finishes the hold before the shock, or the shock arrives while they are far below 80/80, so the test is arbitrary. It also double-counts EB-P6's grace band and reset rules.
+   - *Amendment:* anchor the shock to **hold start** (`fromDay = holdStartDay + k`, k from a keyed roll). Announce the specific kind ≥4 days ahead, with a generic "a test will come once you stabilise" from day 1. Choose a single hold rule (EB's grace band) so the two counters don't interact. Sim gate: `prevent − noProject ≥ +10` during the shock.
+3. **UX-P2 province layer.**
+   - *Objection:* `CountryMap` is `memo`'d over 81 paths (turkey 80 KB, de 111 KB, uk 165 KB of path data). A per-province tint driven by React props re-renders them on every tick. The state has no "player province", only `regionId`.
+   - *Amendment:* one wrapper CSS variable (`--clean`) and no per-path props. Draw the region outline from the existing region geometry. Place soot or tuft markers at `getProvinceCentres` (`geometry.ts:211`) as `<symbol>`s capped at 5. No `blur` filters in `mobile-landscape`.
+4. **SE's weakest: SE-P4 adaptive selection.**
+   - *Objection:* there is no repeated mechanism in any region pool. A pool is 5–7 regional plus 11 generic, and a run is ~12 events. The feature is a no-op today. The validator rule "≥2 events per mechanism" would fail 21 of the 22 current mechanisms.
+   - *Amendment:* do the enum collapse (22 strings → ~8) first. Make the coverage rule a warning until ≥2 events per enum exist in each country. Ship cross-run warm-up recall first (*note: LS has since withdrawn the warm-up*); ship spawn weights only after the content exists.
+
+**(D) Build sequence** (caps are LOC and LTU; a milestone ships only after its gates are green)
+
+| M | Scope | LOC / LTU cap | Gates before ship |
+|---|---|---|---|
+| **M0** Foundations (all SYSTEM) | CI wiring (`npm test`, validate, sim:check); SE-P2 minus UI (compact log, `CONTENT_VERSION`, lock, JSON round-trip); SE-P5 harness (baseline, paired seeds, Wilson, policies `noProject`, `lazy`, `desperate`, `desperateClean`); `runSeed` and `keyedRoll`; ESLint meta boundary; LTU budget check; C11 XS fix; C14 XS items | ≤450 / ≤8 | SE-G1, EB-11, and SE-G2 at **zero diff** |
+| **M1** Economy and honesty | EB-P4 (income rebase, quest rewards to 0, derived dossier unlocks) in one PR; K1 prevention (EB-P2, GL-P2, ES-P4-lite: `prevents` on the 6 projects plus at most 2 new); `effectiveEffects`; unified `Consequence` with rebate and ES-P1 recovery on the 10 delayed events; EB-P3 with $ tiers; EB-P6 hold 14 plus grace band; BP-P1 patron flags | ≤700 / ≤45 | EB-1 to EB-11 including payback ≤15 d, SE-G3 and SE-G4 (landing ≥60%, quests-off ablation ≥40%), per-lever ablation within ±5 of EB's prediction |
+| **M2** Learning loop | `HANDLE_CHOICE {index, hunch?}` and `PREDICT_CHIP`; UX-P1 chips; LS-P1 chips (8 labels and 8 sentences); enum collapse; SE-P3 meta store; LS-P5 One Idea codex; rewind and seed card; +10 events upgraded with shared sentences | ≤800 / ≤90 | SE-G1 with new rewind and round-trip tests; state-minus-`pred` bit-identical; EB-1 to EB-9; `learner` and `rewinder` policies |
+| **M3** Place, tempo, endgame | GL-P4 with UX-P4 merged; UX-P3; UX-P2 per amendment; UX-P5 haptics only; GL-P1 per amendment (4 shock cards); adaptive weights (SE-P4) once enum coverage holds; EB-P5 audit as a keyed roll with BP-P3 unlabelled option (3 loophole events); BP-P2 repair arc (3 shared events); Promise; citizen stake-tagging only (X12, reuse the 5 templates) | ≤900 / ≤110 | EB-1 to EB-11 plus `prevent − noProject ≥ +10` in the stress year; empty-mastery bit-identical; keyed-roll replay test |
+| **M4** Depth, **playtest-gated**, one family per release | ES-P2 media stage 1 then 2 behind the shim; ES-P3 cards and skins with DE/UK back-fill; EB-P7 (≤8 events); BP-P4 fragments in batches of 18; BP-P5 Casebook (k≥5); ambient audio | ≤700 per release / ≤120 per release | SE-G2 (±5 pts, ±2 d, ±5 pp) for stage 1; `displacer` ≥10 below `mediaAware` for stage 2; EB-1 to EB-11 |
+
+Deferred: ES-P4's full catalogue of 10 projects, and EB-P7's 25% blanket.
+
+> **ORCHESTRATOR ERRATUM #3 (A.3/A.4):** SE verified from data that max choices per event is **3** (107 two-choice, 17 three-choice, 0 four-choice), not "2–4"; `isDirtyDeal` flags **57** non-bribe choices across 60 events (not ~25); wildlife is decorative (Erratum #1 confirmed). Also: `tags`/`mechanisms` are read by no code (confirmed); the 15 events carry **22 distinct free-text mechanism strings** (not a controlled vocabulary).
+
+*(Orchestrator note: R3 reports logged: GL, LS, ES, UX, BP, SE. Pending: EB.)*
