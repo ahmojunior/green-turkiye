@@ -147,3 +147,162 @@ Basis: read the log, gameReducer.ts, gameLogic.ts, quests.ts, projects.ts, story
 3. Give "clean" some economic co-benefit and add a persistent local dossier to make runs #5-20 meaningful.
 
 *(Orchestrator note: other six Round 1 reports still pending; CHECKPOINT - Round 1 will be written when all arrive.)*
+
+### R1 · Cognitive & Learning Scientist (`LS`)
+
+**LEARNING SCIENTIST, ROUND 1 AUDIT** (read-only; read the log, EventModal, reducer, GameOver, MikeyHints, quests, story, and events.ts lines 1-210 and 350-420; sampled the rest by grep)
+
+**(1) What already works, and why**
+- **Predict-then-reveal (EventModal.tsx 77-89, 237-251).** The player commits to a hypothesis, gets feedback, then reads a causal "why". That is the generation/hypercorrection effect. A wrong guess costs nothing and the message is non-punitive (amber, not red). It also needs no extra authoring, because the options are the event's own `outcome.what` strings.
+- **Hidden effects with a visible cost tier (EventModal.tsx 28-43).** Money is public and consequences are inferred. This is a fair, desirable difficulty that stops arithmetic min-maxing.
+- **The "why" texts are misconception-targeted, not just factual.** Examples: "visible pollution and health risk are not the same thing" (marmara-urban-renewal, dust barriers); "export moves pollution, it doesn't remove it" (ewaste-dump); "a free bag's cost becomes invisible" (plastic-ban). Distractor options are plausible but wrong (dust barrier, export), which gives them diagnostic value.
+- **Real-world anchoring.** plastic-ban uses actual Turkish policy, and sources carry a verified/partly-verified flag. This models epistemic honesty and supports far transfer.
+- **Delayed letters (gameReducer.ts 308-314, 422-427; story.ts `LETTERS.delayed`).** They are a delayed-feedback mechanic written as narrative ("nobody noticed much that day"). That is a correct model of lagged environmental effects.
+
+**(2) Top 5 leaks**
+1. **88% of events teach the wrong lesson by dominance.** In blacksea-hes (events.ts ~400), "Cancel" gives +25 happy and +10 clean, and "Security forces" gives -30 and -5. One option strictly dominates, so the transferable rule is "pick the one with plus signs". adana-stubble-burning is the same: training beats penalties on both non-money stats. Raw numbers sit on the buttons (the `effectRow` branch, line 330). The player learns the numbers, not the stubble/smoke/soil mechanism.
+2. **Prediction is recognition-matching, and it happens after commitment.**
+   - Options are the `what` strings of the very choices the player just saw, so elimination suffices, with no free recall.
+   - The choice is already applied, so a wrong prediction changes nothing and the player cannot act on it.
+   - `shuffledIndices` is stable per event id, so on a repeat the answer sits in the same slot and the player memorises position, not mechanism.
+   - Nothing records or reuses predictions, so there is no calibration across a run.
+3. **Cleanliness decays on its own with no cause (gameReducer.ts 335-342).** A flat -2 per day, region-scaled, reinforces the misconception that pollution is entropy rather than a stock that someone is emitting. The scalar also cannot express displacement. The ewaste "export" shows cleanliness 0 and +40 budget, so the player sees a free lunch. The `pollution-displacement` tag is read by no code.
+4. **Delayed consequences are too sparse and too late to teach.** Only 10 of 124 events have them, and one lands at +22 days (marmara asbestos) against a median winning run of about 28 days. A letter then fires with generic text; the template re-states neither the mechanism nor the original choice's reasoning. The player is not prompted to link cause and effect, and an asbestos-style 'years later' effect is shortened to 22 days.
+5. **The debrief reviews logistics, not concepts (GameOver.tsx 41-53).** The cards are "N decisions in D days", "dirty deals: n", and "first critical stat: X". This is the best consolidation moment and it contains no retrieval, no mechanism recap and no "you saw X, here is the one idea". Projects (6, identical everywhere) and quests (stat thresholds, paid in stats) carry zero domain content. The quest-to-stat reward loop is also Goodharting: reward the already-good.
+
+**(3) Missing entirely**
+- **Spaced retrieval.** A run draws about 12 of about 124 events from a bag, and tags (`mechanisms`) are never used to schedule a concept for a second encounter in a different context. There is no cross-run memory of what the player has gotten wrong.
+- **Free recall or application.** There is no "which choice here would X apply to?" transfer item.
+- **Scaffolding and ZPD.** Mikey hints scaffold the UI only (MikeyHints.tsx), never the domain. Every event is drawn uniformly, with no easy-to-hard concept sequencing and no adaptation to prediction accuracy.
+- **A concept record.** `mechanisms` are tagged but there is no codex, so learning is invisible to the player.
+- **Counterfactual contrast.** The player never sees "what the other option would have done", which is the strongest transfer scaffold.
+
+**(4) Reconsiderations and constraints I respect**
+- **Reconsider "replay-from-a-decision" (deferred).** One-rewind-per-run with a reveal of the road not taken is the best desirable-difficulty and counterfactual device available, and it fits the pure reducer plus `actionLog`.
+- **Reconsider the blame-sentence rejection narrowly.** I agree with banning unprovable causal claims. A concept recap is not one: "in this run you met pollution-displacement (ewaste); the idea is X" is provable from `decisions` and states a mechanism, not a cause of collapse.
+- **Hidden pollution stocks (deferred): support a minimal two-stock version.** At least air/soil/water-lite, so displacement can be expressed. Otherwise the stated teaching goal is unreachable.
+- **Constraints I respect.** No points, XP, leaderboards or badges (a concept codex is knowledge, not currency); no telemetry or backend, so persistence stays in `localStorage`; one-line hints; deterministic reducer and `actionLog` replay; the trilingual authoring cost, which means any new mechanic should reuse existing `outcome` strings rather than add new text; no fixed-seed scripted tutorial.
+
+**Priority fix:** extend the hidden-numbers and predict model to all events by converting the dominance-shaped choices into real trade-offs, because that closes leak 1 and raises coverage from 12% to 100% at the same time.
+
+---
+
+### R1 · UX/UI & Game-Feel (Juice) Director (`UX`)
+
+**UX / Game-Feel Director, Round 1 audit.** Everything below is from reading the code. Not played on a device. Zero uses of `navigator.vibrate` and zero `aria-live` regions exist in `src` (grep).
+
+**1. What already works**
+- **Mikey is the best asset.** Mood-driven SVG with real animation (hop, tear, jolt) in `Mikey.tsx` and `index.css`. Hints are one line, shown once, non-modal, and the arm aims at the target element (`MikeyHints.tsx`, `.hint-target` glow).
+- **Crisis nodes encode severity three ways.** Size, colour and ping speed change, a digit appears, and there is an aria-label (`App.tsx` L156-198). Good accessibility and good clarity.
+- **The map degrades with pollution.** The sepia, grayscale and brightness filter on the SVG group animates over 1.5s (`CountryMap.tsx` L26-37).
+- **Project completion is the one decision with map feedback.** A fly-in, a burst, a chime and a permanent site icon (`ProjectSites.tsx`).
+- **The predict-then-reveal flow in `EventModal.tsx` is well built.** Focus trap, tiered costs, and a header colour that changes from red alarm to blue question to green lesson. It sets the standard for the other 88% of events.
+- **Reduced motion is respected globally** (`index.css` L96-105), and Mikey and the hint glow are guarded again.
+- **The day summary pairs the TV and the letters on one screen**, split into columns in landscape (`DaySummary.tsx`).
+
+**2. Friction and clarity**
+
+*First 60 seconds*
+- The game opens straight into a map with one amber node and a Mikey bubble. The goal (hold happiness and cleanliness at 80 or more for 20 days) is visible only as a small "sustainability 0/20" bar in the HUD. Nothing says that 80/80 is the target, and the bars have no 80 marker.
+- The HUD says nothing about what a node is until the player taps it, and Mikey says it once.
+- The first node's prompt (`hint.firstNode`) fires only if the player has not seen it before. After a restart or a second run there is zero guidance, which is correct for veterans and bad for a classmate borrowing the phone. localStorage keys it per browser, not per person.
+
+*Per-turn flow*
+- Tap node, choice, floating numbers, modal closes, tap End Day, DaySummary, tap Continue: four or more taps and two overlays per day with no skip, and "End Day" is disabled behind the modal. It is also the only way to advance, because nothing else moves time.
+- `DaySummary` shows only deltas. It does not show the new totals, so the player has to read the HUD behind the dimmed backdrop. It also never says which cause produced which delta. It would help to show "-2 cleanliness: unsolved nodes 3, Kara Holding tier 2" as icons.
+- **Floating text in `EventModal` positions at the click point and then the modal immediately closes.** `onChoice` runs in the same tick. For the 85% of events with no explainer, the player's reward is three numbers drifting over a map that is changing underneath them. The HUD bars do animate, but the player's eyes are on the dialog.
+- After a choice the player never sees the node vanish with any ceremony. It simply disappears.
+- **Quest panel on mobile**: `max-sm:top-72` places a 280px panel off to the side, and the toggle is a 40px chevron (`QuestPanel.tsx` L29-37). This duplicates the HUD's job and carries extrinsic stat rewards.
+
+*Mobile landscape (the target)*
+- The HUD is a top strip. Bottom-centre has End Day plus two mute buttons, bottom-left has the tax panel, and bottom-right has the Projects button. The map is therefore squeezed into a band between the top HUD and the bottom controls. At about 360px height, `mobile-landscape:text-[9px]` and `[10px]` appear throughout, which is unreadable and gives touch targets under 44px (Mikey and sound toggles `p-1.5` around a 14px icon; tax buttons at `py-1`).
+- The volume button is `max-sm:invisible` (`App.tsx` L119). On a phone you can never un-mute the SFX, which `sfx.ts` reads as muted from localStorage at load. That is a trap.
+- The Mikey bubble sits at top-centre and can cover the HUD stat it points at. `mobile-landscape:!text-lg` forces 18px Caveat in a bubble capped at `min(90vw,360px)`.
+- Effect rows at `text-[10px]` inside choice buttons are a real reading problem.
+- **Pointer targets are small.** Nodes are 40px at severity 1 (`p-1.5` + 16px icon + border). A thumb that taps a province may also tap the wrong node when two are close.
+
+**3. Where feedback is missing on the map** — the biggest gap. The map is a flat slate-200 country with one green province. The only state it reflects is the global cleanliness filter, which is slow, desaturating and applied to the whole SVG. That makes it feel like a dimmer, not a place.
+- **The selected region is the only thing that is ever coloured.** The player manages one province, but a pollution filter hits the entire country, so the thing they control and the thing that shows consequences are different objects.
+- **A node never visibly resolves.** Solving a crisis does not produce a clean-up on that spot, and ignoring one does not produce a stain. Eruption is a sound (`eruption()`) but no visual. A node that grows for 6 days then vanishes is invisible punishment.
+- **Dirty deals leave no mark.** Kara Holding tiers 1-5 only drive a letter and a news line. A grey smokestack icon or soot patch on the player's own province, growing with tier, would make "the game remembers" literal. The co-op equivalent would be green tufts or wind turbines.
+- **Delayed consequences have no visual countdown.** `delayed[]` effects land with a letter, but a pending consequence could appear as a faint dashed ring or a small clock on the map.
+- **Projects** only ever add one icon each. Construction has no map presence (a scaffold marker with a day count), so `activeProjects` is visible only inside a modal.
+- **MapWildlife is purely decorative and ignores cleanliness**, despite the discovery log saying wildlife "reacts to cleanliness". It does not: planes and boats run regardless. Wiring it up (boats thin out, birds or fish at high cleanliness, haze at low) would cost about 20 lines. *(Orchestrator note: this corrects Part A.3 of this log, which claimed wildlife reacts to cleanliness — verify in R2/R3 before relying on either claim.)*
+- `useGameSfx` plays a tone for spawn, escalation, eruption, victory and defeat, but not for day tick, tax change, stat threshold crossings (80 or 30) or sustain-streak progress.
+
+**4. Cheap, high-impact juice (ranked by impact per hour)**
+1. **Stat-delta pulses on the HUD.** On any stat change, flash the bar green or red and tick the number up or down over about 400ms. About 15 lines in `GameHUD`, and it replaces the floating text lost when the modal closes.
+2. **Node resolve and erupt animations.** On resolve, scale the node down and burst green or red. On eruption, shake the map for 300ms and flash a red ring on the province. Reuse the `project-burst` keyframes.
+3. **Province-level pollution tint.** Fill the player's province with a colour interpolated from cleanliness (green to brown) instead of the whole-country filter. Keep the global filter at half strength.
+4. **Haptics.** `navigator.vibrate(10)` on taps, `[20,30,20]` on a bad choice, `[10,20,10,20,40]` on project complete, 80ms on eruption. Feature-detect and wrap in try/catch. Gate it behind the same mute toggle and `prefers-reduced-motion`. About 10 lines and the cheapest way to make phone play feel physical.
+5. **Day-tick ceremony.** Season colour wash, a clock tick, and a "Day N" slide-in banner. Today the day changes silently under the dim overlay.
+6. **Threshold sounds.** A rising chime when a stat crosses 80, a minor drone at under 30, and a pitch-stepped tick for each sustain day. The sustain streak is the core fantasy and currently has no sound.
+7. **Reduce-motion gaps.** The global rule sets `animation-iteration-count: 1`, which also kills the pulse that tells a player a node is urgent. Keep a static severity ring so the information survives.
+
+**5. What works against learning**
+- **Modal-over-map is the single biggest problem.** Every decision happens on a dark blurred overlay with the map hidden. The player decides without seeing the province, the node's location, or the other nodes. "Game shows, text doesn't tell" fails here: the information that matters (where, how bad, what else is burning) is covered.
+- **88% of events show raw numbers on buttons** (`effectRow`), which invites arithmetic min-maxing rather than inference.
+- **Learning content is gated behind a modal tap.** The `why` and sources appear only for 12% of events, and the "Ne oldu?" card is the only place a player reads a causal chain.
+- **Reading load**: the prediction step shows full `what` sentences as options. On a phone, three or four paragraph-length buttons in a 10-12px font is a wall of text.
+- **The News TV is bright, cheerful and fast**, and it can be skipped. Its job (irony about Kara Holding) is excellent but it is optional reading in a screen that can be tapped through.
+- **The debrief on `GameOver`** says "first stat to go critical". There is no replay, no map snapshot of the player's province over time, and no per-decision timeline. The best learning moment shows the least visual evidence.
+- **Quest rewards in stats** (`QuestPanel`) turn a teaching moment into a bonus hunt, and the panel hides off-screen by default.
+- **The 80 marker is missing** on the happiness and cleanliness bars, so players cannot see how close they are to winning.
+
+**Recommended priority:**
+1. A persistent mini-map or side placement of the modal in landscape (choices on the right, map visible on the left), so decisions are made while seeing the province.
+2. Province-level consequence visuals: soot or green markers per holding or co-op tier, node resolve and erupt animations, pending-consequence markers.
+3. HUD delta pulses, haptics and threshold sounds, all gated by mute and reduced-motion.
+4. Fix the mobile traps: the invisible volume button, sub-44px targets, and the 9-10px text.
+5. Add an 80 marker to the bars and show totals in the day summary.
+
+---
+
+### R1 · Principal Game Systems Engineer (`SE`)
+
+**SE audit, Round 1 (read-only; ran nothing)**
+
+**1. Strengths to preserve**
+- `gameReducer` is pure, and every random draw threads `rngSeed` through state (`nextRandom` in `rng.ts`, `spawnNode`). `createSeed()` is only called from `GameContext.startGame`. Keep this rule: no `Date.now` or `Math.random` anywhere under `src/reducers` or `src/utils/gameLogic`.
+- The `gameReducer` wrapper logs actions and skips no-ops. `scripts/replay-test.ts` replays `actionLog` from `INITIAL_STATE` and `assert.deepEqual`s the result across 7 policies × 30 seeds. This is the project's best asset. It is what makes replay-from-decision, shareable seeds and honest "your choice on day N" claims possible.
+- `scripts/play.ts` drives the real reducer, so sim and replay cover the same code the UI uses.
+- `validate-events.mjs` already enforces trilingual completeness, province names, sources-imply-outcomes, and a "dominant choice" warning. It is the right place for new content-schema gates.
+- `TUNING` is centralised, `ScheduledEffect` already models delayed stock-like consequences, and `PollutionTag` and `mechanisms` already exist on events.
+
+**2. Debt and constraints**
+- **Single scalar `cleanliness`.** It appears in `Effects`, `Project.effects`, `Quest`, `evaluateQuests`, `markCritical`, the win and lose checks, `isDirtyDeal` and `isCleanChoice` (in `story.ts`), and the HUD. There are about 250 occurrences in `events.ts` alone (124 events × ~3 choices). Any new stock model must keep `cleanliness` as a **derived** value, or all of that breaks.
+- **`actionLog` bloat.** `START_GAME.payload` embeds the whole `Country` object (SVG `provincePaths`) and `BUY_PROJECT` embeds a whole `Project`. The log cannot be serialised cheaply, which blocks share links and persistence. Fix it first by logging `{countryId, regionId}` and `{projectId}`; the reducer already imports `getRegion` and `PROJECTS`. The `deepEqual` test still passes.
+- **Logs are tied to the content version.** `HANDLE_CHOICE` stores a `choiceIndex` and `OPEN_EVENT` stores a `nodeId`. The event pool is the unversioned global `EVENTS`, and the reducer imports content directly. Reordering or adding an event or choice changes every old seed's run, so saved logs and shared links silently go stale. This needs a `CONTENT_VERSION` constant.
+- **Thin `Decision` shape.** `{day, eventId, choiceIndex, dirty}`. It lacks the tags and mechanisms the choice touched, what the player predicted, and whether the outcome card was seen. It is the substrate for the debrief, the codex and spaced re-surfacing, and extending it needs no migration because it is not persisted.
+- **`GameState` is a flat bag.** Letters, news, quests, holding and coop are all top-level fields. `INITIAL_STATE` is re-spread on `START_GAME`, so adding fields is cheap, but per-run and cross-run data must not be mixed.
+- **Persistence is ad-hoc `localStorage`.** Four unrelated keys (hints, endings, language, mute); `sfx.ts` and `LanguageContext` read it unguarded. There is no schema or versioning, so you need a single `gt_meta_v1` module with try/catch and migration.
+- **Event selection is a plain shuffled bag.** `usedEventIds` plus a uniform draw in `spawnNode`. It knows nothing of the player.
+- **Authoring cost.** Every string is ×3 languages. Only 15 of 124 events have `outcome`. The validator forces sources whenever an outcome exists, which is good for honesty but a bottleneck for content scale.
+- **`npm test` and `npm run sim` are not in `.github/workflows/deploy.yml`.** CI runs only lint, validate and build, so the replay guarantee is currently unenforced.
+- The replay test's causal check is weak: it only verifies that some `HANDLE_CHOICE` has a matching `choiceIndex`, not that it matches the right event.
+
+**3. Feasibility map (LOC rough, excluding content authoring and UI)**
+
+| Extension | Where it plugs in | LOC / risk |
+|---|---|---|
+| (a) Multi-medium stocks | Add `GameState.media: Record<'air'\|'water'\|'soil'\|…, number>`. Per-choice deltas keyed by medium, optional on `Effects`; where absent, derive them from `tags.pollution` split equally from the existing `cleanliness` number. `cleanliness` becomes a weighted aggregate computed in a single helper, so the HUD, win check and quests don't change. Add transfer rules (burning waste moves soil to air) as data, applied in `HANDLE_CHOICE` and `TICK` decay. | ~250 LOC plus content. **High risk:** the sim balance shifts, and win and lose can drift. Mitigate by making the aggregate's mean-preserving default a regression test against current `sim-report.md`. |
+| (b) Codex / field journal | Cross-run meta store (see f). Unlock on `mechanisms` seen in `decisions`; requires a `CodexEntry` data file ×3 languages. Pure derived data, no reducer change. | ~150 LOC. **Low risk;** content-bound. |
+| (c) Adaptivity / spaced re-surfacing | Replace the uniform draw in `spawnNode` with weights from `decisions` plus a per-`mechanism` mastery map (player predicted wrongly, or not yet seen). It must stay deterministic and use the seeded draw: compute weights from state only. | ~120 LOC. **Medium risk:** needs pool size per mechanism. Only 15 events have mechanisms, so tag more first or it's a no-op. Do not gate on wall-clock "spacing"; use game days. |
+| (d) New project/policy types | `Project` is just data, with `effects` and `prerequisites`. Add `mediumPerTurn` and region-specific availability (`regionIds?`). Policies are a new `GameAction` (`SET_POLICY`), so you need a new action in the union and the replay path. | ~80 LOC for projects, ~150 for policies. **Low risk,** and the sim must be re-run. |
+| (e) Replay-from-a-decision | Needs the log to be compact (fix the payloads). Then `actionLog.slice(0, k).reduce(gameReducer, INITIAL_STATE)` rewinds to that decision, and the player re-chooses. Expose the rewind as a new `REWIND_TO` action that **truncates** the log; do not branch it, so the replay invariant holds. | ~60 LOC. **Low risk,** provided the content version is unchanged. |
+| (f) Persistent meta-state | New `src/meta/` module (`loadMeta` and `saveMeta` with try/catch and schema version) that stays outside `GameState` and is updated by a UI effect on `isGameOver`, never in the reducer, which keeps the reducer pure. | ~120 LOC. **Low risk,** with data-loss risk. |
+| (g) Shareable run links, no backend | Encode `{contentVersion, countryId, regionId, seed}` into a URL hash. This alone gives "same map, same crises", and the seeded RNG already supports it. A full-log share needs compact encoding such as a delta of choice indices (~2 bytes per action), so a ~60-decision run is ~120 bytes: fine in a hash. | Seed link ~40 LOC; full-log ~100 LOC. **Low to medium risk** (content-version drift). |
+
+**4. Test, sim and validator changes**
+- Replay test: add the new action types to `POLICIES` coverage, and add (i) an explicit "log survives JSON round-trip" assertion, (ii) a rewind-then-replay equals original-prefix assertion, (iii) a derived-`cleanliness` invariance test for (a).
+- `play.ts` policies must be taught about new mechanics (e.g. a `diversified` policy), and the `random` policy should be a seeded draw. The sim is currently measuring a game that has no hidden stocks. Add win-rate and ending targets as assertions (e.g. maxTax gap ≤ 10 points, `clean` > 0%), and **wire `npm test` into CI**.
+- Validator: add a check that every `mechanisms` entry has a codex entry, every `tags.pollution` event with medium deltas sums within bounds, and a "mechanism coverage" report (events per mechanism ≥ 3).
+
+**5. Top 3 technical risks**
+1. **Determinism drift.** Any new consumer of randomness, any new field the reducer reads from outside state (meta-store, `localStorage`, `Date`), or any content edit silently breaks replay and shared links. Adaptivity (c) and meta-state (f) are the two highest temptations. Rule: the reducer receives meta as an explicit action payload that is logged, or does not see it.
+2. **Balance and sim blindness.** The sim policies don't understand new mechanics, so new systems will pass tests while being dominated (maxTax is already dominant). Lock sim assertions before shipping (a) or (d).
+3. **Content cost versus 3 languages and sourced-claim honesty.** Features (b), (a) and (c) are all content-limited: 15 of 124 events have outcomes and sources. Ship systems that degrade gracefully on unsourced content, and prefer fewer, deeper events with tagged mechanisms over more mechanics.
+
+**Opinionated sequencing:** first, compact the `actionLog` payloads, add a content version, and put `npm test` in CI. These are ~100 LOC total and unlock (e) and (g). Then (f) and (b) (cheap, learning-heavy). Treat (a) as the largest, riskiest change and do it behind the derived-`cleanliness` shim.
+
+*(Orchestrator note: 4 of 7 Round 1 reports logged (GL, LS, UX, SE). Pending: BP, ES, EB.)*
