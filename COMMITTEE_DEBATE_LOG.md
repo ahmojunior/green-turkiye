@@ -1604,3 +1604,36 @@ Probabilistic audit · ×0.5 cap above 85 (measured null) · EB-P7 systemic-fix 
 
 **Next scheduled action: Round 4 — Ratification & Convergence Vote.** (1) EB measures R1, R2 and a stress-window variant on the fork. (2) All 7 seats receive the draft **candidate item list F1–F20** (in the next log entry) and must: (a) **rank** them (Borda), (b) lodge any **blocking objection** (guardrail/honesty/feasibility) with an amendment, (c) answer R3–R7 in ≤3 lines each. If no blocking objection remains and the Borda order is stable, write `FINAL_FEATURE_ROADMAP.md`; otherwise Round 5 on the blocked items only.
 
+
+---
+
+## ROUND 4 — RATIFICATION & CONVERGENCE VOTE
+
+### R4 · Orchestrator brief: candidate final items (F1–F20)
+
+Built from the converged clusters and R3 resolutions. Seats rank all 20 (best = 20 points … worst = 1; Borda), lodge **blocking objections** (a guardrail / honesty / feasibility failure, with an amendment), and answer R3–R7.
+
+| ID | Candidate item | Type | Source IDs |
+|---|---|---|---|
+| F1 | **Foundations & sim gates**: compact `actionLog` (ids not objects), `CONTENT_VERSION` + content lock, CI wiring (`npm test`, validate, `sim:check`), D7/SE-G sim assertion harness + new policies (`noProject`, `lazy`, `desperate(Clean)`, `patient`), `runSeed` + keyed roll, meta-import lint boundary | Upgrade (scripts, reducer wrapper, CI) | SE-P2/P5, EB D7, K11 |
+| F2 | **Hidden-info leak fix + frozen pre-choice snapshot + mobile traps** (floaters/sfx on hidden events; volume button invisible on phones; 80 marker; ≥11 px text; ≥44 px targets; totals in DaySummary; aria-live) | Upgrade (EventModal, App, GameHUD) | K6, C11, C14 |
+| F3 | **Hunch + shared reveal for all 124 events**: `HANDLE_CHOICE{index,hunch?}`, hidden numbers everywhere, mechanism enum collapse (22→~8), shared mechanism sentence on reveal, miss ⇒ counterfactual line, optional `PREDICT_CHIP`; hit-rate as a sentence only | Upgrade (EventModal, types, events) | LS-P1, UX-P1, SE-P4 |
+| F4 | **Lag symmetry & co-benefit**: unified `Consequence`; two recovery installments (+4/+8); rebate only where authored avoided cost (some clean choices pay 0); all delays ≤12–14 d; typed `residue` on 5–6 events | Upgrade (types, reducer, ~10 delayed events) | ES-P1, EB-P1, LS-P3 |
+| F5 | **Project reprice + prevention + educational catalogue-lite**: reprice 6 projects (EB table), `prevents` tags + spawn weights, region gating (no sea-plant in Konya), ≤2 new region projects, "what it does not do" text | Upgrade (`projects.ts`, `spawnNode`) | EB-P2, GL-P2, ES-P4-lite, SE-P1 stage 0 |
+| F6 | **Quests → Promise + codex unlocks**: quest stat rewards to 0 (only together with F4/F5 economy), Promise flow (start card → ring → debrief line), derived unlock cards ≤4, no toasts | Upgrade (`quests.ts`, `QuestPanel`, `GameOver`) | BP-P6, EB-P4, LS-P5 |
+| F7 | **Dirty-path honesty**: `patron`/`kind` flag replaces `isDirtyDeal`; neutral `cost` letter; unlabelled-act wording + reveal; **deterministic ratio fee** on named citizen; endings keyed to ever-dirty log; repair action in `LetterModal` (cost 0.8×gain) | Upgrade (`story.ts`, reducer, `LetterModal`, ~10 events) | BP-P1/P2/P3, EB-P5 |
+| F8 | **Neglect interest** bound to visible severity, only `compounding` events, tier on choice buttons | Upgrade (reducer, events flag) | EB-P3 |
+| F9 | **Endgame**: hold 10 (grace UX band), **one forecast stress window** (slow-onset shock, regional analogue, ≥4 d notice, prevention = shield) | Upgrade (`TUNING`, `phases.ts`) | GL-P1, EB-P6 |
+| F10 | **Tempo**: single "Advance" + notable-stops + Dawn Strip replacing blocking `DaySummary` on quiet days | Upgrade (`App`, `DaySummary`) | GL-P4, UX-P4 |
+| F11 | **Map as evidence**: node resolve/erupt end-states, province markers tied to the event's medium (+ labelled-fictional Kara), pending "?" ring, side-by-side landscape sheet, wildlife ↔ cleanliness, `--clean` CSS var (no per-path props) | Upgrade (CountryMap, MapWildlife, EventModal) / New (MapMarks) | UX-P2/P3, K8 |
+| F12 | **Juice**: HUD delta pulses, neutral haptics, threshold chimes (80/30 once), reduced-motion twins; no sustain-tick/drone/ambient | Upgrade (`sfx.ts`, HUD) / New (`feel.ts`) | UX-P5 amended |
+| F13 | **Meta store + Dossier line + returning citizens + stake-matched letters**: `src/meta/` (try/catch, no streaks/dates), `lastEnding`, one-line epitaph per region, role→stakes map, `cleanBad` variants, `returning` template | New (`src/meta/`) / Upgrade (`story.ts`) | SE-P3, BP-P4 lite, GL-P5 |
+| F14 | **Debrief "One Idea" + counterfactual + codex** (cloze → answer; neutral silhouettes, no counter) | Upgrade (`GameOver`) / New (codex) | LS-P5, ES-P5 |
+| F15 | **Rewind-one + seed card + path code** (passive link, after loss, ≤2 uses, mini-map pins, "↶ original path" chip) | New (reducer wrapper `REWIND_TO`, GameOver) | SE-P2, GL-P3, LS-P4 |
+| F16 | **Break dominance in the ~20 most-drawn events** (real trade-offs, ≥40% three-option where honest) | Upgrade (content) | LS step 3, EB §2 |
+| F17 | **Mechanism cards + regional skins + DE/UK back-fill** (4 cards/8 skins in M2, 4 more/16 in M3; tiers real/composite/hypothetical; ≤40 sentences & ≤8 sources per milestone) | New (`mechanisms.ts`, `skins.ts`) | ES-P3, X8 |
+| F18 | **Honest-content validator rules** (ES's 8 rules; tier badge on card; TR/EN/DE parity; no text/number contradiction; LTU budget) | Upgrade (`validate-events.mjs`) | ES R3, SE |
+| F19 | **Mikey rulebook** (speak only about interface; once per hint; silent in crisis/reveal/debrief; ≤6 bubbles first run) | Upgrade (`MikeyHints`) | UX X11 |
+| F20 | **Deferred/playtest-gated family**: media stages 1–2, Casebook (separate route), EB-P7 systemic third option, Second Look, 54 letter fragments, ambient audio | Deferred | — |
+
+**Questions each seat must answer (≤3 lines each):** R3 stress-window anchor (absolute day vs hold-anchored vs seed-derived; per-region shock table); R4 water-filter reprice; R5 silhouette slots; R6 hunch stat; R7 ending taxonomy / reachability. **EB additionally** measures R1 (neglect variants) and R2 (authored-rebate proxy) on the fork and reports numbers.
