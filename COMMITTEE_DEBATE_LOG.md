@@ -1127,3 +1127,59 @@ CI fails on any breach, and `sim.ts` prints a pass/fail table.
 **Defer or reject:** Defer K9 full skins (do ~3 cards only) and defer ES-P2 media; defer EB-P7 (third option on 25% of events); defer BP-P3 unlabelled temptations; reject toast-style quests; reject GL-P6 until K9 coverage exists; reject the Casebook aggregator for now.
 
 *(Orchestrator note: R3 reports logged: GL. Pending: LS, BP, UX, SE, ES, EB.)*
+
+### R3 · Cognitive & Learning Scientist (`LS`)
+
+**LEARNING SCIENTIST, ROUND 3** (read-only; read the Round 2 log and checkpoint, plus UX-P1, ES-P1, SE-P4 and EB-P1/P3 text).
+
+**(A) Resolutions**
+
+**X1 — one hybrid, one tap per event, with the mechanism revealed rather than asked.**
+- **Pre-commit.** The player taps a choice and it becomes a selected card. One chip row follows: "Cleanliness after this?" with ▲ ▬ ▼ and a pre-highlighted "Not sure". One extra tap. The stat is always cleanliness, never budget (already public). ▬ means |Δ| ≤ 2. Money stays as a cost tier.
+- **Post-commit.** The reveal card always names the choice's `mechanism` chip with its shared sentence. After a hit the card collapses to that line. After a miss it expands to the event's `why` plus one counterfactual line ("the other option would have been X").
+- **Mechanism as a question.** The mechanism is asked only when it recurs in the same run after a miss. Spacing, not a second tap on every event.
+- **Why one tap.** Two questions per event would double friction on a 12-event run. The direction hunch has stakes; the mechanism label supplies the vocabulary.
+- **What is logged.** No separate `PREDICT` action, because the hunch is about the chosen option and only exists at the moment of choice. The action is `HANDLE_CHOICE{choiceIndex, hunch?: -1|0|1}`. The reducer writes `Decision += {mech, hunch?, miss: boolean}`. Mastery is a pure fold over `decisions`, not stored state, so replay stays deterministic and the log stays compact. A later `RECALL{mech, answer}` is added only with the recurrence question.
+
+**X3 — LS-P3 residue plus ES-P1 lag symmetry are sufficient for displacement. Defer ES-P2.** Build the three media only if playtests show one of: **(a)** ≥2 of 5 players say the exported or burned problem "went away" after the residue letter; **(b)** a `displacer` sim policy beats `smart` (displacement is a free lunch); **(c)** ~8+ events need two media at once to be honest (e-waste soil+air is the likely first).
+
+**X9 — installments versus rebate.** Use ES-P1's data shape. EB-P1's magnitude can be reused, but it must be authored per choice. A cure's physical recovery (cleanliness) comes in installments at about +6 and +12. A budget return exists only where the choice names an avoided cost. One mechanism, not two code paths.
+
+**(B) Attacks and amendments**
+1. **UX-P1 direction chips.**
+   - *Objection:* the "largest-|effect| stat" is often budget, or the valence is obvious from the option name ("Clean the river" is ▲), so the hit rate has a ceiling and measures nothing. Hits also reinforce choice-supportive bias (you pick what you like, then predict it works). A debrief hit-rate percentage is a performance score.
+   - *Amendment:* fix the stat to cleanliness. Show "Mikey was surprised N times" by mechanism, never a percentage. Weight mastery only on choices authored `counterintuitive` (~30 of them, flagged as part of the mechanism tagging).
+2. **EB-P3 neglect interest.**
+   - *Objection:* a universal ×1.6 multiplier teaches "delay always compounds". True for spills, spread and nutrient loading; false for policy debates. It also double-charges the map's existing escalation and bleed. And because skipping the hunch is faster, it rewards click-throughs over thinking.
+   - *Amendment:* apply only to events authored `compounding: true`. Show a "grown since day X" marker, provable from `spawnDay`. Leave other events flat.
+3. **EB-P1 automatic rebate.**
+   - *Objection:* yes, it teaches "virtue always pays back", with a fixed ×0.5 on anything that passes `isCleanChoice` — the same stat-inference check C10 calls dishonest. It also nudges the optimum toward "invest, then wait for the dividend".
+   - *Amendment:* rebate only where a choice carries an authored `coBenefit` that names the avoided cost (fisheries, health, tourism), with the amount authored per choice. Some clean choices explicitly get 0, and the reveal says "this one pays back in nature, not the budget". That contrast is the lesson: when prevention pays and when it is a public good that must be funded.
+4. **LS's own weakest, LS-P2's warm-up recall.**
+   - *Objection:* a quiz before play breaks the "first decision in ≤60 s" target and feels like school. Spacing inside a 12-event run is nearly impossible, and it needs ≥2 events per mechanism that don't exist yet.
+   - *Amendment:* drop the warm-up. Keep the in-run recurrence question and the debrief cloze. Cross-run spacing comes from the codex "???" slots only.
+
+**(C) Ranking by learning impact per effort (top 6)**
+1. **K6** (hidden-info leak plus a logged hunch). XS, gates all measurement.
+2. **K9** (mechanism taxonomy plus a shared reveal for all events). Moves C1 from 12% to 100% through a system, not prose.
+3. **K2** (lag symmetry, residue, authored co-benefit). Fixes the central false lesson "cure is instant"; mostly data.
+4. **K1** (prevention projects via tags). Makes `tags.pollution` mechanical and teaches prevention over cure; EB already sim-validated it.
+5. **K10** (`isDirtyDeal` fix). Cheap; makes the debrief honest.
+6. **K4, minimal** (debrief "One Idea" plus a small codex). The consolidation moment; needs no economy changes.
+
+**Defer or reject:**
+- **Defer:** K7 (not a learning change); K8 except the "something is pending" marker; K3 path codes and Casebook (small-n risk; k≥5 floor adds work); K5 until the income rebase has shipped; ES-P2 media; GL's stress year.
+- **Reject:** BP-P4's 54 letter fragments. Do stake-tagging only (X12).
+- **Keep but late:** rewind-one-decision (K3).
+
+**(D) Final minimal learning core, in build order**
+1. **Remove the leak and log the hunch.** Drop the floaters and `sfx.choiceGood/Bad` on hidden-effect events; add `hunch` to `HANDLE_CHOICE` and `Decision`.
+2. **Mechanism enum on every choice, and one shared reveal card for all 124 events.** Numbers stay hidden until after the commit.
+3. **Break dominance in the 20 most-drawn events.** Make the options real trade-offs, with a third "systemic" option where it fits (C2). Without this, steps 1 and 2 train valence-guessing.
+4. **Lag symmetry.** Delays capped at 14 days and cures in installments. Add residue for `displace` choices; co-benefits authored (X9).
+5. **Prevention projects wired to `tags.pollution`**, so prevention is a mechanic and not a spreadsheet buff.
+6. **Debrief "One Idea" with a counterfactual line**, plus a minimal local codex. Rewind comes after this.
+
+**Acceptance test for the core:** in a 3–5 student playtest, after one run each player can state one mechanism in their own words (e.g. "export moves pollution") and say why a cure took days to show. If they can't, the reveal card is too long.
+
+*(Orchestrator note: R3 reports logged: GL, LS. Pending: BP, UX, SE, ES, EB.)*
