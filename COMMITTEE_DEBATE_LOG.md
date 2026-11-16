@@ -1467,3 +1467,140 @@ Deferred: ES-P4's full catalogue of 10 projects, and EB-P7's 25% blanket.
 > **ORCHESTRATOR ERRATUM #3 (A.3/A.4):** SE verified from data that max choices per event is **3** (107 two-choice, 17 three-choice, 0 four-choice), not "2–4"; `isDirtyDeal` flags **57** non-bribe choices across 60 events (not ~25); wildlife is decorative (Erratum #1 confirmed). Also: `tags`/`mechanisms` are read by no code (confirmed); the 15 events carry **22 distinct free-text mechanism strings** (not a controlled vocabulary).
 
 *(Orchestrator note: R3 reports logged: GL, LS, ES, UX, BP, SE. Pending: EB.)*
+
+### R3 · Economy & Progression Balancer (`EB`)
+
+**EB ROUND 3 — measured on the fork** (`/tmp/claude-0/-home-user-green-turkiye/526d184a-5f3e-5c53-99fb-e2de131171b5/scratchpad/fork`, `lib6.ts`, `x2b/x4/x5/x9/x10/final/abl.ts`). n=500 per cell, SE ±2.2. Quests at 0 in every cell.
+
+**Three corrections to EB's own Round 2 first.**
+1. EB's "smart" included the project-buying drag. Buying the old-price projects at any reserve level loses 13–17 points against `noProj`, and the gate "smart 45–65" was measuring that drag.
+2. The tax rebase is not needed. Tax stays NORMAL +8. What replaced the quest money (+700 budget) is the rebate plus a budget yield on every project.
+3. Prevention by spawn weight is almost worth nothing in balance terms. `patient` is 66 with it and 65 without it. Only 52 of 124 events carry tags. Its value is educational, plus the stress year (see X4/X10).
+
+**(A) Resolutions**
+
+**X2 — a deterministic cost replaces the audit.** All rows have dirty ×2 below 200 budget and the new base economy.
+
+| Dirty-path cost | smart | desperate | desperateClean | random | desperate ending shares |
+|---|---|---|---|---|---|
+| None | 59 | 98 | 86 | 17 | green-shadow 63% |
+| EB audit (.25+.15t, 120) | 52 | 90 | 82 | 13 | green-shadow 61% |
+| Named-citizen harm (−8h/−6c at +5d) | 58 | 98 | 85 | 15 | no effect, too small |
+| **Ratio fee** | 51 | 88 | 82 | 10 | green-shadow 61% |
+| Fee 25+25t | 47 | 84 | 81 | 7 | |
+
+- **Adopt the ratio fee.** It lands on a named citizen on day +4, at `0.5 × gain × (1 + 0.15 × holdingTier)` budget and −4 happiness. It is a pure function of the deal, with no roll, and it matches the audit's numbers.
+- The dirty path stays mildly better (desperate beats desperateClean by +6) and cannot be taught as "it always fails". A fixed fine on the 3rd dirty deal also works (desperate 90, random 11).
+- Dirty still wins most of the time. That is why the ending must be keyed to the decision log (see BP-P2 below).
+
+**X4 — stress year.**
+- Hold-length effect, desperateClean median winning day: hold 20 → 38, hold 14 → 30, hold 10 → 26. Win rate within ±4, with smart 47 → 51 → 54.
+- Grace plus the ×0.5 cap above 85 changes nothing measurable: hold 10 gives smart 54 either way. The cap is weak.
+- Stress at an absolute day (start 20, length 5, decay ×2.5/×2, hazard-family weights ×3): noProj drops 66 → 59 and patient drops 68 → 66. So the shield value of building projects rises from +2 to +7.
+- A hold-relative mild hazard weighting (EB-P6) has zero effect, 53 vs 54. A hold-relative full shock costs smart −6.
+- **Resolution:** hold 10, one forecasted stress window at days 20–24, grace band 10 kept as UX only, cap dropped.
+
+**X5 — neglect interest is still needed.** Prevention and the stress year do not fix `lazy`. Lazy (opens crises at age 3 or later) scores 74 against smart 60; with the stress year still 69.
+
+| Setting | lazy | smart |
+|---|---|---|
+| Interest 0.1 | 58 | 60 |
+| Interest 0.15 (adopt, cap 1.45) | 47 | 57 |
+| Interest 0.2 | 45 | 60 |
+| Bleed 0/2/4, no interest | 67 | 60 |
+
+Smart and desperate are unchanged by interest. Honesty: show the cost tier ($/$$/$$$) on the node. This does not push "clear the board", because opening early is only better by 10 points, not required. *(Not tested: compounding-only flag; other seats ask for it.)*
+
+**X9 — rebate shape.** Both ES-P1 installments and the single rebate work.
+
+| Variant | smart | clean |
+|---|---|---|
+| No rebate | 43 | 2 |
+| Single +6d | 60 | 17 |
+| Two installments at +4 and +8 | 61 | 18 |
+| Single at +10 | 53 | 12 |
+| ES clean installments (30% now, 35%@8d, 35%@14d) plus rebate 0.5 | 52 | 17 (bankrupt endings 23) |
+| Same plus rebate 0.6 | 55 | 22 |
+
+**Adopt two rebate installments at +4 and +8.** Offer the ES clean-cure lag as an option: costs ~3 points of smart win and needs rebate 0.6 to hold. *(Not tested: authored-only rebate (ES/LS/BP amendment) vs blanket `isCleanChoice`.)*
+
+**(B) Attacks**
+- **LS-P3/ES-P1 delays ≤14 or ≤8 days:** win rate and endings do not change (60 vs 60). Only 0.2–0.5% of choices carry a delay. The residue is a pure teaching device with zero balance risk. Ship 5–6 events, not 15.
+- **BP-P2 repair (cost 40/70/100 budget, tier −1):** win moves by only +1 (93 → 94). But for the dirty-using desperate policy the ending moves: at cost 70, green-shadow falls 261 → 90 and green-model rises 31 → 261. The ratchet (0.5 clean per tier per day) is too weak to matter. Repair launders the ending label. *Amendment:* key endings to the ever-dirty decision log, not the current `holdingTier`. Make repair cost `0.8 × the gain taken`, not a flat 70 (gains run 100–300).
+- **EB's weakest proposals:** P6 diminishing returns above 85 (measured null, 54 vs 54); P7 systemic-fix option (cost smart 52 → 45, content burden H, pedagogically unvalidated). Both rejected or deferred.
+
+**(C) Final integrated package (all constants)**
+- **Tax:** NORMAL +8 (unchanged), LOW 0 with +3 happy, HIGH +16 with −4 happy.
+- **Quests:** all stat rewards 0.
+- **Rebate:** `cleanRebate` 0.5 of |cost|, as two installments at +4 and +8.
+- **Neglect interest:** 0.15 per 2 days, cap 1.45.
+- **Dirty:** ×2 budget gain below 200 budget; ratio fee `0.5 × gain × (1 + 0.15t)` at +4 days, −4 happy. No audit roll.
+- **Hold:** `sustainGoalDays` 10, grace 10 (counter pauses at 70–79, resets below 70).
+- **Stress year:** days 20–24 (visible forecast), decay ×2.5 clean / ×2 happy, spawn ×1.3, hazard/air/water/energy weights ×3.
+- **Projects** (cost, build days, daily yield, prevention multiplier):
+
+| Project | Cost | Days | Daily yield | prevents ×mult |
+|---|---|---|---|---|
+| recycle-plant | 120 | 4 | +9 b, +2 c, +3 h once | waste, soil ×0.5 |
+| public-park | 120 | 4 | +6 b, +2 h | hazard, heritage ×0.6 |
+| eco-park | 200 | 5 | +16 b, +2 h, +1 c | landuse, biodiversity ×0.5 |
+| solar-farm | 200 | 5 | +30 b, +1 c | energy, air ×0.6 |
+| water-filter | 220 | 6 | +16 b, +3 c | water, marine, groundwater ×0.4 |
+| smart-grid | 300 | 7 | +40 b | none (requires solar) |
+
+**Predicted win rates (n=500):** smart 57, patient 66, noProj 59, desperate 90, desperateClean 85, clean 17, greedy 53, random 13, maxTax 64, bribe 0, idle 0, lazy 47. Paired single-project effect vs noProj: recycle +11, park +9, eco +7, solar +17, water 0, solar+grid +16 (make water 200 or give it more yield). Endings: clean-broke 31%, green 25%, green-shadow 19%, green-model 9%, toxic 9%, uprising 4%, coast-sold 2%, bankrupt 1%. With optional ES installments and rebate 0.6: smart 54, clean 22, bankrupt 11%.
+
+**D7 gate result:** *Pass:* smart 45–65; patient above noProj by ≥3; every project in [−3, +20]; desperate ≥ smart+10 and ≤95 (ceiling raised from 90); random ≤15, bribe ≤5, idle=0; clean 3–25; |maxTax−smart| ≤12; lazy ≤ smart−5; desperateClean−greedy ≥25, smart−random ≥30; no ending >35%; median winner day 18–35 (smart 20, desperateClean 22). *Marginal/fail:* smart−greedy only 4 (watch); bankrupt 1%, below the 2% floor (floor changed to 1%); random 13 vs 15 ceiling. *Not tested:* replay determinism and invariance (CI must).
+
+**(D) K1–K11 by balance leverage per effort**
+1. **K2 rebate and lag symmetry.** Biggest lever: smart +17, clean 2→17. Effort S.
+2. **K11 sim gate.** Without it every number is guesswork. Effort S.
+3. **K5 quests to 0 plus Promise/Dossier.** Safe only now, because rebate and project yields replace the quest money. Effort S code, M copy.
+4. **K1 project reprice.** The reprice is the part that works (projects go from −13 to +7 or more). Prevention tags are close to cosmetic. Effort S reprice, M tags.
+5. **K10 dirty fix.** Ratio fee, log-keyed ending, repair cost tied to gain. Effort S–M.
+6. **K4 local meta store.** Enables the Dossier. Effort M.
+Plus, outside the K list: neglect interest (lazy 74→47, effort S) and hold 10 plus stress year (effort M), which gives the project shield its value.
+
+**Defer:** K3 rewind/seed card, K7 "Advance until notable" (interacts with interest, so must stop on spawn), K8 map layer, ES-P2 three media, LS-P3 residue beyond 5–6 events.
+**Reject:** the probabilistic audit, the ×0.5 cap above 85, P7 systemic-fix options, any tax-rate rebase.
+
+---
+
+### [CHECKPOINT - Round 3]
+
+**Status:** Round 3 (Cross-Examination & Synthesis) COMPLETE — 7/7 seats reported and logged. Diminishing returns on *ideation* reached; the remaining work is **ratification + residual measurement**.
+
+**Completed phases:** Discovery · R1 Audit · R2 Ideation (38 proposals) · R3 Cross-examination (24+ attacks, 5 factual verifications, 1 integrated balance package, 1 milestone sequence).
+
+#### Conflicts resolved (decision — who converged)
+| # | Resolution |
+|---|---|
+| **X1** prediction | **One prediction per event; never two.** Direction hunch travels *atomically* in `HANDLE_CHOICE{index, hunch?}` (zero authoring; no half-committed state; `REWIND_TO` stays simple). UI: tap choice → one chip row → commit both → reveal (3 taps). Stat = **cleanliness** by default (LS) or authored `probe` stat on trade-off events (BP). Optional post-commit mechanism chip `PREDICT_CHIP` only where a mechanism enum exists. Reveal: hit ⇒ collapse to one shared mechanism line; miss ⇒ expand + one counterfactual line. First crisis skips the hunch. Hit-rate shown as a sentence ("called 3 of 5"), **never a percent/trend**. *(LS, UX, SE, BP; UX conceded timing, LS conceded PREDICT-as-separate-action.)* |
+| **X2** dirty path | **No random audit.** Deterministic **ratio fee** landing on a *named citizen* at +4 d: `0.5 × gain × (1+0.15·holdingTier)` budget, −4 happy (EB-measured; matches audit numbers). Wording: plain act ("accept the cash envelope"), legal label revealed *after*; reveal states why the offer was big ("the treasury was low"). `patron`/`kind` flag replaces `isDirtyDeal`. Ending keyed to the **ever-dirty decision log**, not current tier (repair can't launder the ending). *(EB, BP, ES, SE; SE's keyed-roll no longer needed for audit.)* |
+| **X3** media | **No stock/media model now.** Typed **residue** (`residue:{to:'air'|'water'|'land'|'sea'|'abroad'}`) on **5–6 events** + destination shown on outcome card. Build media only if playtest shows (a) ≥2/5 say displaced problem "went away", (b) `displacer` sim beats `smart`, (c) ~8+ events need two media. *(LS, ES, SE, EB.)* |
+| **X6** quest replacement | **The Promise** (BP flow): pick 1 of 3 citizen-stake cards at start (or "No promise"); ring on citizen's province; no toast/meter/reward; debrief line kept/partly/not kept/never tested from decision log + mechanism card + repair route. Dossier unlocks fold into codex as debrief-only cards (≤4). Old quests deleted *only after* economy rebase. Mandate dropped. |
+| **X8** content cap | Systems first. Milestones M0–M4 (SE table) with LOC/LTU caps; ES: M1 0 new events; M2 = 4 mechanism cards seeded from the 15 existing outcome events + 8 DE/UK skins; M3 = 4 more cards + 16 skins; ≤40 new sentences ×3 and ≤8 verified sources per milestone. Reject 54 letter fragments, EB-P7 blanket, GL-P6 until enum coverage. |
+| **X9** lag shape | One data shape (`Consequence{kind: harm|recovery|residue, mechanism, medium}`, `DelayedEffect` aliases it). **Two rebate installments at +4 and +8** (EB-measured: smart 61, clean 18). ES-style slower clean-cure lag = optional (costs ≈3 pts, needs rebate 0.6). All delays ≤12–14 d. |
+| **X10** forecast = weights | Same mechanism: `phase={kind, boostedTags, fromDay}` feeds `spawnWeight = prevention × mastery × phase` (integers ×100; neutral = bit-identical). |
+| **X11** Mikey | UX table adopted: Mikey speaks only about *interface/process*, once per hint id; silent during crisis/reveal/eruption/fines/Kara/rewind/debrief body; ≤6 bubbles in a first run; no new Mikey lines for new features beyond first-time pointers. |
+| **X12** citizens | Role→stakes map (~10 roles; 38 characters inherit); `addLetter` picks first character whose stakes intersect event `tags.pollution`; keep 5 templates; fix `cleanBad` ("fish are gone") with 3 variants (9 strings) + one `returning` template ×3. Total ≈ 12 strings. |
+| **K3 scope** | Rewind-one + seed card + path code survive; **Casebook aggregator deferred** (ship only the code; no in-game dashboard; if ever, separate desktop route, marginals only, no rows). Rewind is a *passive link* under the debrief, ≤2 uses, shown only after a loss, mini-map timeline of ≤5 pins. |
+| **K10** repair | Repair is **an action inside `LetterModal`** (no node, no cap use, no timer), cost `0.8 × gain taken`, one open per citizen; never refunds past damage. |
+| **K7** tempo | Single **"Advance"** button that ticks visibly (~350 ms/day) and stops at any notable event (new spawn, severity 2/3, letter/news, project done, scheduled effect lands, stat crosses 80/70/30, sustain milestone ×5, spell open/close, budget<critical, game end), cap 5 days/press, tap cancels; Dawn Strip replaces `DaySummary` on quiet days. Hold-to-skip dropped. |
+
+#### Verified factual corrections (Erratum #3 above): max 3 choices/event (107/17/0); `isDirtyDeal` flags **57** non-bribe choices in 60 events; wildlife decorative; `tags`/`mechanisms` unread by code; 15 events carry 22 distinct free-text mechanism strings (not a vocabulary); `wales-afforestation` is *not* free (−40 budget).
+
+#### Items dropped by explicit committee agreement
+Probabilistic audit · ×0.5 cap above 85 (measured null) · EB-P7 systemic-fix 25% blanket (smart 52→45, content H) · tax-rate rebase (not needed) · ambient audio bed · `$` glyph on map nodes (tier lives on choice buttons only) · sustain-streak rising-pitch tick and drone under 30 and punitive haptic (BP: streak/anxiety/punishment) · 250 ms screen shake · warm-up recall quiz (LS withdrew) · GL "Mandate" · Konya flood shock · "poverty ×2" label · 54 letter fragments · three-media model (deferred) · GL-P6 Second Look (until enum coverage) · in-game Casebook.
+
+#### RESIDUAL conflicts (to be settled in Round 4 by measurement or ratification)
+- **R1 — Neglect interest scope.** EB: universal 0.15/2 d, cap 1.45 (lazy 74→47). LS/ES/GL/UX/BP: only events flagged `compounding:true` (≈30–40%), bound to the *visible severity*, tier on choice buttons only, off during tutorial/first 5 days. → **EB to measure compounding-only and severity-bound variants (lazy ≤ smart−5 gate).**
+- **R2 — Rebate scope.** EB: automatic on `isCleanChoice`. ES/LS/BP: only on authored `avoids`/`coBenefit`, some clean choices pay 0 ("pays back in nature, not the budget"). → **EB to measure rebate on ~50% of clean choices (authored-only proxy) and whether the project yields still replace the quest money.**
+- **R3 — Stress window anchor.** EB: absolute days 20–24 (measured shield value +2→+7). SE: anchor to hold start via keyed roll. GL: `D = 14 + seed mod 7`. ES: slow-onset only, with historical analogue per region; floods get 1–2 d warning. → Need ONE rule + per-region shock table (≥1 analogue each).
+- **R4 — Project reprice vs prevention.** EB: reprice is what works; prevention weights are "close to cosmetic" in balance but educational; water-filter paired Δ = 0. → Reprice water-filter; prevention kept for educational value & stress shield.
+- **R5 — "???" codex slots.** GL/LS want curiosity-gap silhouettes; BP wants no nagging/no completion counter. → neutral silhouette only, no count.
+- **R6 — Hunch stat choice.** Cleanliness fixed (LS) vs `probe` authored (BP) vs largest-|effect| (UX): default = cleanliness; `probe` where authored.
+- **R7 — Ending taxonomy.** Key endings to ever-dirty log (EB) — requires revising `ENDINGS.when` and `EndingFacts`; need new endings? (bankrupt 1%, coast-sold 2% are rare: `Ending reachable` gate).
+
+**Next scheduled action: Round 4 — Ratification & Convergence Vote.** (1) EB measures R1, R2 and a stress-window variant on the fork. (2) All 7 seats receive the draft **candidate item list F1–F20** (in the next log entry) and must: (a) **rank** them (Borda), (b) lodge any **blocking objection** (guardrail/honesty/feasibility) with an amendment, (c) answer R3–R7 in ≤3 lines each. If no blocking objection remains and the Borda order is stable, write `FINAL_FEATURE_ROADMAP.md`; otherwise Round 5 on the blocked items only.
+
