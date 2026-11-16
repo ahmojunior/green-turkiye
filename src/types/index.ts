@@ -1,3 +1,4 @@
+import type { GameAction } from '../reducers/gameReducer';
 import { Difficulty, TaxRate } from './enums';
 import type { QuestState } from './quest';
 
@@ -103,6 +104,8 @@ export interface GameEvent {
   location?: EventLocation;
   tags?: EventTags;
   sources?: SourceRef[];
+  /** Only drawn once Kara Holding has grown to this tier (its own crises). */
+  requiresHolding?: number;
   choices: EventChoice[];
 }
 
@@ -127,6 +130,8 @@ export interface DelayedEffect {
 
 export interface EventChoice {
   text: LocalizedText;
+  /** The player takes money to look away. Feeds the bribe story (Faz 4). */
+  bribe?: boolean;
   effects: Effects;
   outcome?: ChoiceOutcome;
   delayed?: DelayedEffect[];
@@ -167,6 +172,11 @@ export interface EventNode {
 /** A consequence booked for a later day, with the line shown when it lands. */
 export interface ScheduledEffect {
   dueDay: number;
+  // The decision that booked it, so the game can say "this was day N's
+  // choice" and prove it from the log.
+  causeDay: number;
+  eventId: string;
+  choiceIndex: number;
   effects: Effects;
   message: LocalizedText;
 }
@@ -174,8 +184,43 @@ export interface ScheduledEffect {
 /** Goal completions and delayed consequences share one notification queue. */
 export interface Toast {
   text: LocalizedText;
-  kind: 'quest' | 'delayed';
+  kind: 'quest';
 }
+
+/** A decision the player made, in order. Debrief cards are built only from this. */
+export interface Decision {
+  day: number;
+  eventId: string;
+  choiceIndex: number;
+  dirty: boolean;
+}
+
+export type LetterKind = 'delayed' | 'dirty' | 'cleanGood' | 'cleanBad' | 'happyBad';
+
+/**
+ * A citizen's letter. State holds only facts; the text is built from
+ * data/story.ts at render time, in the player's language.
+ */
+export interface Letter {
+  id: string;
+  day: number;
+  kind: LetterKind;
+  characterId: string;
+  read: boolean;
+  // For letters about a past decision: which one, and (delayed) what it cost.
+  eventId?: string;
+  causeDay?: number;
+  message?: LocalizedText;
+  effects?: Effects;
+}
+
+export interface NewsItem {
+  day: number;
+  key: string;                        // headline id in data/story.ts
+  params?: Record<string, string | number>;
+}
+
+export type StatKey = 'budget' | 'happiness' | 'cleanliness';
 
 export interface GameState {
   countryId: string | null;
@@ -187,14 +232,13 @@ export interface GameState {
   activeProjects: ActiveProject[];
   completedProjectIds: string[];
   isPlaying: boolean;
-  isPaused: boolean;
   isGameOver: boolean;
   isVictory: boolean;
   day: number;
   activeNodes: EventNode[];
   activeEvent: GameEvent | null;
   // Set while the explainer for the choice just taken is still on screen.
-  // The event stays active meanwhile, which is what keeps the clock paused.
+  // The event stays active meanwhile, which keeps the day from being ended.
   pendingOutcome: { eventId: string; choiceIndex: number } | null;
   eventsSolved: number;        // crisis events resolved this run (for goals)
   sustainDays: number;         // consecutive days both stats held above the win threshold
@@ -202,5 +246,18 @@ export interface GameState {
   toasts: Toast[];             // notifications waiting to be shown, oldest first
   scheduled: ScheduledEffect[]; // consequences booked by earlier decisions
   rngSeed: number;             // seeded RNG state: same seed + same inputs = same run
+  // Every player action that changed state, in order. Replaying it from
+  // INITIAL_STATE rebuilds this exact state (see scripts/replay-test.ts).
+  actionLog: GameAction[];
   usedEventIds: string[];      // events already drawn this cycle — spawn draws from the complement, reshuffling once exhausted
+  decisions: Decision[];
+  holdingTier: number;         // Kara Holding, 0..5: one step per dirty deal
+  coopTier: number;            // Green co-op, 0..5: one step per two clean choices
+  cleanChoices: number;
+  letters: Letter[];
+  news: NewsItem[];
+  // First stat to fall below the critical line, for the debrief diagnosis.
+  firstCritical: { stat: StatKey; day: number } | null;
+  // How the day that just ended moved each stat (for the end-of-day screen).
+  dayReport: { day: number; budget: number; happiness: number; cleanliness: number } | null;
 }

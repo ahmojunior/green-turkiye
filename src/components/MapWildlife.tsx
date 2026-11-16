@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
-import { useGame } from '../hooks/useGame';
+import { useMemo } from 'react';
 
 // Purely decorative ambient life over the (top-down) map — no gameplay meaning.
 const BASE_URL = import.meta.env.BASE_URL;
@@ -51,40 +50,10 @@ const BOATS = [
 ];
 
 export function MapWildlife() {
-  const { gameState } = useGame();
-  const isPaused = gameState.isPaused;
   const flights = useMemo(() => randomFlights(), []);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // Pause/resume with a slow-motion ramp rather than an instant freeze: on pause,
-  // ease every ambient animation's speed down to a standstill; on resume, ease it
-  // back up to full speed.
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const anims = el.getAnimations({ subtree: true });
-    if (!anims.length) return;
-
-    const to = isPaused ? 0 : 1;
-    const from = anims[0].playbackRate;
-    if (from === to) return;
-
-    const durationMs = isPaused ? 900 : 450;
-    const easeOut = (p: number) => 1 - Math.pow(1 - p, 3);
-    const t0 = performance.now();
-    let raf = 0;
-    const step = (now: number) => {
-      const p = Math.min(1, (now - t0) / durationMs);
-      const rate = from + (to - from) * easeOut(p);
-      anims.forEach(a => { a.playbackRate = rate; });
-      if (p < 1) raf = requestAnimationFrame(step);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
-  }, [isPaused]);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 pointer-events-none overflow-hidden z-[5]">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-[5]">
       {flights.map((f, i) => (
         <img
           key={`plane-${i}`}

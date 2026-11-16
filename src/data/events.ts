@@ -19,6 +19,7 @@ export const EVENTS: GameEvent[] = [
       },
       {
         text: { tr: 'Görmezden Gel (Rüşvet)', en: 'Look the Other Way (Bribe)', de: 'Wegsehen (Bestechung)' },
+        bribe: true,
         effects: { budget: +100, happiness: -10, cleanliness: -10 }
       }
     ]
@@ -2520,6 +2521,59 @@ export const EVENTS: GameEvent[] = [
       {
         text: { tr: 'Türbinlere İzin Ver, Anlaşmazlığı Yoksay', en: 'Approve the Turbines, Ignore the Dispute', de: 'Windräder genehmigen, Streit ignorieren' },
         effects: { budget: +60, happiness: -10, cleanliness: +15 }
+      }
+    ]
+  },
+  // --- Kara Holding: only drawn once the holding has grown on dirty deals ---
+  {
+    id: 'kara-holding-discharge',
+    title: { tr: 'Kara Holding Tesisinden Deşarj', en: 'Discharge from the Kara Holding Plant', de: 'Einleitung aus dem Werk von Kara Holding' },
+    description: { tr: 'Kara Holding\'in yeni tesisinin arkasındaki kanaldan köpüklü, renkli su akıyor. Şirket "izinlerimiz tam" diyor ve bölgeye yeni bir yatırım sözü veriyor.', en: 'Foamy, coloured water is running from the channel behind Kara Holding\'s new plant. The company says "our permits are in order" and promises the region a new investment.', de: 'Aus dem Kanal hinter dem neuen Werk von Kara Holding fließt schäumendes, verfärbtes Wasser. Die Firma sagt „unsere Genehmigungen sind vollständig“ und verspricht der Region eine neue Investition.' },
+    location: { provinces: [], nationwide: true },
+    tags: { pollution: ['water'] },
+    requiresHolding: 2,
+    choices: [
+      {
+        text: { tr: 'Bağımsız Numune Aldır ve Ceza Kes', en: 'Order Independent Samples and Fine Them', de: 'Unabhängige Proben nehmen und Strafe verhängen' },
+        effects: { budget: -60, happiness: +5, cleanliness: +15 }
+      },
+      {
+        text: { tr: 'Yatırım Sözünü Kabul Et (Rüşvet)', en: 'Accept the Investment Promise (Bribe)', de: 'Das Investitionsversprechen annehmen (Bestechung)' },
+        bribe: true,
+        effects: { budget: +90, happiness: -5, cleanliness: -12 },
+        delayed: [
+          {
+            inDays: 4,
+            effects: { cleanliness: -10, happiness: -5 },
+            message: { tr: 'Kanalın aktığı derede ölü balıklar kıyıya vurdu.', en: 'Dead fish washed up along the stream the channel runs into.', de: 'In dem Bach, in den der Kanal mündet, wurden tote Fische angespült.' }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'kara-holding-coast',
+    title: { tr: 'Kara Holding Sahile Göz Dikti', en: 'Kara Holding Eyes the Coast', de: 'Kara Holding hat es auf die Küste abgesehen' },
+    description: { tr: 'Kara Holding, halka açık sahil şeridine "lüks tesis ve liman" kurmak istiyor. İmar değişikliği için sizden tek bir imza bekliyor.', en: 'Kara Holding wants to build a "luxury resort and harbour" on the public shoreline. It needs just one signature from you to rezone the land.', de: 'Kara Holding will auf dem öffentlichen Uferstreifen ein „Luxusresort mit Hafen“ bauen. Für die Umwidmung fehlt nur Ihre Unterschrift.' },
+    location: { provinces: [], nationwide: true },
+    tags: { pollution: ['marine'] },
+    requiresHolding: 4,
+    choices: [
+      {
+        text: { tr: 'Sahili Kamu Alanı Olarak Koru', en: 'Protect the Shore as Public Land', de: 'Das Ufer als öffentliches Gelände schützen' },
+        effects: { budget: -40, happiness: +10, cleanliness: +10 }
+      },
+      {
+        text: { tr: 'İmzayı At (Rüşvet)', en: 'Sign It (Bribe)', de: 'Unterschreiben (Bestechung)' },
+        bribe: true,
+        effects: { budget: +150, happiness: -15, cleanliness: -15 },
+        delayed: [
+          {
+            inDays: 5,
+            effects: { cleanliness: -12, happiness: -8 },
+            message: { tr: 'Sahile beton döküldü; kumsalın yarısı kapandı.', en: 'Concrete was poured on the shore; half the beach is gone.', de: 'Am Ufer wurde Beton gegossen; der halbe Strand ist weg.' }
+          }
+        ]
       }
     ]
   }

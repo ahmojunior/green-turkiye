@@ -1,10 +1,9 @@
-import React, { useReducer, useCallback, useRef, type PropsWithChildren } from 'react';
+import React, { useReducer, useCallback, type PropsWithChildren } from 'react';
 import type { Country, Region, Project, TaxRate } from '../types';
 import { GameContext } from './game-context';
 import { gameReducer, INITIAL_STATE } from '../reducers/gameReducer';
 import { TUNING } from '../utils/gameLogic';
 import { createSeed } from '../utils/rng';
-import { useGameLoop } from '../hooks/useGameLoop';
 
 export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [gameState, dispatch] = useReducer(gameReducer, INITIAL_STATE);
@@ -39,31 +38,18 @@ export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
         dispatch({ type: 'OPEN_EVENT', payload: nodeId });
     }, []);
 
-    const setPaused = useCallback((paused: boolean) => {
-        dispatch({ type: 'SET_PAUSED', payload: paused });
+    // A day is a turn: time only moves when the player ends the day.
+    const endDay = useCallback(() => {
+        dispatch({ type: 'TICK' });
+    }, []);
+
+    const readLetter = useCallback((letterId: string) => {
+        dispatch({ type: 'READ_LETTER', payload: letterId });
     }, []);
 
     const clearQuestToast = useCallback(() => {
         dispatch({ type: 'CLEAR_QUEST_TOAST' });
     }, []);
-
-    // Game Loop
-    const timeAccumulator = useRef(0);
-
-    const handleTick = useCallback((deltaTime: number) => {
-        // CLAMP DELTA TIME to prevent spiral of death
-        const safeDelta = Math.min(deltaTime, 100);
-
-        timeAccumulator.current += safeDelta;
-        // 1000ms = 1 in-game day
-        if (timeAccumulator.current >= 1000) {
-            dispatch({ type: 'TICK' });
-            timeAccumulator.current -= 1000;
-        }
-    }, []);
-
-    const shouldRun = gameState.isPlaying && !gameState.isGameOver && !gameState.activeEvent && !gameState.isPaused;
-    useGameLoop(handleTick, !!shouldRun);
 
     const value = {
         gameState,
@@ -74,7 +60,8 @@ export const GameProvider: React.FC<PropsWithChildren> = ({ children }) => {
         handleNodeClick,
         setTaxRate,
         buyProject,
-        setPaused,
+        endDay,
+        readLetter,
         clearQuestToast
     };
 

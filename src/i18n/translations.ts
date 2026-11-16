@@ -3,23 +3,43 @@
 // this file is only for buttons, headers, labels, tooltips, etc.
 export const UI_STRINGS: Record<string, { tr: string; en: string; de: string }> = {
   // --- App.tsx ---
-  'app.gameOver.regionUnmanageable': { tr: 'Bölge yönetilemez hale geldi.', en: 'The region became unmanageable.', de: 'Die Region wurde unregierbar.' },
-  'app.gameOver.victory': { tr: 'Bölgeni {days} gün boyunca sürdürülebilir tuttun!', en: 'You kept your region sustainable for {days} days!', de: 'Du hast deine Region {days} Tage lang nachhaltig gehalten!' },
-  'app.gameOver.bankrupt': { tr: 'Bölge İflas Etti!', en: 'The Region Went Bankrupt!', de: 'Die Region ist bankrott gegangen!' },
-  'app.gameOver.uprising': { tr: 'Halk Ayaklandı!', en: 'The People Revolted!', de: 'Das Volk hat sich erhoben!' },
-  'app.gameOver.toxicWasteZone': { tr: 'Bölge Zehirli Atık Bölgesi İlan Edildi!', en: 'The Region Was Declared a Toxic Waste Zone!', de: 'Die Region wurde zum Giftmüllgebiet erklärt!' },
-  'app.controls.resume': { tr: 'Devam Et', en: 'Resume', de: 'Fortsetzen' },
-  'app.controls.pause': { tr: 'Duraklat', en: 'Pause', de: 'Pause' },
+  'app.controls.endDay': { tr: 'Günü Bitir', en: 'End Day', de: 'Tag beenden' },
   'app.controls.unmute': { tr: 'Sesi Aç', en: 'Unmute', de: 'Ton an' },
   'app.controls.mute': { tr: 'Sesi Kapat', en: 'Mute', de: 'Ton aus' },
   'app.unknownRegion': { tr: 'Bilinmeyen Bölge', en: 'Unknown Region', de: 'Unbekannte Region' },
   'app.rotateDevice': { tr: 'En iyi deneyim için lütfen cihazınızı yatay çevirin', en: 'Please rotate your device to landscape for the best experience', de: 'Bitte drehe dein Gerät für die beste Erfahrung ins Querformat' },
-  'app.paused.title': { tr: 'DURAKLATILDI', en: 'PAUSED', de: 'PAUSIERT' },
-  'app.paused.hint': { tr: 'Devam etmek için "Devam Et"e bas', en: 'Press "Resume" to continue', de: 'Drücke „Fortsetzen“, um weiterzuspielen' },
   'app.severity.critical': { tr: 'Kritik kriz', en: 'Critical crisis', de: 'Kritische Krise' },
   'app.severity.growing': { tr: 'Büyüyen kriz', en: 'Growing crisis', de: 'Wachsende Krise' },
   'app.severity.new': { tr: 'Yeni kriz', en: 'New crisis', de: 'Neue Krise' },
   'app.openCrisis': { tr: 'Krizi aç', en: 'Open crisis', de: 'Krise öffnen' },
+  'letter.greeting': { tr: 'Sayın Bölge Yöneticisi,', en: 'Dear Regional Manager,', de: 'Sehr geehrte Regionalverwaltung,' },
+  'letter.close': { tr: 'Mektubu kapat', en: 'Close letter', de: 'Brief schließen' },
+  'letter.open': { tr: 'Mektubu oku', en: 'Read letter', de: 'Brief lesen' },
+  'letter.from': { tr: 'Mektup:', en: 'Letter from', de: 'Brief von' },
+  'letter.dayLabel': { tr: '{day}. gün', en: 'Day {day}', de: 'Tag {day}' },
+  'news.channel': { tr: 'YEŞİL TV', en: 'GREEN TV', de: 'GRÜN TV' },
+  'news.live': { tr: 'CANLI', en: 'LIVE', de: 'LIVE' },
+  'news.breaking': { tr: 'SON DAKİKA', en: 'BREAKING', de: 'EILMELDUNG' },
+  'news.next': { tr: 'Sonraki haber', en: 'Next story', de: 'Nächste Meldung' },
+  'day.ended': { tr: '{day}. gün bitti', en: 'Day {day} is over', de: 'Tag {day} ist vorbei' },
+  'day.continue': { tr: 'Yeni güne başla', en: 'Start the next day', de: 'Nächsten Tag beginnen' },
+  'app.controls.mikeyOff': { tr: "Mikey'i sustur", en: 'Mute Mikey', de: 'Mikey stummschalten' },
+  'app.controls.mikeyOn': { tr: "Mikey'i aç", en: 'Unmute Mikey', de: 'Mikey einschalten' },
+
+  // --- MikeyHints.tsx: one line each, shown once per player ---
+  'hint.firstNode': { tr: 'Dokun, ne yapacağına karar ver.', en: 'Tap it and decide what to do.', de: 'Tippe darauf und entscheide.' },
+  'hint.endDay': { tr: 'Hazır olunca günü bitir.', en: 'End the day when you are ready.', de: 'Beende den Tag, wenn du bereit bist.' },
+  'hint.nodeGrew': { tr: 'Bekleyen krizler büyür.', en: 'Crises you leave waiting grow.', de: 'Krisen, die warten, wachsen.' },
+  'hint.lowBudget': { tr: 'Kasa 0 olursa iflas edersin.', en: 'If the treasury hits 0, you go bankrupt.', de: 'Ist die Kasse bei 0, bist du pleite.' },
+  'hint.lowHappiness': { tr: 'Mutluluk 0 olursa halk ayaklanır.', en: 'If happiness hits 0, the people revolt.', de: 'Fällt die Zufriedenheit auf 0, gibt es Aufstand.' },
+  'hint.lowCleanliness': { tr: 'Temizlik 0 olursa her şey biter.', en: 'If cleanliness hits 0, it is all over.', de: 'Fällt die Sauberkeit auf 0, ist alles vorbei.' },
+  'hint.tax': { tr: 'Vergi para getirir, mutluluğu düşürür.', en: 'Tax brings money and costs happiness.', de: 'Steuern bringen Geld und kosten Zufriedenheit.' },
+  'hint.delayed': { tr: 'Bu, birkaç gün önceki kararın.', en: 'That was your decision from a few days ago.', de: 'Das war deine Entscheidung von vor ein paar Tagen.' },
+
+  // --- GameHUD.tsx: tap a stat for one line ---
+  'hud.info.budget': { tr: 'Krizler ve projeler için para. Vergi doldurur.', en: 'Money for crises and projects. Tax fills it.', de: 'Geld für Krisen und Projekte. Steuern füllen es.' },
+  'hud.info.happiness': { tr: 'Her gün biraz düşer. Yüksek vergi daha çok düşürür.', en: 'Drops a little every day. High tax drops it more.', de: 'Sinkt jeden Tag etwas. Hohe Steuern senken sie mehr.' },
+  'hud.info.cleanliness': { tr: 'Her gün kendiliğinden düşer. Kirlilik birikir.', en: 'Falls on its own every day. Pollution builds up.', de: 'Sinkt jeden Tag von selbst. Verschmutzung sammelt sich.' },
 
   // --- EventModal.tsx: the "Ne oldu?" explainer shown after a decision ---
   'event.whatHappened': { tr: 'Ne oldu?', en: 'What happened?', de: 'Was ist passiert?' },
@@ -48,10 +68,14 @@ export const UI_STRINGS: Record<string, { tr: string; en: string; de: string }> 
   'hud.cleanliness': { tr: 'Temizlik', en: 'Cleanliness', de: 'Sauberkeit' },
 
   // --- GameOver.tsx ---
-  'gameOver.victoryTitle': { tr: 'TEBRİKLER!', en: 'CONGRATULATIONS!', de: 'GLÜCKWUNSCH!' },
-  'gameOver.defeatTitle': { tr: 'OYUN BİTTİ', en: 'GAME OVER', de: 'SPIEL VORBEI' },
-  'gameOver.daysSurvivedSuffix': { tr: 'gün', en: 'days', de: 'Tage' },
-  'gameOver.stayedInOffice': { tr: 'boyunca yönetimde kaldın.', en: 'you stayed in office.', de: 'warst du im Amt.' },
+  'gameOver.endingsFound': { tr: 'Bulunan sonlar: {n}/{total}', en: 'Endings found: {n}/{total}', de: 'Gefundene Enden: {n}/{total}' },
+  'debrief.firstCritical': { tr: 'İlk çöken gösterge: {stat}, {day}. gün.', en: 'First to collapse: {stat}, day {day}.', de: 'Zuerst eingebrochen: {stat}, Tag {day}.' },
+  'debrief.noCritical': { tr: 'Hiçbir gösterge kritik seviyeye düşmedi.', en: 'No indicator ever fell to a critical level.', de: 'Kein Wert ist je auf ein kritisches Niveau gefallen.' },
+  'debrief.delayed': { tr: '{cause}. gündeki "{event}" kararın, {day}. günde mektupla geri döndü.', en: 'Your decision on "{event}" on day {cause} came back by letter on day {day}.', de: 'Deine Entscheidung zu „{event}“ an Tag {cause} kam an Tag {day} per Brief zurück.' },
+  'debrief.dirty': { tr: '{n} kez paranın tarafını tuttun. Kara Holding {tier}/5 basamağa büyüdü.', en: 'You sided with the money {n} times. Kara Holding grew to step {tier}/5.', de: 'Du hast dich {n}-mal für das Geld entschieden. Kara Holding wuchs auf Stufe {tier}/5.' },
+  'debrief.coop': { tr: '{n} temiz seçim yaptın. Yeşil Kooperatif {tier}/5 basamağa büyüdü.', en: 'You made {n} clean choices. The Green Co-op grew to step {tier}/5.', de: 'Du hast {n} saubere Entscheidungen getroffen. Die Grüne Genossenschaft wuchs auf Stufe {tier}/5.' },
+  'debrief.projects': { tr: '{n} projeyi tamamladın.', en: 'You completed {n} projects.', de: 'Du hast {n} Projekte abgeschlossen.' },
+  'debrief.decisions': { tr: '{days} günde {n} krize karar verdin.', en: 'You decided {n} crises in {days} days.', de: 'Du hast in {days} Tagen über {n} Krisen entschieden.' },
   'gameOver.restart': { tr: 'Tekrar Oyna', en: 'Play Again', de: 'Erneut Spielen' },
 
   // --- ManagementPanel.tsx ---
@@ -82,7 +106,6 @@ export const UI_STRINGS: Record<string, { tr: string; en: string; de: string }> 
   // --- QuestPanel.tsx ---
   'quest.goals': { tr: 'Hedefler', en: 'Goals', de: 'Ziele' },
   'quest.waitingForNew': { tr: 'Yeni görevler bekleniyor...', en: 'Waiting for new goals...', de: 'Neue Ziele werden erwartet …' },
-  'quest.delayedToast': { tr: 'Geçmiş kararının sonucu:', en: 'Consequence of an earlier decision:', de: 'Folge einer früheren Entscheidung:' },
   'quest.completedToast': { tr: 'tamamlandı!', en: 'completed!', de: 'abgeschlossen!' },
   'quest.reward.budget': { tr: 'Bütçe', en: 'Budget', de: 'Budget' },
   'quest.reward.happiness': { tr: 'Mutluluk', en: 'Happiness', de: 'Zufriedenheit' },
@@ -94,10 +117,6 @@ export const UI_STRINGS: Record<string, { tr: string; en: string; de: string }> 
   'difficulty.Zor': { tr: 'Zor', en: 'Hard', de: 'Schwer' },
 
   // --- MainMenu.tsx ---
-  'menu.welcome.title': { tr: 'Aramıza Hoş Geldin!', en: 'Welcome!', de: 'Willkommen!' },
-  'menu.welcome.body': { tr: 'Görünüşe göre burada ilk kez buradasın. Oyuna başlamadan önce nasıl oynandığını öğrenmek ister misin?', en: 'Looks like this is your first time here. Would you like to learn how to play before you start?', de: 'Sieht so aus, als wärst du zum ersten Mal hier. Möchtest du vor dem Start erfahren, wie man spielt?' },
-  'menu.welcome.yes': { tr: 'Evet, Göster!', en: 'Yes, Show Me!', de: 'Ja, zeig es mir!' },
-  'menu.welcome.no': { tr: 'Hayır, Kendim Keşfederim', en: 'No, I’ll Figure It Out', de: 'Nein, ich finde es selbst heraus' },
   'menu.logoAlt': { tr: 'Yeşil Türkiye', en: 'Yeşil Türkiye', de: 'Yeşil Türkiye' },
   'menu.title': { tr: 'YEŞİL TÜRKİYE', en: 'YEŞİL TÜRKİYE', de: 'YEŞİL TÜRKİYE' },
   'menu.rotatePortrait': { tr: 'Devam etmek için lütfen cihazınızı dikey çevirin', en: 'Please rotate your device to portrait to continue', de: 'Bitte drehe dein Gerät ins Hochformat, um fortzufahren' },

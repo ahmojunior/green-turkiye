@@ -12,7 +12,8 @@ export interface GameContextType {
     handleNodeClick: (nodeId: string) => void;
     setTaxRate: (rate: TaxRate) => void;
     buyProject: (project: Project) => void;
-    setPaused: (paused: boolean) => void;
+    endDay: () => void;
+    readLetter: (letterId: string) => void;
     clearQuestToast: () => void;
 }
 

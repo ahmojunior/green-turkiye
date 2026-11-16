@@ -11,6 +11,7 @@ interface Snapshot {
     isGameOver: boolean;
     // Head of the notification queue: a new head means a new toast just appeared.
     toast: Toast | null;
+    letters: number;
 }
 
 // Watches gameState for transitions that don't have a single obvious click
@@ -35,6 +36,7 @@ export function useGameSfx(gameState: GameState) {
                 day: gameState.day,
                 isGameOver: gameState.isGameOver,
                 toast: gameState.toasts[0] ?? null,
+                letters: gameState.letters.length,
             };
             return;
         }
@@ -62,12 +64,10 @@ export function useGameSfx(gameState: GameState) {
         }
 
         const toast = gameState.toasts[0] ?? null;
-        if (toast && toast !== prev.toast) {
-            // A consequence landing is news of the same weight as a fresh crisis;
-            // a completed goal is a reward.
-            if (toast.kind === 'delayed') sfx.crisisAppear();
-            else sfx.quest();
-        }
+        if (toast && toast !== prev.toast) sfx.quest();
+
+        // A consequence arriving by mail is news of the same weight as a crisis.
+        if (gameState.letters.length > prev.letters) sfx.crisisAppear();
 
         prevRef.current = {
             completedProjectIds: gameState.completedProjectIds,
@@ -76,6 +76,7 @@ export function useGameSfx(gameState: GameState) {
             day: gameState.day,
             isGameOver: gameState.isGameOver,
             toast,
+            letters: gameState.letters.length,
         };
     }, [gameState]);
 }

@@ -1,4 +1,4 @@
-import type { GameState, Project, ActiveProject, EventNode, Country, Region, ScheduledEffect } from '../types';
+import type { GameState, Project, ActiveProject, EventNode, Country, Region, ScheduledEffect, Letter, LetterKind, NewsItem, StatKey } from '../types';
 import type { QuestState } from '../types/quest';
 import { TaxRate } from '../types/enums';
 import {
@@ -16,6 +16,7 @@ import { EVENTS } from '../data/events';
 import { getRegion } from '../data/countries';
 import { PROJECTS } from '../data/projects';
 import { ALL_QUESTS } from '../data/quests';
+import { CHARACTERS, isCleanChoice, isDirtyDeal } from '../data/story';
 
 export type GameAction =
     | { type: 'START_GAME'; payload: { country: Country; region: Region; startBudget: number; seed: number } }
@@ -26,8 +27,8 @@ export type GameAction =
     | { type: 'OPEN_EVENT'; payload: string } // nodeId
     | { type: 'HANDLE_CHOICE'; payload: number } // choiceIndex
     | { type: 'DISMISS_OUTCOME' }
-    | { type: 'SET_PAUSED'; payload: boolean }
-    | { type: 'CLEAR_QUEST_TOAST' };
+    | { type: 'CLEAR_QUEST_TOAST' }
+    | { type: 'READ_LETTER'; payload: string }; // letterId
 
 export const INITIAL_STATE: GameState = {
     countryId: null,
@@ -39,7 +40,6 @@ export const INITIAL_STATE: GameState = {
     activeProjects: [],
     completedProjectIds: [],
     isPlaying: false,
-    isPaused: false,
     isGameOver: false,
     isVictory: false,
     day: 1,
@@ -53,15 +53,139 @@ export const INITIAL_STATE: GameState = {
     scheduled: [],
     rngSeed: 0,
     usedEventIds: [],
+    actionLog: [],
+    decisions: [],
+    holdingTier: 0,
+    coopTier: 0,
+    cleanChoices: 0,
+    letters: [],
+    news: [],
+    firstCritical: null,
+    dayReport: null,
+};
+
+// The first stat to cross the critical line stays recorded for the debrief.
+const markCritical = (
+    prev: GameState['firstCritical'],
+    s: Record<StatKey, number>,
+    day: number,
+): GameState['firstCritical'] => {
+    if (prev) return prev;
+    if (s.cleanliness < TUNING.criticalStat) return { stat: 'cleanliness', day };
+    if (s.happiness < TUNING.criticalStat) return { stat: 'happiness', day };
+    if (s.budget < TUNING.criticalBudget) return { stat: 'budget', day };
+    return null;
+};
+
+// Adds a letter from one of the region's citizens. They take turns, so each
+// character keeps writing over the run and can bring up what they saw earlier.
+const addLetter = (
+    letters: Letter[],
+    regionId: string | null,
+    kind: LetterKind,
+    day: number,
+    extra: Partial<Letter> = {},
+): Letter[] => {
+    const cast = CHARACTERS[regionId ?? ''] ?? [];
+    if (cast.length === 0) return letters;
+    return [...letters, {
+        id: `letter-${day}-${letters.length}`,
+        day, kind, read: false,
+        characterId: cast[letters.length % cast.length].id,
+        ...extra,
+    }];
 };
 
 const createInitialQuests = (): QuestState[] =>
     ALL_QUESTS.map(q => ({ id: q.id, progress: 0, isCompleted: false }));
 
+// Rolls for one new crisis node on `day`; with `force` it skips the roll.
+// Until the first crisis is solved only one node may be open, so a new player
+// meets a single decision at a time.
+function spawnNode(state: GameState, day: number, force: boolean): Pick<GameState, 'activeNodes' | 'usedEventIds' | 'rngSeed'> {
+    const modifiers = getRegion(state.countryId, state.regionId)?.modifiers;
+    let newNodes = state.activeNodes;
+    let newUsedEventIds = state.usedEventIds;
+    // Every random draw threads the seed through state, so a run with the
+    // same seed and the same inputs always plays out identically.
+    let rngSeed = state.rngSeed;
+    const spawnChance = TUNING.baseSpawnChance * (modifiers?.eventFrequencyMultiplier ?? 1);
+    const spawnRoll = nextRandom(rngSeed);
+    rngSeed = spawnRoll.seed;
+    const cap = state.eventsSolved === 0 ? 1 : TUNING.maxNodes;
+    if ((force || spawnRoll.value < spawnChance) && newNodes.length < cap) {
+        const relevantEvents = EVENTS.filter(e => (!e.regionId || e.regionId === state.regionId)
+            && (!e.requiresHolding || state.holdingTier >= e.requiresHolding));
+        // Draw from the events not yet seen this cycle so the same crisis can't
+        // resurface right away; once every relevant event has been drawn, the
+        // bag reshuffles (starting fresh with just this draw) instead of the
+        // pool going dry and starving the player of new content. The just-drawn
+        // event is excluded from the reshuffled bag too, so a cycle boundary
+        // can't produce the exact back-to-back repeat this is meant to prevent.
+        const lastDrawnId = state.usedEventIds[state.usedEventIds.length - 1];
+        const unseen = relevantEvents.filter(e => !state.usedEventIds.includes(e.id));
+        const reshuffled = relevantEvents.filter(e => e.id !== lastDrawnId);
+        const pool = unseen.length > 0 ? unseen : (reshuffled.length > 0 ? reshuffled : relevantEvents);
+        if (pool.length > 0) {
+            const eventDraw = nextRandom(rngSeed);
+            rngSeed = eventDraw.seed;
+            const randomEvent = pool[Math.floor(eventDraw.value * pool.length)];
+            newUsedEventIds = unseen.length > 0
+                ? [...state.usedEventIds, randomEvent.id]
+                : [randomEvent.id];
+            // A crisis lands on a spot measured inside a province of this
+            // region, so it can no longer appear in a neighbouring region,
+            // across a border or out at sea. Where the event names the
+            // provinces it is actually about, it spawns on one of those:
+            // the Konya sinkhole appears on Konya, not wherever the region
+            // happens to have room. Spots already taken are skipped, so two
+            // nodes cannot hide each other.
+            const located = getProvinceSpawnPoints(state.countryId, state.regionId, randomEvent.location?.provinces);
+            const spawnPoints = located.length > 0
+                ? located
+                : getRegionSpawnPoints(state.countryId, state.regionId);
+            const free = spawnPoints.filter(
+                p => !newNodes.some(n => n.x === p.x && n.y === p.y)
+            );
+            const usable = free.length > 0 ? free : spawnPoints;
+            let spawnX = 50;
+            let spawnY = 50;
+
+            if (usable.length > 0) {
+                const placeDraw = nextRandom(rngSeed);
+                rngSeed = placeDraw.seed;
+                const point = usable[Math.floor(placeDraw.value * usable.length)];
+                spawnX = point.x;
+                spawnY = point.y;
+            }
+
+            const newNode: EventNode = {
+                // One spawn per tick, so the day is a stable unique id.
+                id: `node-${day}`,
+                eventId: randomEvent.id,
+                x: spawnX,
+                y: spawnY,
+                spawnDay: day
+            };
+            newNodes = [...newNodes, newNode];
+        }
+    }
+    return { activeNodes: newNodes, usedEventIds: newUsedEventIds, rngSeed };
+}
+
+// Wraps the reducer so every action that changes state is recorded. A no-op
+// (e.g. buying without money) leaves no trace, and replaying the log rebuilds
+// the same state. RESET_GAME clears it with the rest of the run.
 export function gameReducer(state: GameState, action: GameAction): GameState {
+    const next = reduce(state, action);
+    if (next === state || action.type === 'RESET_GAME') return next;
+    return { ...next, actionLog: [...next.actionLog, action] };
+}
+
+function reduce(state: GameState, action: GameAction): GameState {
     switch (action.type) {
-        case 'START_GAME':
-            return {
+        case 'START_GAME': {
+            const started: GameState = {
                 ...INITIAL_STATE,
                 budget: action.payload.startBudget,
                 countryId: action.payload.country.id,
@@ -70,6 +194,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
                 isPlaying: true,
                 quests: createInitialQuests(),
             };
+            // The first crisis is on the map from the start, so the first
+            // decision comes before the player has to learn "End Day".
+            return { ...started, ...spawnNode(started, started.day, true) };
+        }
 
         case 'RESET_GAME':
             return INITIAL_STATE;
@@ -77,8 +205,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         case 'SET_TAX_RATE':
             return { ...state, taxRate: action.payload };
 
-        case 'SET_PAUSED':
-            return { ...state, isPaused: action.payload };
+        case 'READ_LETTER': {
+            if (!state.letters.some(l => l.id === action.payload && !l.read)) return state;
+            return { ...state, letters: state.letters.map(l => (l.id === action.payload ? { ...l, read: true } : l)) };
+        }
 
         case 'CLEAR_QUEST_TOAST':
             // Drops the toast on screen and lets the next queued one through.
@@ -123,6 +253,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         case 'HANDLE_CHOICE': {
             if (!state.activeEvent || state.pendingOutcome) return state;
             const choice = state.activeEvent.choices[action.payload];
+            const eventId = state.activeEvent.id;
 
             const budget = state.budget + (choice.effects.budget || 0);
             const happiness = clampValue(state.happiness + (choice.effects.happiness || 0));
@@ -151,19 +282,35 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             // because the game-over screen takes the screen anyway.
             const explain = !!choice.outcome && !isGameOver;
 
+            // Dirty deals grow Kara Holding one step each; every second clean
+            // choice grows the co-op. Both make the news the same moment.
+            const dirty = isDirtyDeal(choice);
+            const cleanChoices = state.cleanChoices + (isCleanChoice(choice) ? 1 : 0);
+            const holdingTier = dirty ? Math.min(5, state.holdingTier + 1) : state.holdingTier;
+            const coopTier = Math.min(5, Math.floor(cleanChoices / 2));
+            const news: NewsItem[] = [...state.news];
+            if (holdingTier > state.holdingTier) news.push({ day: state.day, key: `holding${holdingTier}` });
+            if (coopTier > state.coopTier) news.push({ day: state.day, key: `coop${coopTier}` });
+
             return {
                 ...state,
                 budget: nextBudget,
                 happiness: nextHappiness,
                 cleanliness: nextCleanliness,
                 eventsSolved,
+                decisions: [...state.decisions, { day: state.day, eventId, choiceIndex: action.payload, dirty }],
+                holdingTier, coopTier, cleanChoices, news,
+                firstCritical: markCritical(state.firstCritical, { budget: nextBudget, happiness: nextHappiness, cleanliness: nextCleanliness }, state.day),
                 quests: result.quests,
                 toasts: [...state.toasts, ...result.completedTitles.map(text => ({ text, kind: 'quest' as const }))],
                 // Consequences this choice books for later. They land on their own
                 // day, long after the modal is closed and forgotten.
                 scheduled: [
                     ...state.scheduled,
-                    ...(choice.delayed ?? []).map(d => ({ dueDay: state.day + d.inDays, effects: d.effects, message: d.message })),
+                    ...(choice.delayed ?? []).map(d => ({
+                        dueDay: state.day + d.inDays, effects: d.effects, message: d.message,
+                        causeDay: state.day, eventId, choiceIndex: action.payload,
+                    })),
                 ],
                 activeEvent: explain ? state.activeEvent : null,
                 pendingOutcome: explain
@@ -175,7 +322,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         }
 
         case 'TICK': {
-            // One TICK advances the game by a single day; useGameLoop handles the timing.
+            // One TICK advances the game by a single day. The player ends the day
+            // themselves, but never with a crisis card still open.
+            if (!state.isPlaying || state.activeEvent) return state;
             const currentRegion = getRegion(state.countryId, state.regionId);
             const modifiers = currentRegion?.modifiers;
 
@@ -188,7 +337,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
             let nextBudget = state.budget + dailyBudgetChange + passive.budget;
             let nextHappiness = state.happiness + dailyHappinessChange + passive.happiness - happinessDecay;
-            let nextCleanliness = state.cleanliness + passive.cleanliness - cleanlinessDecay;
+            // Kara Holding's plants pollute every day; the co-op cleans a little.
+            let nextCleanliness = state.cleanliness + passive.cleanliness - cleanlinessDecay
+                - TUNING.holdingDecayPerTier * state.holdingTier + TUNING.coopCleanPerTier * state.coopTier;
 
             // Consequences booked days ago come due. Using <= rather than === so a
             // scheduled item can never be skipped.
@@ -266,73 +417,40 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
                 isGameOver = true;
             }
 
-            // Spawn a new crisis node (region frequency scales the odds).
-            let newNodes = survivingNodes;
-            let newUsedEventIds = state.usedEventIds;
-            // Every random draw threads the seed through state, so a run with the
-            // same seed and the same inputs always plays out identically.
-            let rngSeed = state.rngSeed;
-            if (!isGameOver) {
-                const spawnChance = TUNING.baseSpawnChance * (modifiers?.eventFrequencyMultiplier ?? 1);
-                const spawnRoll = nextRandom(rngSeed);
-                rngSeed = spawnRoll.seed;
-                if (spawnRoll.value < spawnChance && newNodes.length < TUNING.maxNodes) {
-                    const relevantEvents = EVENTS.filter(e => !e.regionId || e.regionId === state.regionId);
-                    // Draw from the events not yet seen this cycle so the same crisis can't
-                    // resurface right away; once every relevant event has been drawn, the
-                    // bag reshuffles (starting fresh with just this draw) instead of the
-                    // pool going dry and starving the player of new content. The just-drawn
-                    // event is excluded from the reshuffled bag too, so a cycle boundary
-                    // can't produce the exact back-to-back repeat this is meant to prevent.
-                    const lastDrawnId = state.usedEventIds[state.usedEventIds.length - 1];
-                    const unseen = relevantEvents.filter(e => !state.usedEventIds.includes(e.id));
-                    const reshuffled = relevantEvents.filter(e => e.id !== lastDrawnId);
-                    const pool = unseen.length > 0 ? unseen : (reshuffled.length > 0 ? reshuffled : relevantEvents);
-                    if (pool.length > 0) {
-                        const eventDraw = nextRandom(rngSeed);
-                        rngSeed = eventDraw.seed;
-                        const randomEvent = pool[Math.floor(eventDraw.value * pool.length)];
-                        newUsedEventIds = unseen.length > 0
-                            ? [...state.usedEventIds, randomEvent.id]
-                            : [randomEvent.id];
-                        // A crisis lands on a spot measured inside a province of this
-                        // region, so it can no longer appear in a neighbouring region,
-                        // across a border or out at sea. Where the event names the
-                        // provinces it is actually about, it spawns on one of those:
-                        // the Konya sinkhole appears on Konya, not wherever the region
-                        // happens to have room. Spots already taken are skipped, so two
-                        // nodes cannot hide each other.
-                        const located = getProvinceSpawnPoints(state.countryId, state.regionId, randomEvent.location?.provinces);
-                        const spawnPoints = located.length > 0
-                            ? located
-                            : getRegionSpawnPoints(state.countryId, state.regionId);
-                        const free = spawnPoints.filter(
-                            p => !newNodes.some(n => n.x === p.x && n.y === p.y)
-                        );
-                        const usable = free.length > 0 ? free : spawnPoints;
-                        let spawnX = 50;
-                        let spawnY = 50;
-
-                        if (usable.length > 0) {
-                            const placeDraw = nextRandom(rngSeed);
-                            rngSeed = placeDraw.seed;
-                            const point = usable[Math.floor(placeDraw.value * usable.length)];
-                            spawnX = point.x;
-                            spawnY = point.y;
-                        }
-
-                        const newNode: EventNode = {
-                            // One spawn per tick, so the day is a stable unique id.
-                            id: `node-${nextDay}`,
-                            eventId: randomEvent.id,
-                            x: spawnX,
-                            y: spawnY,
-                            spawnDay: nextDay
-                        };
-                        newNodes = [...newNodes, newNode];
-                    }
+            // Letters: delayed costs arrive by mail, dirty deals are remembered a
+            // few days later, and each mood letter comes at most once per run.
+            let letters = state.letters;
+            for (const item of dueToday) {
+                letters = addLetter(letters, state.regionId, 'delayed', nextDay, {
+                    eventId: item.eventId, causeDay: item.causeDay, message: item.message, effects: item.effects,
+                });
+            }
+            for (const d of state.decisions) {
+                if (d.dirty && d.day + TUNING.dirtyLetterDays === nextDay) {
+                    letters = addLetter(letters, state.regionId, 'dirty', nextDay, { eventId: d.eventId, causeDay: d.day });
                 }
             }
+            const sent = (k: LetterKind) => letters.some(l => l.kind === k);
+            const mood: LetterKind | null =
+                nextCleanliness < 30 && !sent('cleanBad') ? 'cleanBad'
+                : nextHappiness < 30 && !sent('happyBad') ? 'happyBad'
+                : nextCleanliness >= 70 && !sent('cleanGood') ? 'cleanGood'
+                : null;
+            if (mood) letters = addLetter(letters, state.regionId, mood, nextDay);
+
+            const news: NewsItem[] = [...state.news];
+            for (const id of nextCompletedProjects.slice(state.completedProjectIds.length)) {
+                news.push({ day: nextDay, key: 'project', params: { project: id } });
+            }
+            if (nextSustainDays > 0 && nextSustainDays % 5 === 0) news.push({ day: nextDay, key: 'sustain', params: { days: nextSustainDays } });
+
+            // Spawn a new crisis node (region frequency scales the odds).
+            const spawned = isGameOver
+                ? { activeNodes: survivingNodes, usedEventIds: state.usedEventIds, rngSeed: state.rngSeed }
+                : spawnNode({ ...state, activeNodes: survivingNodes }, nextDay, false);
+            const newNodes = spawned.activeNodes;
+            const newUsedEventIds = spawned.usedEventIds;
+            const rngSeed = spawned.rngSeed;
 
             return {
                 ...state,
@@ -348,11 +466,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
                 sustainDays: nextSustainDays,
                 scheduled: stillPending,
                 quests: result.quests,
-                toasts: [
-                    ...state.toasts,
-                    ...dueToday.map(item => ({ text: item.message, kind: 'delayed' as const })),
-                    ...result.completedTitles.map(text => ({ text, kind: 'quest' as const })),
-                ],
+                toasts: [...state.toasts, ...result.completedTitles.map(text => ({ text, kind: 'quest' as const }))],
+                letters, news,
+                firstCritical: markCritical(state.firstCritical, { budget: nextBudget, happiness: nextHappiness, cleanliness: nextCleanliness }, nextDay),
+                dayReport: {
+                    day: state.day,
+                    budget: nextBudget - state.budget,
+                    happiness: nextHappiness - state.happiness,
+                    cleanliness: nextCleanliness - state.cleanliness,
+                },
                 isPlaying: !isGameOver,
                 isGameOver,
                 isVictory,

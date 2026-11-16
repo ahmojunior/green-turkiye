@@ -18,19 +18,31 @@ export const TUNING = {
     cleanlinessDecayPerDay: 2,
 
     // Victory: hold BOTH stats at/above the threshold for N consecutive days.
-    sustainThreshold: 85,
-    sustainGoalDays: 12,
+    // A day is a turn the player ends; 20 days targets a 10–12 minute run
+    // (checked with `npm run sim`).
+    sustainThreshold: 80,
+    sustainGoalDays: 20,
 
     // Crisis nodes. Instead of a hard timeout, a node escalates the longer it is
     // ignored: it bleeds stats every day, gets more severe every few days, and
     // finally erupts for a big one-time hit. This forces triage over reflex-clicking.
-    baseSpawnChance: 0.45,
+    baseSpawnChance: 0.75,
     maxNodes: 3,
-    nodeEscalationDays: 4,   // every N unhandled days, severity rises by 1
+    nodeEscalationDays: 2,   // every N unhandled days, severity rises by 1
     nodeMaxSeverity: 3,
-    nodeEruptionDays: 12,    // a node this old erupts and is removed
+    nodeEruptionDays: 6,     // a node this old erupts and is removed
     nodeEruptionHappinessPenalty: 12,
     nodeEruptionCleanlinessPenalty: 15,
+
+    // Below these a stat counts as critical (hints, debrief diagnosis).
+    criticalStat: 25,
+    criticalBudget: 100,
+
+    // Story pressure (Faz 4): each Kara Holding tier pollutes every day, each
+    // co-op tier cleans a little; a dirty deal is brought up in a letter later.
+    holdingDecayPerTier: 0.5,
+    coopCleanPerTier: 0.3,
+    dirtyLetterDays: 3,
 } as const;
 
 // A node's severity (1..max) grows with how long it has gone unhandled.

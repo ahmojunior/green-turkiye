@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useGame } from './hooks/useGame';
 import { useQuestNotifications } from './hooks/useQuests';
 import { useGameSfx } from './hooks/useGameSfx';
@@ -15,7 +15,14 @@ import { CountryMap } from './components/CountryMap';
 import { TacticalBackground } from './components/TacticalBackground';
 import { ProjectSites } from './components/ProjectSites';
 import { getCountry, getRegion } from './data/countries';
-import { AlertCircle, Pause, Play, RotateCw, Volume2, VolumeX } from 'lucide-react';
+import { MikeyHints } from './components/MikeyHints';
+import { readMikeyMuted, writeMikeyMuted } from './utils/mikeyMute';
+import { LetterModal } from './components/LetterModal';
+import { DaySummary } from './components/DaySummary';
+import { findCharacter } from './data/story';
+import { getProvinceCentres } from './utils/geometry';
+import type { Letter } from './types';
+import { AlertCircle, Mail, Mic, MicOff, RotateCw, SkipForward, Volume2, VolumeX } from 'lucide-react';
 
 function App() {
   const {
@@ -25,7 +32,8 @@ function App() {
     dismissOutcome,
     handleNodeClick,
     resetGame,
-    setPaused,
+    endDay,
+    readLetter,
   } = useGame();
 
   useQuestNotifications();
@@ -33,45 +41,17 @@ function App() {
   const { lang, t } = useLanguage();
 
   const [muted, setMuted] = useState(sfx.isMuted());
-
-  // Auto-pause while the rotate-device prompt covers the screen (mobile portrait),
-  // matching the CSS breakpoint used for that overlay below. Only resumes what we
-  // paused ourselves, so a manual pause the player made survives a rotation.
-  const autoPausedRef = useRef(false);
-  useEffect(() => {
-    if (!gameState.isPlaying || gameState.isGameOver) return;
-    const mql = window.matchMedia('(max-width: 639.98px) and (orientation: portrait)');
-    const handle = (e: MediaQueryList | MediaQueryListEvent) => {
-      if (e.matches) {
-        if (!gameState.isPaused) {
-          autoPausedRef.current = true;
-          setPaused(true);
-        }
-      } else if (autoPausedRef.current) {
-        autoPausedRef.current = false;
-        setPaused(false);
-      }
-    };
-    handle(mql);
-    mql.addEventListener('change', handle);
-    return () => mql.removeEventListener('change', handle);
-  }, [gameState.isPlaying, gameState.isGameOver, gameState.isPaused, setPaused]);
+  const [mikeyMuted, setMikeyMuted] = useState(readMikeyMuted);
+  const [openLetter, setOpenLetter] = useState<Letter | null>(null);
+  // The end-of-day screen shows once per finished day.
+  const [summaryDismissed, setSummaryDismissed] = useState<number | null>(null);
+  const showSummary = !!gameState.dayReport && gameState.dayReport.day !== summaryDismissed && !gameState.isGameOver;
+  const openAndRead = (l: Letter) => { setOpenLetter(l); readLetter(l.id); };
 
   const { quests, toasts } = gameState;
 
   const currentCountry = getCountry(gameState.countryId);
   const currentRegion = getRegion(gameState.countryId, gameState.regionId);
-
-  // Determine Game Over reason
-  let gameOverReason = t('app.gameOver.regionUnmanageable');
-
-  if (gameState.isVictory) {
-    gameOverReason = t('app.gameOver.victory').replace('{days}', String(TUNING.sustainGoalDays));
-  } else if (gameState.isGameOver) {
-    if (gameState.budget <= 0) gameOverReason = t('app.gameOver.bankrupt');
-    else if (gameState.happiness <= 0) gameOverReason = t('app.gameOver.uprising');
-    else if (gameState.cleanliness <= 0) gameOverReason = t('app.gameOver.toxicWasteZone');
-  }
 
   // Seasons Logic
   // 0: Spring, 1: Summer, 2: Autumn, 3: Winter
@@ -112,16 +92,26 @@ function App() {
       {/* HUD */}
       <GameHUD state={gameState} regionName={currentRegion?.name[lang] || t('app.unknownRegion')} />
 
-      {/* Pause/Resume + Mute controls — bottom-center on mobile landscape (the
+      {/* End Day + Mute controls — bottom-center on mobile landscape (the
           actual play orientation) so they don't compete with the HUD for the
           cramped top strip; desktop keeps its original top-center placement. */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 mobile-landscape:top-auto mobile-landscape:bottom-2 mobile-landscape:gap-1.5">
         <button
-          onClick={() => { sfx.click(); setPaused(!gameState.isPaused); }}
-          className="glass-panel !rounded-full px-4 py-2 flex items-center gap-2 text-white pointer-events-auto hover:bg-white/10 transition-all active:scale-95 mobile-landscape:px-2.5 mobile-landscape:py-1.5"
+          onClick={() => { sfx.click(); endDay(); }}
+          data-hint="end-day"
+          disabled={!!gameState.activeEvent}
+          className="glass-panel !rounded-full px-4 py-2 flex items-center gap-2 text-white pointer-events-auto hover:bg-white/10 transition-all active:scale-95 disabled:opacity-40 disabled:pointer-events-none mobile-landscape:px-2.5 mobile-landscape:py-1.5"
         >
-          {gameState.isPaused ? <Play className="w-4 h-4 text-emerald-400 mobile-landscape:w-3.5 mobile-landscape:h-3.5" /> : <Pause className="w-4 h-4 text-amber-400 mobile-landscape:w-3.5 mobile-landscape:h-3.5" />}
-          <span className="text-sm font-bold mobile-landscape:text-xs">{gameState.isPaused ? t('app.controls.resume') : t('app.controls.pause')}</span>
+          <SkipForward className="w-4 h-4 text-emerald-400 mobile-landscape:w-3.5 mobile-landscape:h-3.5" />
+          <span className="text-sm font-bold mobile-landscape:text-xs">{t('app.controls.endDay')}</span>
+        </button>
+        <button
+          onClick={() => { writeMikeyMuted(!mikeyMuted); setMikeyMuted(!mikeyMuted); }}
+          title={mikeyMuted ? t('app.controls.mikeyOn') : t('app.controls.mikeyOff')}
+          aria-label={mikeyMuted ? t('app.controls.mikeyOn') : t('app.controls.mikeyOff')}
+          className="glass-panel !rounded-full p-2.5 flex items-center justify-center text-white pointer-events-auto hover:bg-white/10 transition-all active:scale-95 mobile-landscape:p-1.5"
+        >
+          {mikeyMuted ? <MicOff className="w-4 h-4 text-slate-400 mobile-landscape:w-3.5 mobile-landscape:h-3.5" /> : <Mic className="w-4 h-4 text-amber-400 mobile-landscape:w-3.5 mobile-landscape:h-3.5" />}
         </button>
         <button
           onClick={() => setMuted(sfx.toggleMuted())}
@@ -132,16 +122,7 @@ function App() {
         </button>
       </div>
 
-      {/* Paused overlay — sits above the map but below the control panels */}
-      {gameState.isPaused && !gameState.activeEvent && (
-        <div className="absolute inset-0 z-[15] flex items-center justify-center bg-black/40 backdrop-blur-[2px] pointer-events-none">
-          <div className="glass-panel px-10 py-8 text-center animate-fade-in">
-            <Pause className="w-12 h-12 text-amber-400 mx-auto mb-3" />
-            <p className="text-2xl font-black text-white tracking-wide">{t('app.paused.title')}</p>
-            <p className="text-sm text-slate-400 mt-1">{t('app.paused.hint')}</p>
-          </div>
-        </div>
-      )}
+      <MikeyHints state={gameState} muted={mikeyMuted} />
 
       {/* Goals Panel */}
       <QuestPanel quests={quests} toast={toasts[0] ?? null} />
@@ -185,6 +166,8 @@ function App() {
                     title={style.label}
                     aria-label={`${t('app.openCrisis')}: ${style.label} (${severity}/${TUNING.nodeMaxSeverity})`}
                     onClick={() => { sfx.click(); handleNodeClick(node.id); }}
+                    data-hint="node"
+                    data-severity={severity}
                     style={{
                       left: `${node.x}%`,
                       top: `${node.y}%`
@@ -215,6 +198,28 @@ function App() {
                 );
               })}
             </div>
+
+            {/* Unread letters, each on the province it was sent from */}
+            <div className="absolute inset-0 pointer-events-none">
+              {gameState.letters.filter(l => !l.read).map(l => {
+                const at = getProvinceCentres(gameState.countryId).get(findCharacter(l.characterId)?.province ?? '');
+                if (!at) return null;
+                return (
+                  <button
+                    key={l.id}
+                    onClick={() => { sfx.click(); openAndRead(l); }}
+                    data-hint="letter"
+                    data-kind={l.kind}
+                    aria-label={t('letter.open')}
+                    title={t('letter.open')}
+                    style={{ left: `${at.x}%`, top: `${at.y}%` }}
+                    className="absolute -translate-x-1/2 -translate-y-full pointer-events-auto z-40 rounded-full bg-[#fbf7ea] text-[#2A2622] p-1.5 shadow-lg border-2 border-amber-300 hover:scale-110 transition-transform animate-fade-in"
+                  >
+                    <Mail className="w-4 h-4" />
+                  </button>
+                );
+              })}
+            </div>
           </CountryMap>
         </div>
       </div>
@@ -232,14 +237,19 @@ function App() {
         />
       )}
 
+      {showSummary && (
+        <DaySummary
+          state={gameState}
+          onOpenLetter={openAndRead}
+          onClose={() => setSummaryDismissed(gameState.dayReport?.day ?? null)}
+        />
+      )}
+
+      {openLetter && <LetterModal letter={openLetter} onClose={() => setOpenLetter(null)} />}
+
       {/* Game Over / Victory Screen */}
       {gameState.isGameOver && (
-        <GameOver
-          reason={gameOverReason}
-          isVictory={gameState.isVictory}
-          daysSurvived={gameState.day}
-          onRestart={resetGame}
-        />
+        <GameOver state={gameState} onRestart={resetGame} />
       )}
     </div>
   );

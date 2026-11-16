@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { PROJECTS } from '../data/projects';
 import { Coins, Hammer, Clock, CheckCircle, Lock, X, Check } from 'lucide-react';
 import { useGame } from '../hooks/useGame';
@@ -12,7 +12,6 @@ export function ManagementPanel() {
         gameState,
         setTaxRate,
         buyProject,
-        setPaused
     } = useGame();
     const { lang, t } = useLanguage();
 
@@ -20,26 +19,16 @@ export function ManagementPanel() {
     const [showProjects, setShowProjects] = useState(false);
     const [insufficientFundsId, setInsufficientFundsId] = useState<string | null>(null);
 
-    // Pause game when modal is open. Only resumes if this modal was the one that
-    // paused it — otherwise it would stomp on an unrelated pause (e.g. the manual
-    // Pause button, or the mobile rotate-device prompt) as soon as it mounts/closes.
-    const pausedByModalRef = useRef(false);
-    useEffect(() => {
-        if (showProjects) {
-            pausedByModalRef.current = true;
-            setPaused(true);
-        } else if (pausedByModalRef.current) {
-            pausedByModalRef.current = false;
-            setPaused(false);
-        }
-    }, [showProjects, setPaused]);
+    // Tax and projects stay locked until the first crisis is solved, so a new
+    // player meets one decision at a time.
+    if (gameState.eventsSolved === 0) return null;
 
     return (
         <>
             {/* Tax Controls - Bottom Left */}
-            <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-2 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:right-auto max-sm:bottom-24 max-sm:w-[calc(100vw-2rem)] max-sm:max-w-xs">
-                <div className="glass-panel !rounded-xl p-4">
-                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+            <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-2 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:right-auto max-sm:bottom-24 max-sm:w-[calc(100vw-2rem)] max-sm:max-w-xs mobile-landscape:bottom-2 mobile-landscape:left-2">
+                <div className="glass-panel !rounded-xl p-4 animate-fade-in mobile-landscape:p-1.5" data-hint="tax">
+                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2 mobile-landscape:text-[9px] mobile-landscape:mb-1">
                         <Coins className="w-4 h-4 text-yellow-400" /> {t('mgmt.taxRate')}
                     </h3>
                     <div className="flex bg-black/40 p-1 rounded-lg border border-white/10 gap-1">
@@ -48,7 +37,7 @@ export function ManagementPanel() {
                                 key={rate}
                                 onClick={() => { sfx.click(); setTaxRate(rate); }}
                                 className={`
-                                    px-4 py-2 rounded-md text-sm font-bold transition-all
+                                    px-4 py-2 rounded-md text-sm font-bold transition-all mobile-landscape:px-2 mobile-landscape:py-1 mobile-landscape:text-xs
                                     ${taxRate === rate
                                         ? 'bg-emerald-500 text-white shadow-[0_0_12px_rgba(52,211,153,0.4)]'
                                         : 'text-slate-400 hover:text-white hover:bg-white/10'}
@@ -60,7 +49,7 @@ export function ManagementPanel() {
                             </button>
                         ))}
                     </div>
-                    <div className="mt-2 text-xs text-slate-500 font-medium h-4">
+                    <div className="mt-2 text-xs text-slate-500 font-medium h-4 mobile-landscape:hidden">
                         {taxRate === TaxRate.LOW && t('mgmt.taxRate.lowEffect')}
                         {taxRate === TaxRate.NORMAL && t('mgmt.taxRate.normalEffect')}
                         {taxRate === TaxRate.HIGH && t('mgmt.taxRate.highEffect')}
@@ -69,12 +58,12 @@ export function ManagementPanel() {
             </div>
 
             {/* Projects Button - Bottom Right */}
-            <div className="absolute bottom-6 right-6 z-20 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:right-auto">
+            <div className="absolute bottom-6 right-6 z-20 max-sm:left-1/2 max-sm:-translate-x-1/2 max-sm:right-auto mobile-landscape:bottom-2 mobile-landscape:right-2">
                 <button
                     onClick={() => { sfx.click(); setShowProjects(true); }}
-                    className="flex items-center gap-3 bg-emerald-600/80 hover:bg-emerald-500/90 backdrop-blur border border-emerald-400/30 text-white px-6 py-4 rounded-xl shadow-[0_4px_20px_rgba(52,211,153,0.25)] hover:shadow-[0_4px_28px_rgba(52,211,153,0.45)] transition-all active:scale-95 font-bold text-lg max-sm:px-4 max-sm:py-3 max-sm:text-base"
+                    className="flex items-center gap-3 bg-emerald-600/80 hover:bg-emerald-500/90 backdrop-blur border border-emerald-400/30 text-white px-6 py-4 rounded-xl shadow-[0_4px_20px_rgba(52,211,153,0.25)] hover:shadow-[0_4px_28px_rgba(52,211,153,0.45)] transition-all active:scale-95 font-bold text-lg max-sm:px-4 max-sm:py-3 max-sm:text-base mobile-landscape:px-3 mobile-landscape:py-1.5 mobile-landscape:text-sm mobile-landscape:gap-2"
                 >
-                    <Hammer className="w-6 h-6" />
+                    <Hammer className="w-6 h-6 mobile-landscape:w-4 mobile-landscape:h-4" />
                     {t('mgmt.projectsButton')}
                     {activeProjects.length > 0 && (
                         <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full animate-pulse">

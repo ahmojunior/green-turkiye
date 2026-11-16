@@ -8,6 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "validate:events": "node scripts/validate-events.mjs",
+    "sim": "rolldown scripts/sim.ts --format esm --platform node -o node_modules/.cache/sim.mjs && node node_modules/.cache/sim.mjs",
+    "test": "rolldown scripts/replay-test.ts --format esm --platform node -o node_modules/.cache/replay-test.mjs && node node_modules/.cache/replay-test.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

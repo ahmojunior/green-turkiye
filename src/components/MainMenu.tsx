@@ -4,7 +4,7 @@ import { COUNTRIES } from '../data/countries';
 import { TUNING } from '../utils/gameLogic';
 import { CountryMap } from './CountryMap';
 import { TacticalBackground } from './TacticalBackground';
-import { Map, ArrowLeft, ArrowRight, Play, HelpCircle, Users, X, Leaf, Target, AlertTriangle, Scale, Siren, Lightbulb, RotateCw } from 'lucide-react';
+import { Map, ArrowLeft, ArrowRight, Play, HelpCircle, Users, X, Target, AlertTriangle, Scale, Siren, Lightbulb, RotateCw } from 'lucide-react';
 import { sfx } from '../utils/sfx';
 import { useLanguage } from '../contexts/language-context';
 
@@ -24,7 +24,6 @@ export function MainMenu({ onStart }: MainMenuProps) {
   const [phase, setPhase] = useState<MenuPhase>('SPLASH');
   const [selectedCountryId, setSelectedCountryId] = useState<string | null>(null);
   const [selectedRegionId, setSelectedRegionId] = useState<string | null>(null);
-  const [showWelcomePrompt, setShowWelcomePrompt] = useState(false);
   const { lang, setLang, t } = useLanguage();
 
   // The menu is portrait-only — actively lock back to portrait (undoing the game
@@ -45,24 +44,8 @@ export function MainMenu({ onStart }: MainMenuProps) {
   const handlePlayClick = () => {
     sfx.menuConfirm();
     try { document.documentElement.requestFullscreen?.()?.catch(() => { }); } catch { /* fullscreen unsupported/denied — non-critical */ }
-    if (localStorage.getItem('greenTurkiye_hasPlayed')) {
-      setPhase('COUNTRY_SELECT');
-    } else {
-      setShowWelcomePrompt(true);
-    }
-  };
-
-  const handleAcceptTutorial = () => {
-    sfx.menuClick();
-    localStorage.setItem('greenTurkiye_hasPlayed', 'true');
-    setShowWelcomePrompt(false);
-    setPhase('HELP');
-  };
-
-  const handleDeclineTutorial = () => {
-    sfx.menuClick();
-    localStorage.setItem('greenTurkiye_hasPlayed', 'true');
-    setShowWelcomePrompt(false);
+    // No "learn first?" question: the player goes straight in and Mikey's
+    // hints teach in play. How to Play stays in the menu as a reference.
     setPhase('COUNTRY_SELECT');
   };
 
@@ -101,37 +84,6 @@ export function MainMenu({ onStart }: MainMenuProps) {
       </div>
 
       <TacticalBackground />
-
-      {/* ===================== WELCOME PROMPT ===================== */}
-      {showWelcomePrompt && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fade-in">
-          <div className="glass-panel flex flex-col items-center gap-6 px-8 py-10 max-w-sm w-full text-center animate-slide-up border border-green-500/30 shadow-[0_0_40px_rgba(34,197,94,0.2)]">
-            <div className="bg-green-500/20 p-4 rounded-full mb-2">
-              <Leaf className="w-8 h-8 text-green-400" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-white mb-2">{t('menu.welcome.title')}</h2>
-              <p className="text-slate-300 text-sm leading-relaxed">
-                {t('menu.welcome.body')}
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 w-full">
-              <button
-                onClick={handleAcceptTutorial}
-                className="w-full bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl py-3 transition-colors"
-              >
-                {t('menu.welcome.yes')}
-              </button>
-              <button
-                onClick={handleDeclineTutorial}
-                className="w-full bg-white/5 hover:bg-white/10 text-slate-300 font-medium rounded-xl py-3 border border-white/10 transition-colors"
-              >
-                {t('menu.welcome.no')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ===================== SPLASH SCREEN ===================== */}
       {phase === 'SPLASH' && (
