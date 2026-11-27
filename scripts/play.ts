@@ -2,7 +2,7 @@
 // real reducer with simple policies, exactly as the UI would dispatch.
 import { gameReducer, INITIAL_STATE } from '../src/reducers/gameReducer';
 import { COUNTRIES } from '../src/data/countries';
-import { PROJECTS } from '../src/data/projects';
+import { getProjectsForRegion } from '../src/data/projects';
 import { TaxRate } from '../src/types/enums';
 import type { EventChoice, GameState } from '../src/types';
 
@@ -75,7 +75,7 @@ export function play(policy: Policy, seed: number): RunResult {
             }
             if (s.isGameOver) break;
             const owned = new Set([...s.completedProjectIds, ...s.activeProjects.map(p => p.id)]);
-            const next = PROJECTS.find(p => !owned.has(p.id) && s.budget - p.cost >= 150
+            const next = getProjectsForRegion(s.regionId).find(p => !owned.has(p.id) && s.budget - p.cost >= 150
                 && (p.prerequisites ?? []).every(r => s.completedProjectIds.includes(r)));
             if (next) { s = gameReducer(s, { type: 'BUY_PROJECT', payload: next }); seconds += SECONDS.project; }
         }

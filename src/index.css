@@ -209,3 +209,28 @@ body {
   .tv-live-dot { animation: tv-blink 1.2s steps(2) infinite; }
 }
 @keyframes tv-blink { 50% { opacity: .2; } }
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.25) transparent;
+}
+
+/* Finished project sites: the land around them heals, and nature projects get
+   birds or fish circling back. Without motion they simply sit around the site. */
+.site-halo {
+  position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgb(190 242 100 / .5), rgb(190 242 100 / 0) 70%);
+}
+.site-life {
+  position: absolute; left: 50%; top: 50%; width: 11px; height: 11px; margin: -5.5px;
+  color: #f8fafc; filter: drop-shadow(0 1px 1px rgb(0 0 0 / .6));
+  transform: rotate(var(--a)) translateX(20px) rotate(calc(var(--a) * -1));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-life { animation: site-orbit 10s linear infinite; }
+}
+@keyframes site-orbit {
+  from { transform: rotate(var(--a)) translateX(20px) rotate(calc(var(--a) * -1)); }
+  to { transform: rotate(calc(var(--a) + 360deg)) translateX(20px) rotate(calc(var(--a) * -1 - 360deg)); }
+}

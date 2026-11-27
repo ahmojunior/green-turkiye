@@ -2,7 +2,7 @@ import type { Lang } from '../contexts/language-context';
 import type { Letter, NewsItem } from '../types';
 import { EVENTS } from '../data/events';
 import { PROJECTS } from '../data/projects';
-import { HEADLINES, LETTERS, findCharacter } from '../data/story';
+import { HEADLINES, LETTERS, PROJECT_LETTERS, findCharacter } from '../data/story';
 
 const fill = (text: string, params: Record<string, string | number>) =>
     text.replace(/\{(\w+)\}/g, (m, k) => (k in params ? String(params[k]) : m));
@@ -17,10 +17,12 @@ export function letterText(letter: Letter, lang: Lang) {
     const params = {
         days: letter.causeDay !== undefined ? letter.day - letter.causeDay : 0,
         event: eventTitle(letter.eventId, lang),
+        project: PROJECTS.find(p => p.id === letter.projectId)?.name[lang] ?? '',
     };
+    const highlight = letter.message ?? PROJECT_LETTERS[letter.projectId ?? '']?.highlight;
     return {
         body: fill(template.body[lang], params),
-        highlight: letter.message ? letter.message[lang] : fill(template.highlight?.[lang] ?? '', params),
+        highlight: highlight ? highlight[lang] : fill(template.highlight?.[lang] ?? '', params),
         name: character?.name ?? '',
         role: character?.role[lang] ?? '',
         province: character?.province ?? '',

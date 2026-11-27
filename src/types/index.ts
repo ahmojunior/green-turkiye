@@ -141,6 +141,7 @@ export interface Project {
   id: string;
   name: LocalizedText;
   description: LocalizedText;
+  regionId?: string; // Only offered in this region; shared by every region when absent
   cost: number;
   duration: number;
   prerequisites?: string[]; // Project IDs
@@ -195,7 +196,7 @@ export interface Decision {
   dirty: boolean;
 }
 
-export type LetterKind = 'delayed' | 'dirty' | 'cleanGood' | 'cleanBad' | 'happyBad';
+export type LetterKind = 'delayed' | 'dirty' | 'cleanGood' | 'cleanBad' | 'happyBad' | 'project';
 
 /**
  * A citizen's letter. State holds only facts; the text is built from
@@ -212,6 +213,7 @@ export interface Letter {
   causeDay?: number;
   message?: LocalizedText;
   effects?: Effects;
+  projectId?: string; // a regional project that just opened
 }
 
 export interface NewsItem {
