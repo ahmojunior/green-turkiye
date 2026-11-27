@@ -43,6 +43,10 @@ export const TUNING = {
     holdingDecayPerTier: 0.5,
     coopCleanPerTier: 0.3,
     dirtyLetterDays: 3,
+    // Letters about a past decision (delayed cost, dirty deal) tire players when
+    // they pile up: at most this many per run, at least this many days apart.
+    pastLetterMax: 2,
+    pastLetterGapDays: 4,
 } as const;
 
 // A node's severity (1..max) grows with how long it has gone unhandled.

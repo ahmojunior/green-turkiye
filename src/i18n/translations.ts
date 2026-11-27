@@ -90,6 +90,7 @@ export const UI_STRINGS: Record<string, { tr: string; en: string; de: string }> 
   'mgmt.active': { tr: 'Aktif', en: 'Active', de: 'Aktiv' },
   'mgmt.modalTitle': { tr: 'Şehir Projeleri', en: 'City Projects', de: 'Stadtprojekte' },
   'mgmt.modalSubtitle': { tr: 'Bütçeni kullanarak şehrini geliştir.', en: 'Use your budget to develop your city.', de: 'Nutze dein Budget, um deine Stadt weiterzuentwickeln.' },
+  'mgmt.regional': { tr: 'Bölgeye Özel', en: 'Regional', de: 'Regional' },
   'mgmt.locked': { tr: 'Kilitli', en: 'Locked', de: 'Gesperrt' },
   'mgmt.requirement': { tr: 'Gereksinim', en: 'Requirement', de: 'Voraussetzung' },
   'mgmt.price': { tr: 'Fiyat', en: 'Price', de: 'Preis' },

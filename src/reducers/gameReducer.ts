@@ -16,7 +16,7 @@ import { EVENTS } from '../data/events';
 import { getRegion } from '../data/countries';
 import { PROJECTS } from '../data/projects';
 import { ALL_QUESTS } from '../data/quests';
-import { CHARACTERS, isCleanChoice, isDirtyDeal } from '../data/story';
+import { CHARACTERS, PROJECT_LETTERS, isCleanChoice, isDirtyDeal } from '../data/story';
 
 export type GameAction =
     | { type: 'START_GAME'; payload: { country: Country; region: Region; startBudget: number; seed: number } }
@@ -418,15 +418,22 @@ function reduce(state: GameState, action: GameAction): GameState {
             }
 
             // Letters: delayed costs arrive by mail, dirty deals are remembered a
-            // few days later, and each mood letter comes at most once per run.
+            // few days later (both rationed by mayRecall; the stat cost still lands
+            // when a letter is skipped), and each mood letter comes at most once per run.
             let letters = state.letters;
+            const mayRecall = () => {
+                const past = letters.filter(l => l.kind === 'delayed' || l.kind === 'dirty');
+                const last = past[past.length - 1];
+                return past.length < TUNING.pastLetterMax && (!last || nextDay - last.day >= TUNING.pastLetterGapDays);
+            };
             for (const item of dueToday) {
+                if (!mayRecall()) break;
                 letters = addLetter(letters, state.regionId, 'delayed', nextDay, {
                     eventId: item.eventId, causeDay: item.causeDay, message: item.message, effects: item.effects,
                 });
             }
             for (const d of state.decisions) {
-                if (d.dirty && d.day + TUNING.dirtyLetterDays === nextDay) {
+                if (d.dirty && d.day + TUNING.dirtyLetterDays === nextDay && mayRecall()) {
                     letters = addLetter(letters, state.regionId, 'dirty', nextDay, { eventId: d.eventId, causeDay: d.day });
                 }
             }
@@ -441,6 +448,9 @@ function reduce(state: GameState, action: GameAction): GameState {
             const news: NewsItem[] = [...state.news];
             for (const id of nextCompletedProjects.slice(state.completedProjectIds.length)) {
                 news.push({ day: nextDay, key: 'project', params: { project: id } });
+                // A regional project opening gets a letter from the citizen it matters to.
+                const from = PROJECT_LETTERS[id]?.from;
+                if (from) letters = addLetter(letters, state.regionId, 'project', nextDay, { projectId: id, characterId: from });
             }
             if (nextSustainDays > 0 && nextSustainDays % 5 === 0) news.push({ day: nextDay, key: 'sustain', params: { days: nextSustainDays } });
 
